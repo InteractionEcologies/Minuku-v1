@@ -162,7 +162,7 @@ public class MinukuMainService extends Service {
 
 
         //this is for checking if the service instance is running
-        serviceInstance=this;
+        serviceInstance = this;
 
         mPreferenceHelper = new PreferenceHelper(this);
         Log.d(LOG_TAG, "going to create the probe service");
@@ -454,7 +454,7 @@ public class MinukuMainService extends Service {
 
             //the main thread use the default interval to run continuous actions
             //the continuous actions are listed in the RunningActionList maintained by the ActionManager.
-            //Periodically the main thread call ActionManager to execute the contibuous actions.
+            //Periodically the main thread call ActionManager to execute the continuous actions.
             try{
 
                 Log.d(LOG_TAG, "[test pause resume]  running in  recordContextRunnable  ");

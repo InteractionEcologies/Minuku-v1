@@ -28,6 +28,7 @@ import edu.umich.si.inteco.minuku.Fragments.CheckinSectionFragment;
 import edu.umich.si.inteco.minuku.Fragments.DailyJournalSectionFragment;
 import edu.umich.si.inteco.minuku.Fragments.HomeFragment;
 import edu.umich.si.inteco.minuku.Fragments.ListRecordingSectionFragment;
+import edu.umich.si.inteco.minuku.Fragments.ProfileFragment;
 import edu.umich.si.inteco.minuku.Fragments.RecordSectionFragment;
 import edu.umich.si.inteco.minuku.Fragments.TaskSectionFragment;
 import edu.umich.si.inteco.minuku.context.ContextManager;
@@ -135,6 +136,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         // user swipes between sections.
         mViewPager = (ViewPager) findViewById(R.id.main_layout);
         mViewPager.setAdapter(mAppSectionsPagerAdapter);
+        mViewPager.setOffscreenPageLimit(3);
         mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
@@ -145,8 +147,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
             }
         });
-
-
 
 
         //we first set the mLaunchtab parameter based on the study condition
@@ -179,12 +179,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 actionBar.addTab(actionBar.newTab().setText(Constants.MAIN_ACTIVITY_TAB_RECORDINGS).setTabListener(this));
             }
 
-            actionBar.addTab(actionBar.newTab().setText(Constants.MAIN_ACTIVITY_TAB_DAILY_REPORT).setTabListener(this));
             actionBar.addTab(actionBar.newTab().setText(Constants.MAIN_ACTIVITY_TAB_TASKS).setTabListener(this));
+            actionBar.addTab(actionBar.newTab().setText(Constants.MAIN_ACTIVITY_TAB_DAILY_REPORT).setTabListener(this));
 
         }
-
-
 
         currentTabPos = -1;
 
@@ -216,17 +214,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         }
         return true;
     }
-
-//    public static boolean hasPermissions(Context context, String... permissions) {
-//        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
-//            for (String permission : permissions) {
-//                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
-//                    return false;
-//                }
-//            }
-//        }
-//        return true;
-//    }
 
 
     @Override
@@ -477,7 +464,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         // TODO Auto-generated method stub
 
         mViewPager.setCurrentItem(tab.getPosition());
-
+        Log.d("asfasf", tab.getPosition()+"");
         //save the current page
         currentTabPos = tab.getPosition();
 
@@ -521,15 +508,15 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         @Override
         public Fragment getItem(int i) {
+            Log.d("asfasf", "in fragment: " + i);
 
             //Google Analytic
             sendScreenNameToGoogleAnalytic("Opening Minuku");
 
             switch (i) {
-
                 case 0:
                     if (Constants.CURRENT_STUDY_CONDITION.equals(Constants.NORMAL_CONDITION)){
-                    HomeFragment homeSectionFragment = new HomeFragment();
+                        HomeFragment homeSectionFragment = new HomeFragment();
                         homeSectionFragment.setRetainInstance(true);
                         return homeSectionFragment;
                     }
@@ -555,7 +542,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
                     // The first section of the app is the most interesting -- it offers
                     // a launchpad into the other demonstrations in this example application.
-
                 case 1:
                     if (Constants.CURRENT_STUDY_CONDITION.equals(Constants.PARTICIPATORY_LABELING_CONDITION)){
                         mReviewMode = RecordingAndAnnotateManager.ANNOTATE_REVIEW_RECORDING_ALL;
@@ -582,7 +568,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                         return listRecordingSectionFragment;
                     }
                     else {
-
                         TaskSectionFragment taskSectionFragment = new TaskSectionFragment();
                         taskSectionFragment.setRetainInstance(true);
                         return taskSectionFragment;
@@ -592,6 +577,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                     DailyJournalSectionFragment dailyJournalSectionFragment = new DailyJournalSectionFragment();
                     dailyJournalSectionFragment.setRetainInstance(true);
                     return dailyJournalSectionFragment;
+
+                //TODO bugs, cannot get the 3rd page
+                case 3:
+                    ProfileFragment profileFragment = new ProfileFragment();
+                    profileFragment.setRetainInstance(true);
+                    return profileFragment;
 
                 default:
                     TaskSectionFragment taskSectionFragment1 = new TaskSectionFragment();
