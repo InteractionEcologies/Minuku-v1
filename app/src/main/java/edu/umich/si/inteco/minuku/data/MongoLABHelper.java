@@ -1,4 +1,4 @@
-package edu.umich.si.inteco.minuku.data;
+package edu.umich.si.inteco.minuku.Fragments;
 
 import edu.umich.si.inteco.minuku.util.DatabaseNameManager;
 

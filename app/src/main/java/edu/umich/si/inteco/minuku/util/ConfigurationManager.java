@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import edu.umich.si.inteco.minuku.Constants;
 import edu.umich.si.inteco.minuku.context.ContextManager;
 import edu.umich.si.inteco.minuku.context.ContextStateManagers.ContextStateManager;
-import edu.umich.si.inteco.minuku.data.MongoLabHelper;
+import edu.umich.si.inteco.minuku.Fragments.MongoLabHelper;
 import edu.umich.si.inteco.minuku.data.RemoteDBHelper;
 import edu.umich.si.inteco.minuku.model.Condition;
 import edu.umich.si.inteco.minuku.model.Configuration;

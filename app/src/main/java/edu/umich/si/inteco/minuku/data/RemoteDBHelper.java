@@ -41,6 +41,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import edu.umich.si.inteco.minuku.Constants;
+import edu.umich.si.inteco.minuku.Fragments.MongoLabHelper;
 import edu.umich.si.inteco.minuku.context.ContextManager;
 import edu.umich.si.inteco.minuku.util.DatabaseNameManager;
 import edu.umich.si.inteco.minuku.util.LogManager;
@@ -286,7 +287,7 @@ public class RemoteDBHelper {
 
                     Log.d (LOG_TAG, "[postQuesitonnaireDocuments test qu] quesitonnaire document post to mongolab");
 
-                    String postURL =MongoLabHelper.postDocumentURL(ProjectDatabaseName, DatabaseNameManager.MONGODB_COLLECTION_QUESTIONNAIRE);
+                    String postURL = MongoLabHelper.postDocumentURL(ProjectDatabaseName, DatabaseNameManager.MONGODB_COLLECTION_QUESTIONNAIRE);
 
                     Log.d (LOG_TAG, "[postQuesitonnaireDocuments test qu] questionnaire document " + postURL  + " with json: " + json);
 

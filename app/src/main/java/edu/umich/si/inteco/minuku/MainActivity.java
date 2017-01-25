@@ -574,15 +574,18 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                     }
 
                 case 2:
-                    DailyJournalSectionFragment dailyJournalSectionFragment = new DailyJournalSectionFragment();
-                    dailyJournalSectionFragment.setRetainInstance(true);
-                    return dailyJournalSectionFragment;
-
-                //TODO bugs, cannot get the 3rd page
-                case 3:
                     ProfileFragment profileFragment = new ProfileFragment();
                     profileFragment.setRetainInstance(true);
                     return profileFragment;
+//                    DailyJournalSectionFragment dailyJournalSectionFragment = new DailyJournalSectionFragment();
+//                    dailyJournalSectionFragment.setRetainInstance(true);
+//                    return dailyJournalSectionFragment;
+
+                //TODO bugs, cannot get the 3rd page
+                case 3:
+//                    ProfileFragment profileFragment = new ProfileFragment();
+//                    profileFragment.setRetainInstance(true);
+//                    return profileFragment;
 
                 default:
                     TaskSectionFragment taskSectionFragment1 = new TaskSectionFragment();
