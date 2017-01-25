@@ -4,10 +4,13 @@ import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
+import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -24,6 +27,7 @@ import android.view.Menu;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.ndk.CrashlyticsNdk;
+
 import edu.umich.si.inteco.minuku.Fragments.CheckinSectionFragment;
 import edu.umich.si.inteco.minuku.Fragments.DailyJournalSectionFragment;
 import edu.umich.si.inteco.minuku.Fragments.HomeFragment;
@@ -46,7 +50,9 @@ import android.Manifest;
 import android.view.View;
 import android.widget.Toast;
 
+import java.net.NetworkInterface;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +76,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     String[] PERMISSIONS = {Manifest.permission.READ_CONTACTS, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_SMS, Manifest.permission.CAMERA};
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
     protected static final int FINE_LOCATION = 100;
-    protected  static final int CAMERA = 101;
+    protected static final int CAMERA = 101;
     private static final int REQUEST_WRITE_STORAGE = 102;
 
     private static String mReviewMode = RecordingAndAnnotateManager.ANNOTATE_REVIEW_RECORDING_ALL;
@@ -85,6 +91,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     //display the three primary sections of the app, one at a time
     ViewPager mViewPager;
 
+    //MAC address
+    public static String wifiMacAddr;
+    public static String btMacAddr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,13 +112,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 
         //permissions
-        if(checkAndRequestPermissions()) {
+        if (checkAndRequestPermissions()) {
             // carry on the normal flow, as the case of  permissions  granted.
         }
 
 
         /**start the contextManager service**/
-        if (!MinukuMainService.isServiceRunning()){
+        if (!MinukuMainService.isServiceRunning()) {
             Log.d(LOG_TAG, "[test service running]  going start the probe service isServiceRunning:" + MinukuMainService.isServiceRunning());
             Intent intent = new Intent();
             intent.setClass(MainActivity.this, MinukuMainService.class);
@@ -119,7 +128,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 
         /** Create the adapter that will return a fragment for each of the three primary sections
-        // of the app.**/
+         // of the app.**/
         mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the action bar.
@@ -164,16 +173,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 mLaunchTab = Constants.MAIN_ACTIVITY_TAB_RECORD;
                 actionBar.addTab(actionBar.newTab().setText(Constants.MAIN_ACTIVITY_TAB_RECORD).setTabListener(this));
                 actionBar.addTab(actionBar.newTab().setText(Constants.MAIN_ACTIVITY_TAB_RECORDINGS).setTabListener(this));
-            }
-            else if (Constants.CURRENT_STUDY_CONDITION.equals(Constants.IN_STIU_LABELING_CONDITION)) {
+            } else if (Constants.CURRENT_STUDY_CONDITION.equals(Constants.IN_STIU_LABELING_CONDITION)) {
                 mLaunchTab = Constants.MAIN_ACTIVITY_TAB_DAILY_REPORT;
-            }
-
-            else if (Constants.CURRENT_STUDY_CONDITION.equals(Constants.POST_HOC_LABELING_CONDITION)) {
+            } else if (Constants.CURRENT_STUDY_CONDITION.equals(Constants.POST_HOC_LABELING_CONDITION)) {
                 mLaunchTab = Constants.MAIN_ACTIVITY_TAB_DAILY_REPORT;
                 actionBar.addTab(actionBar.newTab().setText(Constants.MAIN_ACTIVITY_TAB_RECORDINGS).setTabListener(this));
-            }
-            else if (Constants.CURRENT_STUDY_CONDITION.equals(Constants.HYRBID_LABELING_CONDITION)) {
+            } else if (Constants.CURRENT_STUDY_CONDITION.equals(Constants.HYRBID_LABELING_CONDITION)) {
                 mLaunchTab = Constants.MAIN_ACTIVITY_TAB_RECORD;
                 actionBar.addTab(actionBar.newTab().setText(Constants.MAIN_ACTIVITY_TAB_RECORD).setTabListener(this));
                 actionBar.addTab(actionBar.newTab().setText(Constants.MAIN_ACTIVITY_TAB_RECORDINGS).setTabListener(this));
@@ -189,7 +194,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     }
 
 
-    private  boolean checkAndRequestPermissions() {
+    private boolean checkAndRequestPermissions() {
 
         int permissionReadExternalStorage = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -209,7 +214,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
         if (!listPermissionsNeeded.isEmpty()) {
-            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),REQUEST_ID_MULTIPLE_PERMISSIONS);
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
             return false;
         }
         return true;
@@ -289,13 +294,37 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 .show();
     }
 
+    public void getMacAddress() {
+        try {
+            List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface nif : all) {
+                if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
 
+                byte[] macBytes = nif.getHardwareAddress();
+                if (macBytes == null) {
+                    wifiMacAddr = "";
+                }
+
+                StringBuilder res1 = new StringBuilder();
+                for (byte b : macBytes) {
+                    res1.append(Integer.toHexString(b & 0xFF) + ":");
+                }
+
+                if (res1.length() > 0) {
+                    res1.deleteCharAt(res1.length() - 1);
+                }
+                wifiMacAddr = res1.toString();
+            }
+        } catch (Exception ex) {
+        }
+        btMacAddr = android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");
+    }
 
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
 
-
+        getMacAddress();
         // Google Analytic [START custom_event]
         mTracker.send(new HitBuilders.EventBuilder()
                 .setCategory("Action")
@@ -311,13 +340,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         Bundle bundle = getIntent().getExtras();
 
 
-
-        if (bundle!=null ) {
+        if (bundle != null) {
 
             if (bundle.containsKey(ConfigurationManager.ACTION_PROPERTIES_ANNOTATE_REVIEW_RECORDING)) {
 
                 String reviewMode = bundle.getString(ConfigurationManager.ACTION_PROPERTIES_ANNOTATE_REVIEW_RECORDING);
-                if (reviewMode!=null){
+                if (reviewMode != null) {
                     mReviewMode = reviewMode;
                     //showRecordingList(mReviewMode);
                 }
@@ -327,13 +355,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
                 mLaunchTab = bundle.getString("launchTab");
             }
-
         }
 
 
         //if the user specify which tab to launch, we launch that tab
-        if (mLaunchTab!=null) {
-            for (int i=0; i<actionBar.getTabCount(); i++) {
+        if (mLaunchTab != null) {
+            for (int i = 0; i < actionBar.getTabCount(); i++) {
                 if (actionBar.getTabAt(i).getText().equals(mLaunchTab)) {
                     actionBar.selectTab(actionBar.getTabAt(i));
                 }
@@ -345,9 +372,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         else {
             //  actionBar.selectTab(actionBar.getTabAt(currentTabPos));
         }
-
-
-
 
 
     }
@@ -464,14 +488,14 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         // TODO Auto-generated method stub
 
         mViewPager.setCurrentItem(tab.getPosition());
-        Log.d("asfasf", tab.getPosition()+"");
+        Log.d("asfasf", tab.getPosition() + "");
         //save the current page
         currentTabPos = tab.getPosition();
 
         Log.d(LOG_TAG, "[onTabSelected] the selected page position is " + tab.getPosition());
 
         //refrest list recording if users click on the tab
-        if (tab.getText().equals(Constants.MAIN_ACTIVITY_TAB_RECORDINGS)){
+        if (tab.getText().equals(Constants.MAIN_ACTIVITY_TAB_RECORDINGS)) {
             ListRecordingSectionFragment.refreshRecordingList();
         }
 
@@ -515,26 +539,21 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
             switch (i) {
                 case 0:
-                    if (Constants.CURRENT_STUDY_CONDITION.equals(Constants.NORMAL_CONDITION)){
+                    if (Constants.CURRENT_STUDY_CONDITION.equals(Constants.NORMAL_CONDITION)) {
                         HomeFragment homeSectionFragment = new HomeFragment();
                         homeSectionFragment.setRetainInstance(true);
                         return homeSectionFragment;
-                    }
-
-                    else if (Constants.CURRENT_STUDY_CONDITION.equals(Constants.PARTICIPATORY_LABELING_CONDITION)){
+                    } else if (Constants.CURRENT_STUDY_CONDITION.equals(Constants.PARTICIPATORY_LABELING_CONDITION)) {
                         RecordSectionFragment recordSectionFragment = new RecordSectionFragment();
                         recordSectionFragment.setRetainInstance(true);
 
                         return recordSectionFragment;
-                    }
-                    else if (Constants.CURRENT_STUDY_CONDITION.equals(Constants.HYRBID_LABELING_CONDITION)){
+                    } else if (Constants.CURRENT_STUDY_CONDITION.equals(Constants.HYRBID_LABELING_CONDITION)) {
                         CheckinSectionFragment checkinSectionFragment = new CheckinSectionFragment();
                         checkinSectionFragment.setRetainInstance(true);
 
                         return checkinSectionFragment;
-                    }
-
-                    else {
+                    } else {
                         DailyJournalSectionFragment dailyJournalSectionFragment = new DailyJournalSectionFragment();
                         dailyJournalSectionFragment.setRetainInstance(true);
                         return dailyJournalSectionFragment;
@@ -543,31 +562,28 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                     // The first section of the app is the most interesting -- it offers
                     // a launchpad into the other demonstrations in this example application.
                 case 1:
-                    if (Constants.CURRENT_STUDY_CONDITION.equals(Constants.PARTICIPATORY_LABELING_CONDITION)){
+                    if (Constants.CURRENT_STUDY_CONDITION.equals(Constants.PARTICIPATORY_LABELING_CONDITION)) {
                         mReviewMode = RecordingAndAnnotateManager.ANNOTATE_REVIEW_RECORDING_ALL;
                         ListRecordingSectionFragment listRecordingSectionFragment = new ListRecordingSectionFragment();
                         listRecordingSectionFragment.setReviewMode(mReviewMode);
                         listRecordingSectionFragment.setRetainInstance(true);
 
                         return listRecordingSectionFragment;
-                    }
-                    else if (Constants.CURRENT_STUDY_CONDITION.equals(Constants.HYRBID_LABELING_CONDITION)){
+                    } else if (Constants.CURRENT_STUDY_CONDITION.equals(Constants.HYRBID_LABELING_CONDITION)) {
                         mReviewMode = RecordingAndAnnotateManager.ANNOTATE_REVIEW_RECORDING_ALL;
                         ListRecordingSectionFragment listRecordingSectionFragment = new ListRecordingSectionFragment();
                         listRecordingSectionFragment.setReviewMode(mReviewMode);
                         listRecordingSectionFragment.setRetainInstance(true);
 
                         return listRecordingSectionFragment;
-                    }
-                    else if (Constants.CURRENT_STUDY_CONDITION.equals(Constants.IN_STIU_LABELING_CONDITION)){
+                    } else if (Constants.CURRENT_STUDY_CONDITION.equals(Constants.IN_STIU_LABELING_CONDITION)) {
                         mReviewMode = RecordingAndAnnotateManager.ANNOTATE_REVIEW_RECORDING_ALL;
                         ListRecordingSectionFragment listRecordingSectionFragment = new ListRecordingSectionFragment();
                         listRecordingSectionFragment.setReviewMode(mReviewMode);
                         listRecordingSectionFragment.setRetainInstance(true);
 
                         return listRecordingSectionFragment;
-                    }
-                    else {
+                    } else {
                         TaskSectionFragment taskSectionFragment = new TaskSectionFragment();
                         taskSectionFragment.setRetainInstance(true);
                         return taskSectionFragment;
@@ -612,7 +628,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             return "Section " + (position + 1);
         }
     }
-
 
 
 }
