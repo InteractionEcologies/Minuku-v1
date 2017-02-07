@@ -164,7 +164,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         //Minuku is not running with any condition, just normaly. there's only profile interface in this condition.
         if (Constants.CURRENT_STUDY_CONDITION.equals(Constants.NORMAL_CONDITION)) {
             mLaunchTab = Constants.MAIN_ACTIVITY_TAB_HOME;
-            actionBar.addTab(actionBar.newTab().setText(Constants.MAIN_ACTIVITY_TAB_HOME).setTabListener(this));
+//            actionBar.addTab(actionBar.newTab().setText(Constants.MAIN_ACTIVITY_TAB_HOME).setTabListener(this));
         }
 
         //Minuku is running with Conditions
@@ -488,7 +488,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         // TODO Auto-generated method stub
 
         mViewPager.setCurrentItem(tab.getPosition());
-        Log.d("asfasf", tab.getPosition() + "");
         //save the current page
         currentTabPos = tab.getPosition();
 
@@ -532,7 +531,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         @Override
         public Fragment getItem(int i) {
-            Log.d("asfasf", "in fragment: " + i);
 
             //Google Analytic
             sendScreenNameToGoogleAnalytic("Opening Minuku");
@@ -619,8 +617,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 return 2;
             else
                 return 3;
-
-
         }
 
         @Override
@@ -628,6 +624,4 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             return "Section " + (position + 1);
         }
     }
-
-
 }

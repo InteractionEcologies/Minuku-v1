@@ -41,7 +41,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import edu.umich.si.inteco.minuku.Constants;
-import edu.umich.si.inteco.minuku.Fragments.MongoLabHelper;
+import edu.umich.si.inteco.minuku.data.MongoDBHelper;
 import edu.umich.si.inteco.minuku.context.ContextManager;
 import edu.umich.si.inteco.minuku.util.DatabaseNameManager;
 import edu.umich.si.inteco.minuku.util.LogManager;
@@ -52,8 +52,6 @@ import edu.umich.si.inteco.minuku.util.ScheduleAndSampleManager;
 
 
 public class RemoteDBHelper {
-
-
 
     /** The time it takes for client to timeout */
     public static final int HTTP_TIMEOUT = 10000; // millisecond
@@ -156,8 +154,6 @@ public class RemoteDBHelper {
             public X509Certificate[] getAcceptedIssuers() {
                 return null;
             }
-
-
         };
 
         // Create a trust manager that does not validate certificate chains
@@ -287,7 +283,7 @@ public class RemoteDBHelper {
 
                     Log.d (LOG_TAG, "[postQuesitonnaireDocuments test qu] quesitonnaire document post to mongolab");
 
-                    String postURL = MongoLabHelper.postDocumentURL(ProjectDatabaseName, DatabaseNameManager.MONGODB_COLLECTION_QUESTIONNAIRE);
+                    String postURL = MongoDBHelper.postDocumentURL(ProjectDatabaseName, DatabaseNameManager.MONGODB_COLLECTION_QUESTIONNAIRE);
 
                     Log.d (LOG_TAG, "[postQuesitonnaireDocuments test qu] questionnaire document " + postURL  + " with json: " + json);
 
@@ -332,7 +328,7 @@ public class RemoteDBHelper {
 
                     Log.d (LOG_TAG, "[testbackend][syncWithRemoteDatabase] background document post to mongolab");
 
-                    String postURL =MongoLabHelper.postDocumentURL(ProjectDatabaseName, DatabaseNameManager.MONGODB_COLLECTION_BACKGROUNDLOGGING);
+                    String postURL = MongoDBHelper.postDocumentURL(ProjectDatabaseName, DatabaseNameManager.MONGODB_COLLECTION_BACKGROUNDLOGGING);
 
 //                    Log.d (LOG_TAG, "[testbackend][syncWithRemoteDatabase] background document " + postURL  + " with json: " + json);
 
@@ -1358,7 +1354,7 @@ public class RemoteDBHelper {
                 if (queryTarget.equals(DATA_TYPE_BACKGROUND_LOGGING)) {
 
                     //give databasename and the collection name
-                    String queryLastSynHourURL = MongoLabHelper.getQueryOfSynLatestDocumentURL(ProjectDatabaseName, DatabaseNameManager.MONGODB_COLLECTION_BACKGROUNDLOGGING);
+                    String queryLastSynHourURL = MongoDBHelper.getQueryOfSynLatestDocumentURL(ProjectDatabaseName, DatabaseNameManager.MONGODB_COLLECTION_BACKGROUNDLOGGING);
 
                     Log.d(LOG_TAG, "syncWithRemoteDatabase going to query background recording on MogoLab ON URL: " +queryLastSynHourURL);
 
@@ -1379,7 +1375,7 @@ public class RemoteDBHelper {
                 else if (queryTarget.equals(DATA_TYPE_QUESTIONNAIRE)) {
 
                     //give databasename and the collection name
-                    String queryLastSynHourURL = MongoLabHelper.getQueryOfSynLatestDocumentURL(ProjectDatabaseName, DatabaseNameManager.MONGODB_COLLECTION_QUESTIONNAIRE);
+                    String queryLastSynHourURL = MongoDBHelper.getQueryOfSynLatestDocumentURL(ProjectDatabaseName, DatabaseNameManager.MONGODB_COLLECTION_QUESTIONNAIRE);
 
                     Log.d(LOG_TAG, "test qu syncWithRemoteDatabase going to query questionnaire on MogoLab with collection  " + DatabaseNameManager.MONGODB_COLLECTION_QUESTIONNAIRE);
 
@@ -1476,7 +1472,7 @@ public class RemoteDBHelper {
 
             else if (REMOTE_SERVER_CHOICE.equals(REMOTE_SERVER_MONGOLAB)){
                 Log.d(LOG_TAG, "[deviceChecking] ttpAsyncMinukuCheckin" + ProjectDatabaseName + " to collection " + DatabaseNameManager.MONGODB_COLLECTION_ISALIVE);
-                MinunuServiceCheckinUsingPOST(MongoLabHelper.postDocumentURL(ProjectDatabaseName, DatabaseNameManager.MONGODB_COLLECTION_ISALIVE));
+                MinunuServiceCheckinUsingPOST(MongoDBHelper.postDocumentURL(ProjectDatabaseName, DatabaseNameManager.MONGODB_COLLECTION_ISALIVE));
             }
 
 

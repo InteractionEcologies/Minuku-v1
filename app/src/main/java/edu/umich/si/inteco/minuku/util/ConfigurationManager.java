@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import edu.umich.si.inteco.minuku.Constants;
 import edu.umich.si.inteco.minuku.context.ContextManager;
 import edu.umich.si.inteco.minuku.context.ContextStateManagers.ContextStateManager;
-import edu.umich.si.inteco.minuku.Fragments.MongoLabHelper;
+import edu.umich.si.inteco.minuku.data.MongoDBHelper;
 import edu.umich.si.inteco.minuku.data.RemoteDBHelper;
 import edu.umich.si.inteco.minuku.model.Condition;
 import edu.umich.si.inteco.minuku.model.Configuration;
@@ -465,7 +465,7 @@ public class ConfigurationManager {
 
             //assign API key to the right service
             if (serviceName.equals(RemoteDBHelper.REMOTE_SERVER_MONGOLAB)){
-                MongoLabHelper.setMongolabApikey(serviceAPI);
+                MongoDBHelper.setMongolabApikey(serviceAPI);
             }else if (serviceName.equals(RemoteDBHelper.REMOTE_SERVER_MICROSOFTAZZURE)) {
 
             }else if (serviceName.equals(RemoteDBHelper.REMOTE_SERVER_MICROSOFTAZZURE)) {

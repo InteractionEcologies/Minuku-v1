@@ -1,11 +1,11 @@
-package edu.umich.si.inteco.minuku.Fragments;
+package edu.umich.si.inteco.minuku.data;
 
 import edu.umich.si.inteco.minuku.util.DatabaseNameManager;
 
 /**
  * Created by Armuro on 2/11/16.
  */
-public class MongoLabHelper {
+public class MongoDBHelper {
 
     /**MONGODBLAB**/
 

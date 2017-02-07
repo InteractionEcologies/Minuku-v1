@@ -28,6 +28,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import edu.umich.si.inteco.minuku.MainActivity;
+import edu.umich.si.inteco.minuku.NewMainActivity;
 import edu.umich.si.inteco.minuku.R;
 import edu.umich.si.inteco.minuku.services.HomeScreenIconService;
 
@@ -124,8 +125,8 @@ public class ProfileFragment extends Fragment {
         }};
         tv1 = (TextView) rootView.findViewById(R.id.fragment_profile_wifimac);
         tv2 = (TextView) rootView.findViewById(R.id.fragment_profile_btmac);
-        tv1.setText("WiFi MAC Address: " + MainActivity.wifiMacAddr);
-        tv2.setText("Bluetooth MAC Address: " + MainActivity.btMacAddr);
+        tv1.setText("WiFi MAC Address: " + NewMainActivity.wifiMacAddr);
+        tv2.setText("Bluetooth MAC Address: " + NewMainActivity.btMacAddr);
         btnStart = (Button) rootView.findViewById(R.id.fragment_profile_btnStart);
         btnStart.setOnClickListener(profileButtonListener);
         setAllBtnListeners();
