@@ -6,5 +6,7 @@
 
     <dimen name="recording_task_horizontal_margin">16dp</dimen>
     <dimen name="recording_task_vertical_margin">48dp</dimen>
-    
+
+    <!--space-->
+    <dimen name="view_space">4dp</dimen>
 </resources>
