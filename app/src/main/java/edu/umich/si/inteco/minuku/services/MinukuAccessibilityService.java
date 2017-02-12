@@ -5,7 +5,7 @@ import android.accessibilityservice.AccessibilityServiceInfo;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
-import edu.umich.si.inteco.minuku.Constants;
+import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.context.ContextManager;
 import edu.umich.si.inteco.minuku.context.ContextStateManagers.UserInteractionManager;
 import edu.umich.si.inteco.minuku.model.UserInteraction;

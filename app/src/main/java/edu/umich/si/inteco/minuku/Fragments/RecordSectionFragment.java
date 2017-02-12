@@ -1,4 +1,4 @@
-package edu.umich.si.inteco.minuku.Fragments;
+package edu.umich.si.inteco.minuku.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
 
-import edu.umich.si.inteco.minuku.Constants;
+import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.R;
 import edu.umich.si.inteco.minuku.activities.AnnotateActivity;
 import edu.umich.si.inteco.minuku.model.Task;

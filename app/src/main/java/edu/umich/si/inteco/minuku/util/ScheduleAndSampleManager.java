@@ -18,7 +18,7 @@ import java.util.Calendar;
 import java.util.Random;
 import java.util.TimeZone;
 
-import edu.umich.si.inteco.minuku.Constants;
+import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.model.ProbeObjectControl.ActionControl;
 import edu.umich.si.inteco.minuku.model.Schedule;
 

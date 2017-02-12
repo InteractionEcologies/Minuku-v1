@@ -17,7 +17,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import edu.umich.si.inteco.minuku.Constants;
+import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.activities.AnnotateActivity;
 import edu.umich.si.inteco.minuku.context.ContextManager;
 import edu.umich.si.inteco.minuku.context.EventManager;

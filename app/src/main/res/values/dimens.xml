@@ -9,4 +9,5 @@
 
     <!--space-->
     <dimen name="view_space">4dp</dimen>
+    <dimen name="fragment_profile_user_icon_size">80dp</dimen>
 </resources>

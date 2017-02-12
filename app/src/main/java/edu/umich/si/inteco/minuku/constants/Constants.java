@@ -1,4 +1,4 @@
-package edu.umich.si.inteco.minuku;
+package edu.umich.si.inteco.minuku.constants;
 
 public class Constants {
 

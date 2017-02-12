@@ -40,8 +40,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import edu.umich.si.inteco.minuku.Constants;
-import edu.umich.si.inteco.minuku.data.MongoDBHelper;
+import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.context.ContextManager;
 import edu.umich.si.inteco.minuku.util.DatabaseNameManager;
 import edu.umich.si.inteco.minuku.util.LogManager;

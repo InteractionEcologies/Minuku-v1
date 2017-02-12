@@ -1,39 +1,26 @@
 package edu.umich.si.inteco.minuku.context.ContextStateManagers;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import edu.umich.si.inteco.minuku.Constants;
+import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.context.ContextManager;
 import edu.umich.si.inteco.minuku.model.ContextSource;
-import edu.umich.si.inteco.minuku.model.LoggingTask;
-import edu.umich.si.inteco.minuku.model.Record.ActivityRecognitionRecord;
 import edu.umich.si.inteco.minuku.model.Record.LocationRecord;
-import edu.umich.si.inteco.minuku.model.Record.Record;
 
 import java.text.DateFormat;
 import java.util.ArrayList;

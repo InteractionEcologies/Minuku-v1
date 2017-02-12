@@ -63,7 +63,6 @@ public class DatabaseManager {
             // Closing database
             if (mDatabase!=null)
                 mDatabase.close();
-
         }
     }
 

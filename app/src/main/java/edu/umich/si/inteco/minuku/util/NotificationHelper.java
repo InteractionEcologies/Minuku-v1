@@ -16,11 +16,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import edu.umich.si.inteco.minuku.Constants;
+import edu.umich.si.inteco.minuku.constants.Constants;
+import edu.umich.si.inteco.minuku.OldMainActivity;
 import edu.umich.si.inteco.minuku.R;
 import edu.umich.si.inteco.minuku.activities.AnnotateActivity;
 import edu.umich.si.inteco.minuku.activities.ListRecordingActivity;
-import edu.umich.si.inteco.minuku.MainActivity;
 import edu.umich.si.inteco.minuku.activities.QuestionnaireActivity;
 import edu.umich.si.inteco.minuku.activities.RequestPermissionActivity;
 
@@ -261,7 +261,7 @@ public class NotificationHelper {
         //if the recoridng is initiated by user we should getback to the recordingActivity
         if (actionId==ActionManager.USER_INITIATED_RECORDING_ACTION_ID) {
 
-            intent = new Intent(mContext, MainActivity.class);
+            intent = new Intent(mContext, OldMainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             bundle.putString("launchTab", Constants.MAIN_ACTIVITY_TAB_RECORD);
         }
@@ -487,7 +487,7 @@ public class NotificationHelper {
     private static PendingIntent defaultPendingIntent() {
 
         // Set the Intent action to open Location Settings
-        Intent defaultIntent = new Intent(mContext, MainActivity.class);
+        Intent defaultIntent = new Intent(mContext, OldMainActivity.class);
 
         // Create a PendingIntent to start an Activity
         return PendingIntent.getActivity(mContext.getApplicationContext(), 0, defaultIntent,

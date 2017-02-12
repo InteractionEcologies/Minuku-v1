@@ -17,8 +17,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import edu.umich.si.inteco.minuku.Constants;
-import edu.umich.si.inteco.minuku.MainActivity;
+import edu.umich.si.inteco.minuku.constants.Constants;
+import edu.umich.si.inteco.minuku.OldMainActivity;
 import edu.umich.si.inteco.minuku.context.ContextManager;
 import edu.umich.si.inteco.minuku.data.DataHandler;
 import edu.umich.si.inteco.minuku.data.LocalDBHelper;
@@ -229,7 +229,7 @@ public class RecordingAndAnnotateManager {
             //indicate which session
             bundle.putString(ConfigurationManager.ACTION_PROPERTIES_ANNOTATE_REVIEW_RECORDING, reviewMode);
             bundle.putString("launchTab", Constants.MAIN_ACTIVITY_TAB_RECORDINGS);
-            Intent intent = new Intent(mContext, MainActivity.class);
+            Intent intent = new Intent(mContext, OldMainActivity.class);
             intent.putExtras(bundle);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 

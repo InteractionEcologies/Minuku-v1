@@ -1,4 +1,4 @@
-package edu.umich.si.inteco.minuku.Fragments;
+package edu.umich.si.inteco.minuku.fragments;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import edu.umich.si.inteco.minuku.Constants;
+import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.R;
 import edu.umich.si.inteco.minuku.activities.AnnotateActivity;
 import edu.umich.si.inteco.minuku.context.ContextManager;
@@ -25,7 +25,6 @@ import edu.umich.si.inteco.minuku.context.ContextStateManagers.ActivityRecogniti
 import edu.umich.si.inteco.minuku.context.ContextStateManagers.LocationManager;
 import edu.umich.si.inteco.minuku.context.ContextStateManagers.TransportationModeManager;
 import edu.umich.si.inteco.minuku.model.Checkpoint;
-import edu.umich.si.inteco.minuku.model.LoggingTask;
 import edu.umich.si.inteco.minuku.model.Task;
 import edu.umich.si.inteco.minuku.model.actions.SavingRecordAction;
 import edu.umich.si.inteco.minuku.services.MinukuMainService;

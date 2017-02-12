@@ -8,7 +8,7 @@ import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import edu.umich.si.inteco.minuku.Constants;
+import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.context.ContextStateManagers.LocationManager;
 import edu.umich.si.inteco.minuku.context.ContextStateManagers.TransportationModeManager;
 import edu.umich.si.inteco.minuku.util.GooglePlayServiceUtil;

@@ -3,7 +3,6 @@ package edu.umich.si.inteco.minuku.context;
 import android.content.Context;
 import android.util.Log;
 
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -12,7 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import edu.umich.si.inteco.minuku.Constants;
+import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.context.ContextStateManagers.ActivityRecognitionManager;
 import edu.umich.si.inteco.minuku.context.ContextStateManagers.ContextStateManager;
 import edu.umich.si.inteco.minuku.context.ContextStateManagers.LocationManager;

@@ -1,9 +1,6 @@
-package edu.umich.si.inteco.minuku.Fragments;
+package edu.umich.si.inteco.minuku.fragments;
 
-import android.app.ListFragment;
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -14,14 +11,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 import edu.umich.si.inteco.minuku.R;
 import edu.umich.si.inteco.minuku.activities.AnnotateActivity;
-import edu.umich.si.inteco.minuku.MainActivity;
 import edu.umich.si.inteco.minuku.adapters.RecordingListAdapter;
 import edu.umich.si.inteco.minuku.model.Session;
-import edu.umich.si.inteco.minuku.util.ActionManager;
 import edu.umich.si.inteco.minuku.util.ConfigurationManager;
 import edu.umich.si.inteco.minuku.util.DatabaseNameManager;
 import edu.umich.si.inteco.minuku.util.LogManager;

@@ -9,7 +9,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import edu.umich.si.inteco.minuku.Constants;
+import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.context.ContextManager;
 import edu.umich.si.inteco.minuku.context.ContextStateManagers.ContextStateManager;
 import edu.umich.si.inteco.minuku.data.MongoDBHelper;

@@ -1,9 +1,5 @@
 package edu.umich.si.inteco.minuku.model.Criteria;
 
-import edu.umich.si.inteco.minuku.Constants;
-import edu.umich.si.inteco.minuku.context.ContextStateManagers.ContextStateManager;
-import edu.umich.si.inteco.minuku.model.Criteria.Criterion;
-
 /**
  * Created by Armuro on 10/28/15.
  */

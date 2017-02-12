@@ -2,7 +2,6 @@ package edu.umich.si.inteco.minuku.context.ContextStateManagers;
 
 import android.content.Context;
 import android.os.Build;
-import android.util.Log;
 
 import com.google.android.gms.location.DetectedActivity;
 
@@ -12,13 +11,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.umich.si.inteco.minuku.Constants;
+import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.context.ContextManager;
 import edu.umich.si.inteco.minuku.model.ContextSource;
 import edu.umich.si.inteco.minuku.model.Record.ActivityRecognitionRecord;
 import edu.umich.si.inteco.minuku.model.Record.Record;
 import edu.umich.si.inteco.minuku.util.LogManager;
-import edu.umich.si.inteco.minuku.util.ScheduleAndSampleManager;
 
 /**
  * Created by Armuro on 7/8/14.

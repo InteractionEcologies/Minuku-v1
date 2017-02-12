@@ -21,7 +21,7 @@ import com.google.android.gms.analytics.Tracker;
 import java.util.ArrayList;
 
 import edu.umich.si.inteco.minuku.AnalyticsMinuku;
-import edu.umich.si.inteco.minuku.Constants;
+import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.context.ContextManager;
 import edu.umich.si.inteco.minuku.context.EventManager;
 import edu.umich.si.inteco.minuku.data.DataHandler;

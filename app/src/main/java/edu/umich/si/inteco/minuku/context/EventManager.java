@@ -5,7 +5,7 @@ import android.content.Context;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import edu.umich.si.inteco.minuku.Constants;
+import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.data.LocalDBHelper;
 import edu.umich.si.inteco.minuku.model.Situation;
 import edu.umich.si.inteco.minuku.model.SimpleGeofence;

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import edu.umich.si.inteco.minuku.Constants;
+import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.context.ContextManager;
 import edu.umich.si.inteco.minuku.context.ContextStateManagers.ContextStateManager;
 import edu.umich.si.inteco.minuku.model.AnnotationSet;
@@ -129,7 +129,6 @@ public class LocalDBHelper extends SQLiteOpenHelper{
     				");" ;
 
     	db.execSQL(cmd);
-
     }
 
 
@@ -462,9 +461,7 @@ public class LocalDBHelper extends SQLiteOpenHelper{
 		ArrayList<String> rows = new ArrayList<String>();
 
 		try{
-
 			SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
-
 			String sql = "SELECT *"  +" FROM " + DatabaseNameManager.QUESTIONNAIRE_TABLE_NAME +
 					//condition with session id
 					" where " + DatabaseNameManager.COL_ID + " = " + questionnaireId + "";

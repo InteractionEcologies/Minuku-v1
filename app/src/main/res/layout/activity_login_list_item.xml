@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="@dimen/view_space">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="left"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/activity_login_list_item_iv"
+            android:layout_width="@dimen/fragment_profile_user_icon_size"
+            android:layout_height="@dimen/fragment_profile_user_icon_size"
+            android:layout_margin="@dimen/view_space"
+            android:src="@drawable/fragment_profile_role_icon9" />
+
+        <EditText
+            android:id="@+id/activity_login_list_item_tv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/view_space"
+            android:gravity="center_vertical"
+            android:hint="Enter user name"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/activity_login_list_item_btn_remove"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|top"
+        android:layout_margin="@dimen/view_space"
+        android:background="@drawable/background_remove_button" />
+</FrameLayout>

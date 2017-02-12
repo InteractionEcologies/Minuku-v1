@@ -2,7 +2,7 @@ package edu.umich.si.inteco.minuku.model;
 
 import java.util.ArrayList;
 
-import edu.umich.si.inteco.minuku.Constants;
+import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.context.ContextManager;
 import edu.umich.si.inteco.minuku.model.Criteria.StateValueCriterion;
 import edu.umich.si.inteco.minuku.model.Criteria.TimeCriterion;

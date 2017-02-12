@@ -19,7 +19,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.TimeZone;
 
-import edu.umich.si.inteco.minuku.Constants;
+import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.R;
 import edu.umich.si.inteco.minuku.data.LocalDBHelper;
 import edu.umich.si.inteco.minuku.model.Annotation;

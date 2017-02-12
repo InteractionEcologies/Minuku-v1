@@ -1,9 +1,6 @@
 package edu.umich.si.inteco.minuku.model.Record;
 
-import com.google.android.gms.maps.model.LatLng;
-
-import edu.umich.si.inteco.minuku.Constants;
-import edu.umich.si.inteco.minuku.context.ContextStateManagers.ActivityRecognitionManager;
+import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.context.ContextStateManagers.LocationManager;
 
 /**

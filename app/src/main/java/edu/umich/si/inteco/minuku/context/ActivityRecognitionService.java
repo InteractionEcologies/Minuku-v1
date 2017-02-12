@@ -16,10 +16,8 @@ import com.google.android.gms.location.DetectedActivity;
 
 import java.util.List;
 
-import edu.umich.si.inteco.minuku.Constants;
 import edu.umich.si.inteco.minuku.context.ContextStateManagers.ActivityRecognitionManager;
 import edu.umich.si.inteco.minuku.util.GooglePlayServiceUtil;
-import edu.umich.si.inteco.minuku.util.LogManager;
 
 public class ActivityRecognitionService extends IntentService {
 

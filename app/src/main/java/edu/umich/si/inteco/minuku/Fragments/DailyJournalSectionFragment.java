@@ -1,4 +1,4 @@
-package edu.umich.si.inteco.minuku.Fragments;
+package edu.umich.si.inteco.minuku.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import edu.umich.si.inteco.minuku.Constants;
+import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.R;
 import edu.umich.si.inteco.minuku.model.actions.GenerateEmailQuestionnaireAction;
 import edu.umich.si.inteco.minuku.util.ActionManager;
