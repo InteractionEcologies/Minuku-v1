@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -48,6 +49,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private AppSectionsPagerAdapter mAppSectionsPagerAdapter;
     private ViewPager mViewPager;
     private int currentTabPos = -1;
+    public static Context context;
 
     //MAC address
     public static String wifiMacAddr;
@@ -58,7 +60,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
         setContentView(R.layout.activity_main);
-
+        context = MainActivity.this;
         //permissions
         if (checkAndRequestPermissions()) {
             // carry on the normal flow, as the case of  permissions  granted.
@@ -103,6 +105,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         actionBar.addTab(actionBar.newTab().setText(Constants.MAIN_ACTIVITY_TAB_TASKS).setTabListener(this));
         currentTabPos = 0;
+    }
+
+    public static Context getContext(){
+        return context;
     }
 
     private boolean checkAndRequestPermissions() {

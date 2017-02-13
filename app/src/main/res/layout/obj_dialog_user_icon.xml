@@ -7,15 +7,15 @@
 
     <ImageView
         android:id="@+id/obj_user_dialog_icon_iv"
-        android:layout_width="@dimen/fragment_profile_user_icon_size"
-        android:layout_height="@dimen/fragment_profile_user_icon_size"
+        android:layout_width="@dimen/activity_login_user_icon_size"
+        android:layout_height="@dimen/activity_login_user_icon_size"
         android:layout_margin="@dimen/view_space"
         android:background="@drawable/background_circle_transparent"
         android:padding="6dp"
         android:src="@drawable/fragment_profile_role_icon9" />
     <View
         android:id="@+id/obj_user_dialog_icon_selectedView"
-        android:layout_width="@dimen/fragment_profile_user_icon_size"
+        android:layout_width="@dimen/activity_login_user_icon_size"
         android:layout_height="6dp"
         android:background="@color/transparent"/>
 </LinearLayout>

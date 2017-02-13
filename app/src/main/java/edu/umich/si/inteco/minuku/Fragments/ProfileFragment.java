@@ -30,7 +30,11 @@ import java.util.ArrayList;
 
 import edu.umich.si.inteco.minuku.MainActivity;
 import edu.umich.si.inteco.minuku.R;
+import edu.umich.si.inteco.minuku.constants.UserIconReference;
 import edu.umich.si.inteco.minuku.data.UserSettingsDBHelper;
+import edu.umich.si.inteco.minuku.model.User;
+import edu.umich.si.inteco.minuku.model.Views.DialogUserIcon;
+import edu.umich.si.inteco.minuku.model.Views.UserIcon;
 import edu.umich.si.inteco.minuku.services.HomeScreenIconService;
 
 public class ProfileFragment extends Fragment {
@@ -40,14 +44,16 @@ public class ProfileFragment extends Fragment {
     //UI Widgets
     private Spinner spNumOfPeople;
     private Button btnSave;
-    private String[] arraySpinner;
     private GridLayout gridLayout;
     //functions
     private ProfileButtonListener profileButtonListener;
     private UserSettingsDBHelper userSettingsDBHelper;
+    private UserIconReference userIconReference;
+    private ArrayList<String> arraySpinner;
+    private ArrayList<User> userList;
+    private ArrayList<Integer> userIdList;
     private int numOfPeopleUsing = 1;
     private int currentSelected = 0;
-    private String nameOfUser = "";
     public static int OVERLAY_PERMISSION_REQ_CODE_CHATHEAD = 1234;
     public static int OVERLAY_PERMISSION_REQ_CODE_CHATHEAD_MSG = 5678;
 
@@ -62,7 +68,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        context = getActivity();
+        context = MainActivity.getContext();
         rootView = inflater.inflate(R.layout.fragment_profile, container, false);
         init();
         return rootView;
@@ -73,24 +79,23 @@ public class ProfileFragment extends Fragment {
         userSettingsDBHelper = new UserSettingsDBHelper(context);
         spNumOfPeople = (Spinner) rootView.findViewById(R.id.fragment_profile_spinner);
         gridLayout = (GridLayout) rootView.findViewById(R.id.fragment_profile_gridLayout);
-        this.arraySpinner = new String[]{"1", "2", "3", "4"};
+        this.arraySpinner = new ArrayList<String>();
+        for (int i = 1; i <= userSettingsDBHelper.getTotalNumOfUser(); i++) {
+            arraySpinner.add(String.valueOf(i));
+        }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
                 android.R.layout.simple_spinner_item, arraySpinner);
         spNumOfPeople.setAdapter(adapter);
+        spNumOfPeople.setSelection(userSettingsDBHelper.getCurrentNumOfUser() - 1);
         spNumOfPeople.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 numOfPeopleUsing = position + 1;
-                if (position == 3) {
-                    setAllSelectedViewColor(getResources().getColor(R.color.brightblue));
-//                    for (int index = 0; index < ibRoles.size(); index++) {
-//                        ibRoles.get(index).setEnabled(false);
-//                    }
-                } else {
-//                    for (int index = 0; index < ibRoles.size(); index++) {
-//                        ibRoles.get(index).setEnabled(true);
-//                    }
+                if (numOfPeopleUsing == userSettingsDBHelper.getTotalNumOfUser()) {
+                    userSettingsDBHelper.setAllUserSelected();
+                    currentSelected = numOfPeopleUsing;
                 }
+                setUserIconView();
             }
 
             @Override
@@ -107,18 +112,35 @@ public class ProfileFragment extends Fragment {
         tv2.setText("Bluetooth MAC Address: " + MainActivity.btMacAddr);
         btnStart = (Button) rootView.findViewById(R.id.fragment_profile_btnStart);
         btnStart.setOnClickListener(profileButtonListener);
+        setUserIconView();
     }
 
-    private void setAllSelectedViewColor(int color) {
-//        for (int index = 0; index < ibRoles.size(); index++) {
-//            selectedViews.get(index).setBackgroundColor(color);
-//        }
+    public void setUserIconView() {
+        if (null == userIconReference)
+            userIconReference = new UserIconReference(context);
+        if (null == userSettingsDBHelper)
+            userSettingsDBHelper = new UserSettingsDBHelper(context);
+        userList = userSettingsDBHelper.getAllUserList();
+        userIdList = userSettingsDBHelper.getAllIdList();
+        gridLayout.removeAllViews();
+        for (int i = 0; i < userList.size(); i++) {
+            final String id = userIdList.get(i).toString();
+            final User user = userList.get(i);
+            UserIcon userIcon = new UserIcon(context, user);
+            ImageButton ib = userIcon.getIbUser();
+            ib.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setSelectedTabColor(id, user);
+                }
+            });
+            gridLayout.addView(userIcon.getView());
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        spNumOfPeople.setSelection(userSettingsDBHelper.getCurrentNumOfUser() - 1);
     }
 
     @Override
@@ -126,21 +148,16 @@ public class ProfileFragment extends Fragment {
         super.onPause();
     }
 
-    private void saveUserSelected() {
-
-    }
-
-    private void setSelectedTabColor(View selectedView, int user) {
+    private void setSelectedTabColor(String id, User user) {
         if (currentSelected >= numOfPeopleUsing) {
-            setAllSelectedViewColor(getResources().getColor(R.color.transparent));
-            selectedView.setBackgroundColor(getResources().getColor(R.color.brightblue));
+            userSettingsDBHelper.setAllUserUnSelected();
             currentSelected = 1;
-            nameOfUser = user + "";
         } else {
-            selectedView.setBackgroundColor(getResources().getColor(R.color.brightblue));
             currentSelected++;
-            nameOfUser += "," + user;
         }
+        user.setIfSelected(true);
+        userSettingsDBHelper.updateDB(id, user);
+        setUserIconView();
         btnSave.setEnabled(true);
     }
 
@@ -151,7 +168,6 @@ public class ProfileFragment extends Fragment {
             switch (view.getId()) {
                 case R.id.fragment_profile_btnSave:
                     if (currentSelected == numOfPeopleUsing) {
-                        saveUserSelected();
                         btnSave.setEnabled(false);
                     } else {
                         new AlertDialog.Builder(context)

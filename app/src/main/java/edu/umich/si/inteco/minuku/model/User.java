@@ -42,7 +42,11 @@ public class User {
         return this.ifSelected;
     }
 
-    public void setIfSelected(String ifSelected) {
-        this.ifSelected = ifSelected;
+    public void setIfSelected(boolean ifSelected) {
+        if (ifSelected) {
+            this.ifSelected = "1";
+        } else {
+            this.ifSelected = "0";
+        }
     }
 }

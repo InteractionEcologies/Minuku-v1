@@ -2,6 +2,8 @@ package edu.umich.si.inteco.minuku.adapters;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,6 +69,26 @@ public class UserIconAdapter extends BaseAdapter {
             viewHolder.edUserName = (EditText) convertView.findViewById(R.id.activity_login_list_item_tv);
             viewHolder.ibRemove = (ImageButton) convertView.findViewById(R.id.activity_login_list_item_btn_remove);
             viewHolder.edUserName.setText(allUserList.get(getCount() - position - 1).getUserName());
+            viewHolder.edUserName.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    // unused
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    // unused
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if (null == userSettingsDBHelper)
+                        userSettingsDBHelper = new UserSettingsDBHelper(context);
+                    User user = allUserList.get(getCount() - position - 1);
+                    user.setUserName(viewHolder.edUserName.getText().toString());
+                    userSettingsDBHelper.updateDB(userSettingsDBHelper.getAllIdList().get(getCount() - position - 1).toString(), user);
+                }
+            });
             viewHolder.ivUserIcon.setImageDrawable(userIconReference.getIcon(allUserList.get(getCount() - position - 1).getImgNumber()));
             viewHolder.ivUserIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -77,9 +99,8 @@ public class UserIconAdapter extends BaseAdapter {
             viewHolder.ibRemove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (null == userSettingsDBHelper) {
+                    if (null == userSettingsDBHelper)
                         userSettingsDBHelper = new UserSettingsDBHelper(context);
-                    }
                     userSettingsDBHelper.deleteUserById(userSettingsDBHelper.getAllIdList().get(getCount() - position - 1));
                     ((LoginActivity) LoginActivity.getContext()).setListView();
                 }

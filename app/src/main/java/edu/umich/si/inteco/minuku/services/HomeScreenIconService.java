@@ -16,23 +16,37 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.GridLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import edu.umich.si.inteco.minuku.R;
+import edu.umich.si.inteco.minuku.data.UserSettingsDBHelper;
+import edu.umich.si.inteco.minuku.model.User;
+import edu.umich.si.inteco.minuku.model.Views.UserIcon;
 
 public class HomeScreenIconService extends Service {
-    private WindowManager windowManager;
-    private RelativeLayout chatheadView, removeView;
+    // Views
+    private RelativeLayout removeView, homescreenServiceView;
     private LinearLayout txtView, txt_linearlayout;
+    private GridLayout gridLayout;
     private ImageView chatheadImg, removeImg;
-    private TextView  txt1;
+    private TextView txt1;
     private int x_init_cord, y_init_cord, x_init_margin, y_init_margin;
     private Point szWindow = new Point();
     private boolean isLeft = true;
     private String sMsg = "";
+
+    // Function
+    private boolean ifUserIconOpen = false;
+    private WindowManager windowManager;
+    private UserSettingsDBHelper userSettingsDBHelper;
+    private ArrayList<User> userList;
 
     @SuppressWarnings("deprecation")
 
@@ -43,12 +57,10 @@ public class HomeScreenIconService extends Service {
 
     }
 
-    private void handleStart(){
+    private void handleStart() {
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-
-        LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
-
-        removeView = (RelativeLayout)inflater.inflate(R.layout.homescreen_service_remove, null);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        removeView = (RelativeLayout) inflater.inflate(R.layout.homescreen_service_remove, null);
         WindowManager.LayoutParams paramRemove = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -58,13 +70,35 @@ public class HomeScreenIconService extends Service {
         paramRemove.gravity = Gravity.TOP | Gravity.LEFT;
 
         removeView.setVisibility(View.GONE);
-        removeImg = (ImageView)removeView.findViewById(R.id.remove_img);
+        removeImg = (ImageView) removeView.findViewById(R.id.remove_img);
         windowManager.addView(removeView, paramRemove);
 
 
-        chatheadView = (RelativeLayout) inflater.inflate(R.layout.homescreen_service_chathead, null);
-        chatheadImg = (ImageView)chatheadView.findViewById(R.id.chathead_img);
-
+        homescreenServiceView = (RelativeLayout) inflater.inflate(R.layout.service_homescreen_mainlayout, null);
+        chatheadImg = (ImageView) homescreenServiceView.findViewById(R.id.home_screen_service_chathead_img);
+        chatheadImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null == userSettingsDBHelper)
+                    userSettingsDBHelper = new UserSettingsDBHelper(getApplicationContext());
+                if (ifUserIconOpen) {
+                    ifUserIconOpen = false;
+                    gridLayout.setVisibility(View.GONE);
+                } else {
+                    ifUserIconOpen = true;
+                    gridLayout.removeAllViews();
+                    userList = userSettingsDBHelper.getAllUserList();
+                    for (int i = 0; i < userList.size(); i++) {
+                        final User user = userList.get(i);
+                        UserIcon userIcon = new UserIcon(getApplicationContext(), user);
+                        ImageButton ib = userIcon.getIbUser();
+                        gridLayout.addView(userIcon.getView());
+                    }
+                    gridLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        gridLayout = (GridLayout) homescreenServiceView.findViewById(R.id.home_screen_service_gridLayout);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             windowManager.getDefaultDisplay().getSize(szWindow);
@@ -83,9 +117,9 @@ public class HomeScreenIconService extends Service {
         params.gravity = Gravity.TOP | Gravity.LEFT;
         params.x = 0;
         params.y = 100;
-        windowManager.addView(chatheadView, params);
+        windowManager.addView(homescreenServiceView, params);
 
-        chatheadView.setOnTouchListener(new View.OnTouchListener() {
+        homescreenServiceView.setOnTouchListener(new View.OnTouchListener() {
             long time_start = 0, time_end = 0;
             boolean isLongclick = false, inBounded = false;
             int remove_img_width = 0, remove_img_height = 0;
@@ -104,7 +138,7 @@ public class HomeScreenIconService extends Service {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) chatheadView.getLayoutParams();
+                WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) homescreenServiceView.getLayoutParams();
 
                 int x_cord = (int) event.getRawX();
                 int y_cord = (int) event.getRawY();
@@ -124,7 +158,7 @@ public class HomeScreenIconService extends Service {
                         x_init_margin = layoutParams.x;
                         y_init_margin = layoutParams.y;
 
-                        if(txtView != null){
+                        if (txtView != null) {
                             txtView.setVisibility(View.GONE);
                             myHandler.removeCallbacks(myRunnable);
                         }
@@ -136,18 +170,18 @@ public class HomeScreenIconService extends Service {
                         x_cord_Destination = x_init_margin + x_diff_move;
                         y_cord_Destination = y_init_margin + y_diff_move;
 
-                        if(isLongclick){
-                            int x_bound_left = szWindow.x / 2 - (int)(remove_img_width * 1.5);
-                            int x_bound_right = szWindow.x / 2 +  (int)(remove_img_width * 1.5);
-                            int y_bound_top = szWindow.y - (int)(remove_img_height * 1.5);
+                        if (isLongclick) {
+                            int x_bound_left = szWindow.x / 2 - (int) (remove_img_width * 1.5);
+                            int x_bound_right = szWindow.x / 2 + (int) (remove_img_width * 1.5);
+                            int y_bound_top = szWindow.y - (int) (remove_img_height * 1.5);
 
-                            if((x_cord >= x_bound_left && x_cord <= x_bound_right) && y_cord >= y_bound_top){
+                            if ((x_cord >= x_bound_left && x_cord <= x_bound_right) && y_cord >= y_bound_top) {
                                 inBounded = true;
 
                                 int x_cord_remove = (int) ((szWindow.x - (remove_img_height * 1.5)) / 2);
-                                int y_cord_remove = (int) (szWindow.y - ((remove_img_width * 1.5) + getStatusBarHeight() ));
+                                int y_cord_remove = (int) (szWindow.y - ((remove_img_width * 1.5) + getStatusBarHeight()));
 
-                                if(removeImg.getLayoutParams().height == remove_img_height){
+                                if (removeImg.getLayoutParams().height == remove_img_height) {
                                     removeImg.getLayoutParams().height = (int) (remove_img_height * 1.5);
                                     removeImg.getLayoutParams().width = (int) (remove_img_width * 1.5);
 
@@ -158,19 +192,19 @@ public class HomeScreenIconService extends Service {
                                     windowManager.updateViewLayout(removeView, param_remove);
                                 }
 
-                                layoutParams.x = x_cord_remove + (Math.abs(removeView.getWidth() - chatheadView.getWidth())) / 2;
-                                layoutParams.y = y_cord_remove + (Math.abs(removeView.getHeight() - chatheadView.getHeight())) / 2 ;
+                                layoutParams.x = x_cord_remove + (Math.abs(removeView.getWidth() - homescreenServiceView.getWidth())) / 2;
+                                layoutParams.y = y_cord_remove + (Math.abs(removeView.getHeight() - homescreenServiceView.getHeight())) / 2;
 
-                                windowManager.updateViewLayout(chatheadView, layoutParams);
+                                windowManager.updateViewLayout(homescreenServiceView, layoutParams);
                                 break;
-                            }else{
+                            } else {
                                 inBounded = false;
                                 removeImg.getLayoutParams().height = remove_img_height;
                                 removeImg.getLayoutParams().width = remove_img_width;
 
                                 WindowManager.LayoutParams param_remove = (WindowManager.LayoutParams) removeView.getLayoutParams();
                                 int x_cord_remove = (szWindow.x - removeView.getWidth()) / 2;
-                                int y_cord_remove = szWindow.y - (removeView.getHeight() + getStatusBarHeight() );
+                                int y_cord_remove = szWindow.y - (removeView.getHeight() + getStatusBarHeight());
 
                                 param_remove.x = x_cord_remove;
                                 param_remove.y = y_cord_remove;
@@ -184,7 +218,7 @@ public class HomeScreenIconService extends Service {
                         layoutParams.x = x_cord_Destination;
                         layoutParams.y = y_cord_Destination;
 
-                        windowManager.updateViewLayout(chatheadView, layoutParams);
+                        windowManager.updateViewLayout(homescreenServiceView, layoutParams);
                         break;
                     case MotionEvent.ACTION_UP:
                         isLongclick = false;
@@ -193,7 +227,7 @@ public class HomeScreenIconService extends Service {
                         removeImg.getLayoutParams().width = remove_img_width;
                         handler_longClick.removeCallbacks(runnable_longClick);
 
-                        if(inBounded){
+                        if (inBounded) {
 //                            if(MyDialog.active){
 //                                MyDialog.myDialog.finish();
 //                            }
@@ -207,20 +241,20 @@ public class HomeScreenIconService extends Service {
                         int x_diff = x_cord - x_init_cord;
                         int y_diff = y_cord - y_init_cord;
 
-                        if(Math.abs(x_diff) < 5 && Math.abs(y_diff) < 5){
+                        if (Math.abs(x_diff) < 5 && Math.abs(y_diff) < 5) {
                             time_end = System.currentTimeMillis();
-                            if((time_end - time_start) < 300){
+                            if ((time_end - time_start) < 300) {
                                 chathead_click();
                             }
                         }
 
                         y_cord_Destination = y_init_margin + y_diff;
 
-                        int BarHeight =  getStatusBarHeight();
+                        int BarHeight = getStatusBarHeight();
                         if (y_cord_Destination < 0) {
                             y_cord_Destination = 0;
-                        } else if (y_cord_Destination + (chatheadView.getHeight() + BarHeight) > szWindow.y) {
-                            y_cord_Destination = szWindow.y - (chatheadView.getHeight() + BarHeight );
+                        } else if (y_cord_Destination + (homescreenServiceView.getHeight() + BarHeight) > szWindow.y) {
+                            y_cord_Destination = szWindow.y - (homescreenServiceView.getHeight() + BarHeight);
                         }
                         layoutParams.y = y_cord_Destination;
 
@@ -236,9 +270,9 @@ public class HomeScreenIconService extends Service {
         });
 
 
-        txtView = (LinearLayout)inflater.inflate(R.layout.homescreen_service_txt, null);
+        txtView = (LinearLayout) inflater.inflate(R.layout.homescreen_service_txt, null);
         txt1 = (TextView) txtView.findViewById(R.id.txt1);
-        txt_linearlayout = (LinearLayout)txtView.findViewById(R.id.txt_linearlayout);
+        txt_linearlayout = (LinearLayout) txtView.findViewById(R.id.txt_linearlayout);
 
 
         WindowManager.LayoutParams paramsTxt = new WindowManager.LayoutParams(
@@ -267,30 +301,30 @@ public class HomeScreenIconService extends Service {
             szWindow.set(w, h);
         }
 
-        WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) chatheadView.getLayoutParams();
+        WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) homescreenServiceView.getLayoutParams();
 
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
 
-            if(txtView != null){
+            if (txtView != null) {
                 txtView.setVisibility(View.GONE);
             }
 
-            if(layoutParams.y + (chatheadView.getHeight() + getStatusBarHeight()) > szWindow.y){
-                layoutParams.y = szWindow.y- (chatheadView.getHeight() + getStatusBarHeight());
-                windowManager.updateViewLayout(chatheadView, layoutParams);
+            if (layoutParams.y + (homescreenServiceView.getHeight() + getStatusBarHeight()) > szWindow.y) {
+                layoutParams.y = szWindow.y - (homescreenServiceView.getHeight() + getStatusBarHeight());
+                windowManager.updateViewLayout(homescreenServiceView, layoutParams);
             }
 
-            if(layoutParams.x != 0 && layoutParams.x < szWindow.x){
+            if (layoutParams.x != 0 && layoutParams.x < szWindow.x) {
                 resetPosition(szWindow.x);
             }
 
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
 
-            if(txtView != null){
+            if (txtView != null) {
                 txtView.setVisibility(View.GONE);
             }
 
-            if(layoutParams.x > szWindow.x){
+            if (layoutParams.x > szWindow.x) {
                 resetPosition(szWindow.x);
             }
 
@@ -299,7 +333,7 @@ public class HomeScreenIconService extends Service {
     }
 
     private void resetPosition(int x_cord_now) {
-        if(x_cord_now <= szWindow.x / 2){
+        if (x_cord_now <= szWindow.x / 2) {
             isLeft = true;
             moveToLeft(x_cord_now);
 
@@ -310,38 +344,44 @@ public class HomeScreenIconService extends Service {
         }
 
     }
-    private void moveToLeft(final int x_cord_now){
+
+    private void moveToLeft(final int x_cord_now) {
         final int x = szWindow.x - x_cord_now;
 
         new CountDownTimer(500, 5) {
-            WindowManager.LayoutParams mParams = (WindowManager.LayoutParams) chatheadView.getLayoutParams();
+            WindowManager.LayoutParams mParams = (WindowManager.LayoutParams) homescreenServiceView.getLayoutParams();
+
             public void onTick(long t) {
-                long step = (500 - t)/5;
-                mParams.x = 0 - (int)(double)bounceValue(step, x );
-                windowManager.updateViewLayout(chatheadView, mParams);
+                long step = (500 - t) / 5;
+                mParams.x = 0 - (int) (double) bounceValue(step, x);
+                windowManager.updateViewLayout(homescreenServiceView, mParams);
             }
+
             public void onFinish() {
                 mParams.x = 0;
-                windowManager.updateViewLayout(chatheadView, mParams);
-            }
-        }.start();
-    }
-    private  void moveToRight(final int x_cord_now){
-        new CountDownTimer(500, 5) {
-            WindowManager.LayoutParams mParams = (WindowManager.LayoutParams) chatheadView.getLayoutParams();
-            public void onTick(long t) {
-                long step = (500 - t)/5;
-                mParams.x = szWindow.x + (int)(double)bounceValue(step, x_cord_now) - chatheadView.getWidth();
-                windowManager.updateViewLayout(chatheadView, mParams);
-            }
-            public void onFinish() {
-                mParams.x = szWindow.x - chatheadView.getWidth();
-                windowManager.updateViewLayout(chatheadView, mParams);
+                windowManager.updateViewLayout(homescreenServiceView, mParams);
             }
         }.start();
     }
 
-    private double bounceValue(long step, long scale){
+    private void moveToRight(final int x_cord_now) {
+        new CountDownTimer(500, 5) {
+            WindowManager.LayoutParams mParams = (WindowManager.LayoutParams) homescreenServiceView.getLayoutParams();
+
+            public void onTick(long t) {
+                long step = (500 - t) / 5;
+                mParams.x = szWindow.x + (int) (double) bounceValue(step, x_cord_now) - homescreenServiceView.getWidth();
+                windowManager.updateViewLayout(homescreenServiceView, mParams);
+            }
+
+            public void onFinish() {
+                mParams.x = szWindow.x - homescreenServiceView.getWidth();
+                windowManager.updateViewLayout(homescreenServiceView, mParams);
+            }
+        }.start();
+    }
+
+    private double bounceValue(long step, long scale) {
         double value = scale * java.lang.Math.exp(-0.055 * step) * java.lang.Math.cos(0.08 * step);
         return value;
     }
@@ -351,7 +391,7 @@ public class HomeScreenIconService extends Service {
         return statusBarHeight;
     }
 
-    private void chathead_click(){
+    private void chathead_click() {
 //        if(MyDialog.active){
 //            MyDialog.myDialog.finish();
 //        }else{
@@ -360,11 +400,11 @@ public class HomeScreenIconService extends Service {
 //        }
     }
 
-    private void chathead_longclick(){
+    private void chathead_longclick() {
 
         WindowManager.LayoutParams param_remove = (WindowManager.LayoutParams) removeView.getLayoutParams();
         int x_cord_remove = (szWindow.x - removeView.getWidth()) / 2;
-        int y_cord_remove = szWindow.y - (removeView.getHeight() + getStatusBarHeight() );
+        int y_cord_remove = szWindow.y - (removeView.getHeight() + getStatusBarHeight());
 
         param_remove.x = x_cord_remove;
         param_remove.y = y_cord_remove;
@@ -372,23 +412,23 @@ public class HomeScreenIconService extends Service {
         windowManager.updateViewLayout(removeView, param_remove);
     }
 
-    private void showMsg(String sMsg){
-        if(txtView != null && chatheadView != null ){
+    private void showMsg(String sMsg) {
+        if (txtView != null && homescreenServiceView != null) {
             txt1.setText(sMsg);
             myHandler.removeCallbacks(myRunnable);
 
-            WindowManager.LayoutParams param_chathead = (WindowManager.LayoutParams) chatheadView.getLayoutParams();
+            WindowManager.LayoutParams param_chathead = (WindowManager.LayoutParams) homescreenServiceView.getLayoutParams();
             WindowManager.LayoutParams param_txt = (WindowManager.LayoutParams) txtView.getLayoutParams();
 
-            txt_linearlayout.getLayoutParams().height = chatheadView.getHeight();
+            txt_linearlayout.getLayoutParams().height = homescreenServiceView.getHeight();
             txt_linearlayout.getLayoutParams().width = szWindow.x / 2;
 
-            if(isLeft){
+            if (isLeft) {
                 param_txt.x = param_chathead.x + chatheadImg.getWidth();
                 param_txt.y = param_chathead.y;
 
                 txt_linearlayout.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-            }else{
+            } else {
                 param_txt.x = param_chathead.x - szWindow.x / 2;
                 param_txt.y = param_chathead.y;
 
@@ -410,7 +450,7 @@ public class HomeScreenIconService extends Service {
         @Override
         public void run() {
             // TODO Auto-generated method stub
-            if(txtView != null){
+            if (txtView != null) {
                 txtView.setVisibility(View.GONE);
             }
         }
@@ -419,14 +459,14 @@ public class HomeScreenIconService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        if(intent != null){
+        if (intent != null) {
             Bundle bd = intent.getExtras();
 
-            if(bd != null)
+            if (bd != null)
                 sMsg = "";
 
-            if(sMsg != null && sMsg.length() > 0){
-                if(startId == Service.START_STICKY){
+            if (sMsg != null && sMsg.length() > 0) {
+                if (startId == Service.START_STICKY) {
                     new Handler().postDelayed(new Runnable() {
 
                         @Override
@@ -436,7 +476,7 @@ public class HomeScreenIconService extends Service {
                         }
                     }, 300);
 
-                }else{
+                } else {
                     showMsg(sMsg);
                 }
 
@@ -444,11 +484,11 @@ public class HomeScreenIconService extends Service {
 
         }
 
-        if(startId == Service.START_STICKY) {
+        if (startId == Service.START_STICKY) {
             handleStart();
             return super.onStartCommand(intent, flags, startId);
-        }else{
-            return  Service.START_NOT_STICKY;
+        } else {
+            return Service.START_NOT_STICKY;
         }
 
     }
@@ -458,15 +498,15 @@ public class HomeScreenIconService extends Service {
         // TODO Auto-generated method stub
         super.onDestroy();
 
-        if(chatheadView != null){
-            windowManager.removeView(chatheadView);
+        if (homescreenServiceView != null) {
+            windowManager.removeView(homescreenServiceView);
         }
 
-        if(txtView != null){
+        if (txtView != null) {
             windowManager.removeView(txtView);
         }
 
-        if(removeView != null){
+        if (removeView != null) {
             windowManager.removeView(removeView);
         }
 

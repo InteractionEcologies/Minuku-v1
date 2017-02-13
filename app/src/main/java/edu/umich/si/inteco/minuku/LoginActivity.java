@@ -1,7 +1,9 @@
 package edu.umich.si.inteco.minuku;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -31,6 +33,7 @@ public class LoginActivity extends Activity {
 
     public static Context context;
     private UserSettingsDBHelper userSettingsDBHelper;
+    private int limitOfUsers = 8;
     // UI widgets
     private Button btnLogin, btnAddUser;
     private ListView lvUsers;
@@ -58,11 +61,19 @@ public class LoginActivity extends Activity {
         btnAddUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (userSettingsDBHelper.getTotalNumOfUser() < 6) {
+                if (userSettingsDBHelper.getTotalNumOfUser() < limitOfUsers) {
                     userSettingsDBHelper.insertDB(new User());
                     setListView();
                 } else {
-
+                    new AlertDialog.Builder(getContext())
+                            .setTitle("Reach the User Limit")
+                            .setMessage("The user limit for this device is " + limitOfUsers + ".")
+                            .setCancelable(false)
+                            .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            }).show();
                 }
             }
         });

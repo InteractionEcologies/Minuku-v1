@@ -72,6 +72,40 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         return count;
     }
 
+    public int setAllUserSelected() {
+        ArrayList<User> userList = getAllUserList();
+        ArrayList<Integer> idList = getAllIdList();
+        SQLiteDatabase db = getWritableDatabase();
+        int count = 0;
+        for (int i = 0; i < userList.size(); i++) {
+            ContentValues values = new ContentValues();
+            values.put(USER_NAME, userList.get(i).getUserName());
+            values.put(USER_IMGNUM, userList.get(i).getImgNumber());
+            values.put(IF_SELECTED, "1");
+            String whereClause = ID + "='" + idList.get(i) + "'";
+            count += db.update(TABLENAME, values, whereClause, null);
+        }
+        db.close();
+        return count;
+    }
+
+    public int setAllUserUnSelected() {
+        ArrayList<User> userList = getAllUserList();
+        ArrayList<Integer> idList = getAllIdList();
+        SQLiteDatabase db = getWritableDatabase();
+        int count = 0;
+        for (int i = 0; i < userList.size(); i++) {
+            ContentValues values = new ContentValues();
+            values.put(USER_NAME, userList.get(i).getUserName());
+            values.put(USER_IMGNUM, userList.get(i).getImgNumber());
+            values.put(IF_SELECTED, "0");
+            String whereClause = ID + "='" + idList.get(i) + "'";
+            count += db.update(TABLENAME, values, whereClause, null);
+        }
+        db.close();
+        return count;
+    }
+
     public int deleteUserById(int id) {
         SQLiteDatabase db = getWritableDatabase();
         String whereClause = ID + "='" + id + "'";

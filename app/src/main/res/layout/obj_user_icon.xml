@@ -27,8 +27,10 @@
 
     <View
         android:id="@+id/obj_user_icon_selectedView"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/fragment_profile_user_icon_size"
         android:layout_height="5dp"
+        android:layout_gravity="center"
         android:background="@color/transparent"
-        android:clickable="false" />
+        android:clickable="false"
+        android:layout_margin="5dp" />
 </LinearLayout>
