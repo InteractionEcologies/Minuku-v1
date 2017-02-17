@@ -21,8 +21,7 @@ import com.google.android.gms.analytics.Tracker;
 import java.util.ArrayList;
 
 import edu.umich.si.inteco.minuku.AnalyticsMinuku;
-import edu.umich.si.inteco.minuku.MainActivity;
-import edu.umich.si.inteco.minuku.constants.Constants;
+import edu.umich.si.inteco.minuku.constants.*;
 import edu.umich.si.inteco.minuku.context.ContextManager;
 import edu.umich.si.inteco.minuku.context.EventManager;
 import edu.umich.si.inteco.minuku.data.DataHandler;
@@ -176,10 +175,14 @@ public class MinukuMainService extends Service {
 
     @Override
     public void onCreate() {
-        super.onCreate();
+
+
         LogManager.log(LogManager.LOG_TYPE_SYSTEM_LOG,
                 LogManager.LOG_TAG_SERVICE,
                 "Service onCreate");
+
+        super.onCreate();
+
 
         //this is for checking if the service instance is running
         serviceInstance = this;
@@ -205,7 +208,7 @@ public class MinukuMainService extends Service {
         }
         //we've got one. so use the stored one
         else {
-//            Constants.DEVICE_ID = MainActivity.wifiMacAddr + MainActivity.btMacAddr;
+
             Constants.DEVICE_ID = PreferenceHelper.getPreferenceString(PreferenceHelper.DEVICE_ID, "NA");
             Constants.USER_ID = PreferenceHelper.getPreferenceString(PreferenceHelper.USER_ID, "NA");
             Log.d(LOG_TAG, "[test permission] we've got a device id " + Constants.DEVICE_ID + " user id: " + Constants.USER_ID);
@@ -234,6 +237,7 @@ public class MinukuMainService extends Service {
         mLocalDBHelpder.getWritableDatabase();
 
         //set up the environment for background recording
+
         mFileHelper = new FileHelper(this);
 
         //initiate the TaskManager and load the tasks
@@ -258,6 +262,8 @@ public class MinukuMainService extends Service {
 
         //initiate the DataHandler
         mDataHandler = new DataHandler(this);
+
+
     }
 
 
@@ -292,6 +298,7 @@ public class MinukuMainService extends Service {
             );
         } else {
             Constants.DEVICE_ID = mngr.getDeviceId();
+
             //combined device id, timestamp, and minuku
             Constants.USER_ID = (Constants.MINUKU_PREFIX + (ContextManager.getCurrentTimeInMillis() + Constants.DEVICE_ID).hashCode());
 
@@ -305,8 +312,6 @@ public class MinukuMainService extends Service {
 
             Log.d(LOG_TAG, "[test permission] already set device ID " + PreferenceHelper.getPreferenceString(PreferenceHelper.DEVICE_ID, "NA"));
             Log.d(LOG_TAG, "[test permission] already set user ID " + PreferenceHelper.getPreferenceString(PreferenceHelper.USER_ID, "NA"));
-
-
         }
     }
 
@@ -369,9 +374,6 @@ public class MinukuMainService extends Service {
         //cancel all scheduled action alarms
         ScheduleAndSampleManager.cancelAllActionAlarms();
         ScheduleAndSampleManager.unregisterAlarmReceivers();
-
-//        //unregister receivers
-//        unregisterReceiver(mBatteryStatusReceiver);
 
         //stop main thread
         getMainThread().removeCallbacks(mMainThreadrunnable);
@@ -468,7 +470,7 @@ public class MinukuMainService extends Service {
 
             //the main thread use the default interval to run continuous actions
             //the continuous actions are listed in the RunningActionList maintained by the ActionManager.
-            //Periodically the main thread call ActionManager to execute the continuous actions.
+            //Periodically the main thread call ActionManager to execute the contibuous actions.
             try {
 
                 Log.d(LOG_TAG, "[test pause resume]  running in  recordContextRunnable  ");
@@ -476,6 +478,7 @@ public class MinukuMainService extends Service {
                 for (int i = 0; i < ActionManager.getRunningActionList().size(); i++) {
 
                     Action action = ActionManager.getRunningActionList().get(i);
+
                     //if the action is not paused, run the action
                     if (!action.isPaused()) {
 
@@ -507,10 +510,12 @@ public class MinukuMainService extends Service {
 
                         //reset
                         mDeviceCheckingTimeCountDown = DEFAULT_DEVICE_CHECKING_COUNT;
+
                     } else {
                         //count down
                         mDeviceCheckingTimeCountDown -= 1;
                     }
+
                 }
 
 
@@ -525,30 +530,21 @@ public class MinukuMainService extends Service {
 
 /*
     private void startBackgroundRecording(){
-
         mRecordingHandler = new Handler();
-
         Runnable recordContext = new Runnable() {
             @Override
             public void run() {
                 try{
-
                     //1. If the ContextExtractor is extracing context information, store context information to the SensorRecorde
                     if (mContextExtractor.isExtractingContext() ){
-
                         //write the temporarily stored records into files or databases
                         //mDataHandler.WriteRecordsToFile(mRecordPool);
-
-
                         //TODO: make writing to database an Action
                         mDataHandler.SaveRecordsToLocalDatabase(ContextManager.getPublicRecordPool(), Constants.BACKGOUND_LOGGING_SESSION_ID);
-
                         //after writing the records into files or databases, clear the record pools
                         //ContextManager.getPublicRecordPool().clear();
                     }
-
                     //send recrod to DataHandler
-
                 }catch (IllegalArgumentException e){
                     //Log.e(LOG_TAG, "Could not unregister receiver " + e.getMessage()+"");
                 }
@@ -556,10 +552,8 @@ public class MinukuMainService extends Service {
                 mRecordingHandler.postDelayed(this, MinukuMainService.CONTEXT_RECORD_INTERVAL);
             }
         };
-
         //start repeatedly store the extracted contextual information into Record objects
         mRecordingHandler.post(recordContext);
-
     }
 */
 
