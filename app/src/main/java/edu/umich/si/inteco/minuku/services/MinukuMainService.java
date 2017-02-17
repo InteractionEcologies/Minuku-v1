@@ -21,6 +21,7 @@ import com.google.android.gms.analytics.Tracker;
 import java.util.ArrayList;
 
 import edu.umich.si.inteco.minuku.AnalyticsMinuku;
+import edu.umich.si.inteco.minuku.MainActivity;
 import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.context.ContextManager;
 import edu.umich.si.inteco.minuku.context.EventManager;
@@ -45,7 +46,9 @@ public class MinukuMainService extends Service {
 
     private static MinukuMainService serviceInstance = null;
 
-    /** Tag for logging. */
+    /**
+     * Tag for logging.
+     */
     private static final String LOG_TAG = "MinukuMainService";
 
     //Google Analytic
@@ -57,7 +60,9 @@ public class MinukuMainService extends Service {
      *
      * **/
 
-    /**Context Manager in General*/
+    /**
+     * Context Manager in General
+     */
     //the frequency of storing the cached records
 
     public static int DEFAULT_DEVICE_CHECKING_COUNT = 120;//5 minutes. it counts down for every 5 seconds
@@ -72,18 +77,21 @@ public class MinukuMainService extends Service {
     public static long DEFAULT_APP_MONITOR_RATE_INTERVAL = DEFAULT_ACTION_RATE_INTERVAL;
 
 
-    /**Google Play (Location & Activity) Services*/
+    /**
+     * Google Play (Location & Activity) Services
+     */
     public final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
 
     /**Supported Context Source number (for the Record use)**/
 
 
-
     /**Context Records**/
     // each Record object is uniqute to the ContextExtractor. The ContextExtractor updates each of the Record based on the RecordFrequency
 
-    /**Handle repeating recoridng**/
+    /**
+     * Handle repeating recoridng
+     **/
     private Handler mRecordingHandler;
 
     private static TriggerManager mTriggerManager;
@@ -92,47 +100,63 @@ public class MinukuMainService extends Service {
 
     private static ConfigurationManager mConfigurationManager;
 
-    private static NotificationHelper mNotificationHelper ;
+    private static NotificationHelper mNotificationHelper;
 
-    /**Data Handler**/
+    /**
+     * Data Handler
+     **/
     private static DataHandler mDataHandler;
 
-    /**Record Annottion Manager**/
+    /**
+     * Record Annottion Manager
+     **/
     private static RecordingAndAnnotateManager mRecordingAndAnnotateManager;
 
-    /**Task Manager**/
+    /**
+     * Task Manager
+     **/
     private static TaskManager mTaskManager;
 
-    /**Action Manager**/
+    /**
+     * Action Manager
+     **/
     private static ActionManager mActionManager;
 
-    /**Schedule Manager**/
+    /**
+     * Schedule Manager
+     **/
     private static ScheduleAndSampleManager mScheduleAndAlarmManager;
 
-    /**Questionnaire Manager**/
+    /**
+     * Questionnaire Manager
+     **/
     private static QuestionnaireManager mQuestionnaireManager;
 
-    /** File Helper**/
+    /**
+     * File Helper
+     **/
     private static FileHelper mFileHelper;
 
     //handle the local SQLite operation
     private static LocalDBHelper mLocalDBHelpder;
 
-    /**Even Monitor**/
+    /**
+     * Even Monitor
+     **/
     private static EventManager mEventManager;
 
     private static PreferenceHelper mPreferenceHelper;
 
     private static Handler mMainThread;
 
-    private static int mDeviceCheckingTimeCountDown = DEFAULT_DEVICE_CHECKING_COUNT ;
-    private static int mDeviceLocationCheckingTimeCountDown = DEFAULT_LOCATION_CHECKING_COUNT ;
+    private static int mDeviceCheckingTimeCountDown = DEFAULT_DEVICE_CHECKING_COUNT;
+    private static int mDeviceLocationCheckingTimeCountDown = DEFAULT_LOCATION_CHECKING_COUNT;
 
 
-    private static long baseForChronometer =0;
+    private static long baseForChronometer = 0;
     private static boolean mCentralChrometerRunning;
     private static boolean mCentralChrometerPaused;
-    private static String mCentralChrometerText="00:00:00";
+    private static String mCentralChrometerText = "00:00:00";
     private static long mTimeWhenStopped = 0;
 
     //for testing checkpoint. this variable remember information of last checkpoint.
@@ -152,14 +176,10 @@ public class MinukuMainService extends Service {
 
     @Override
     public void onCreate() {
-
-
+        super.onCreate();
         LogManager.log(LogManager.LOG_TYPE_SYSTEM_LOG,
                 LogManager.LOG_TAG_SERVICE,
                 "Service onCreate");
-
-        super.onCreate();
-
 
         //this is for checking if the service instance is running
         serviceInstance = this;
@@ -175,17 +195,17 @@ public class MinukuMainService extends Service {
          * the timestamp and a deviceID**/
         String phoneUID = "";
 
-        Log.d(LOG_TAG, "[test permission] check preference device ID " + PreferenceHelper.getPreferenceString(PreferenceHelper.DEVICE_ID, "NA") ) ;
+        Log.d(LOG_TAG, "[test permission] check preference device ID " + PreferenceHelper.getPreferenceString(PreferenceHelper.DEVICE_ID, "NA"));
 
         //we've not got a Device_ID.
-        if ( PreferenceHelper.getPreferenceString(PreferenceHelper.DEVICE_ID, "NA").equals("NA")) {
+        if (PreferenceHelper.getPreferenceString(PreferenceHelper.DEVICE_ID, "NA").equals("NA")) {
             //so get it
             Log.d(LOG_TAG, "[test permission] we've not got a deviceID ");
             getDeviceID();
         }
         //we've got one. so use the stored one
         else {
-
+//            Constants.DEVICE_ID = MainActivity.wifiMacAddr + MainActivity.btMacAddr;
             Constants.DEVICE_ID = PreferenceHelper.getPreferenceString(PreferenceHelper.DEVICE_ID, "NA");
             Constants.USER_ID = PreferenceHelper.getPreferenceString(PreferenceHelper.USER_ID, "NA");
             Log.d(LOG_TAG, "[test permission] we've got a device id " + Constants.DEVICE_ID + " user id: " + Constants.USER_ID);
@@ -208,15 +228,13 @@ public class MinukuMainService extends Service {
 
         mContextManager = new ContextManager(this);
 
-
         mLocalDBHelpder = new LocalDBHelper(this, Constants.TEST_DATABASE_NAME);
 
         //this line is required to create the table.
         mLocalDBHelpder.getWritableDatabase();
 
         //set up the environment for background recording
-
-        mFileHelper = new FileHelper (this);
+        mFileHelper = new FileHelper(this);
 
         //initiate the TaskManager and load the tasks
         mTaskManager = new TaskManager(this);
@@ -239,9 +257,7 @@ public class MinukuMainService extends Service {
         mRecordingAndAnnotateManager = new RecordingAndAnnotateManager(this);
 
         //initiate the DataHandler
-        mDataHandler = new DataHandler (this);
-
-
+        mDataHandler = new DataHandler(this);
     }
 
 
@@ -254,13 +270,13 @@ public class MinukuMainService extends Service {
         Log.d(LOG_TAG, "[test permission] we're attempting to get deviceID ");
 
         /** when the app starts, first obtain the participant ID **/
-        TelephonyManager mngr = (TelephonyManager)getSystemService(this.TELEPHONY_SERVICE);
+        TelephonyManager mngr = (TelephonyManager) getSystemService(this.TELEPHONY_SERVICE);
 
         //check if device ID is granted the permission
-        int permissionStatus= ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
+        int permissionStatus = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
 
         //if we did not get permission yet, we need to call a notification to ask users to give permission
-        if (permissionStatus!= PackageManager.PERMISSION_GRANTED) {
+        if (permissionStatus != PackageManager.PERMISSION_GRANTED) {
 
             sendNotification();
 
@@ -273,11 +289,9 @@ public class MinukuMainService extends Service {
                     NotificationHelper.NOTIFICATION_TITLE_ASK_FOR_PERMISSION,
                     //message
                     NotificationHelper.NOTIFICATION_MESSAGE_ASK_FOR_PERMISSION
-                    );
-        }
-        else {
+            );
+        } else {
             Constants.DEVICE_ID = mngr.getDeviceId();
-
             //combined device id, timestamp, and minuku
             Constants.USER_ID = (Constants.MINUKU_PREFIX + (ContextManager.getCurrentTimeInMillis() + Constants.DEVICE_ID).hashCode());
 
@@ -289,16 +303,17 @@ public class MinukuMainService extends Service {
             PreferenceHelper.setPreferenceStringValue(PreferenceHelper.DEVICE_ID, Constants.DEVICE_ID);
             PreferenceHelper.setPreferenceStringValue(PreferenceHelper.USER_ID, Constants.USER_ID);
 
-            Log.d(LOG_TAG, "[test permission] already set device ID " + PreferenceHelper.getPreferenceString(PreferenceHelper.DEVICE_ID, "NA")) ;
-            Log.d(LOG_TAG, "[test permission] already set user ID " + PreferenceHelper.getPreferenceString(PreferenceHelper.USER_ID, "NA")) ;
+            Log.d(LOG_TAG, "[test permission] already set device ID " + PreferenceHelper.getPreferenceString(PreferenceHelper.DEVICE_ID, "NA"));
+            Log.d(LOG_TAG, "[test permission] already set user ID " + PreferenceHelper.getPreferenceString(PreferenceHelper.USER_ID, "NA"));
 
 
         }
     }
 
 
-
-    /**called when the service is started **/
+    /**
+     * called when the service is started
+     **/
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
@@ -377,11 +392,9 @@ public class MinukuMainService extends Service {
 
 
     /**
-     *
      * This function is called in two situations:
      * 1. When the app is first setup
      * 2.
-     *
      */
 
 
@@ -392,9 +405,9 @@ public class MinukuMainService extends Service {
 
         //for the labeling study, if there are existing configurations, we remove it and insert new ones...
         //TODO: remove this part after we can update the configuration from the database...
-        if (res.size()>0) {
+        if (res.size() > 0) {
 
-            Log.d(LOG_TAG, "[cleanUpDatabaseBeforeWeCanUpdateConfiguration] Clean tasks, configurations and questionnaire" );
+            Log.d(LOG_TAG, "[cleanUpDatabaseBeforeWeCanUpdateConfiguration] Clean tasks, configurations and questionnaire");
             //remove the configurations, questionnaires, and tasks, which are stored in the databse.
             LocalDBHelper.removeQuestionnaires();
             LocalDBHelper.removeTasks();
@@ -402,9 +415,9 @@ public class MinukuMainService extends Service {
 
             //validate...
             res = LocalDBHelper.queryConfigurations();
-       //     Log.d(LOG_TAG, "[cleanUpDatabaseBeforeWeCanUpdateConfiguration] there are " + res.size() + " configurations in the database");
+            //     Log.d(LOG_TAG, "[cleanUpDatabaseBeforeWeCanUpdateConfiguration] there are " + res.size() + " configurations in the database");
             res = LocalDBHelper.queryTasks();
-         //   Log.d(LOG_TAG, "[cleanUpDatabaseBeforeWeCanUpdateConfiguration] there are " + res.size() + " configurations in the database");
+            //   Log.d(LOG_TAG, "[cleanUpDatabaseBeforeWeCanUpdateConfiguration] there are " + res.size() + " configurations in the database");
 
         }
 
@@ -419,7 +432,7 @@ public class MinukuMainService extends Service {
 
 
     //TODO: fix this
-    public void startMinukuService(){
+    public void startMinukuService() {
 
         Log.d(LOG_TAG, "[startMinukuService] star the probe service");
         //TODO: checking updated configurations
@@ -436,10 +449,11 @@ public class MinukuMainService extends Service {
     }
 
 
-    /**after the Probe service starts, ActionManager maintain a list of actions that continuously run in the background. Action Manager needs to
+    /**
+     * after the Probe service starts, ActionManager maintain a list of actions that continuously run in the background. Action Manager needs to
      * create threads for these continuoulsy running actions.
      */
-    public static void runMainThread (){
+    public static void runMainThread() {
         //Log.d(LOG_TAG, " [RUN] : action manager is setting up the main thread" );
         mMainThread = new Handler();
 
@@ -455,16 +469,15 @@ public class MinukuMainService extends Service {
             //the main thread use the default interval to run continuous actions
             //the continuous actions are listed in the RunningActionList maintained by the ActionManager.
             //Periodically the main thread call ActionManager to execute the continuous actions.
-            try{
+            try {
 
                 Log.d(LOG_TAG, "[test pause resume]  running in  recordContextRunnable  ");
 
-                for (int i=0; i < ActionManager.getRunningActionList().size(); i++){
+                for (int i = 0; i < ActionManager.getRunningActionList().size(); i++) {
 
                     Action action = ActionManager.getRunningActionList().get(i);
-
                     //if the action is not paused, run the action
-                    if (!action.isPaused()){
+                    if (!action.isPaused()) {
 
 //                        Log.d(LOG_TAG, "[test pause resume]running continuous and non-paused actions " + action.getId() + " " + action.getName() );
                         ActionManager.executeAction(action);
@@ -475,10 +488,10 @@ public class MinukuMainService extends Service {
                 /***if we need to check whether the device is alive**/
                 if (ConfigurationManager.MINUKU_SERVICE_CHECKIN_ENABLED) {
 
-                    if (mDeviceCheckingTimeCountDown==0 ){
+                    if (mDeviceCheckingTimeCountDown == 0) {
 
                         //if we want to use Google Analytic to check alive status
-                        if (ConfigurationManager.MINUKU_SERVICE_CHECKIN_GOOGLE_ANALYTICS_ENABLED){
+                        if (ConfigurationManager.MINUKU_SERVICE_CHECKIN_GOOGLE_ANALYTICS_ENABLED) {
                             //If Google Analytic Tracker is enabled, we periodically send data to the
                             mTracker.send(new HitBuilders.EventBuilder()
                                     .setCategory(Constants.MINUKU_SERVICE_CHECKING_ISALIVE)
@@ -488,24 +501,20 @@ public class MinukuMainService extends Service {
                         }
 
                         //if we want to use remote MongoDB to check alive status
-                        if(ConfigurationManager.MINUKU_SERVICE_CHECKIN_MONGODB_ENABLED) {
+                        if (ConfigurationManager.MINUKU_SERVICE_CHECKIN_MONGODB_ENABLED) {
                             RemoteDBHelper.MinukuServiceCheckIn();
                         }
 
                         //reset
-                        mDeviceCheckingTimeCountDown=DEFAULT_DEVICE_CHECKING_COUNT ;
-
-                    }
-                    else {
+                        mDeviceCheckingTimeCountDown = DEFAULT_DEVICE_CHECKING_COUNT;
+                    } else {
                         //count down
-                        mDeviceCheckingTimeCountDown-=1;
+                        mDeviceCheckingTimeCountDown -= 1;
                     }
-
                 }
 
 
-
-            }catch (IllegalArgumentException e){
+            } catch (IllegalArgumentException e) {
                 //Log.e(LOG_TAG, "Could not unregister receiver " + e.getMessage()+"");
             }
             // then send data to the datahandler
@@ -554,10 +563,14 @@ public class MinukuMainService extends Service {
     }
 */
 
-    /**for testing*/
+    /**
+     * for testing
+     */
 
 
-    public static Handler getMainThread() {return mMainThread;}
+    public static Handler getMainThread() {
+        return mMainThread;
+    }
 
     public static long getTimeWhenStopped() {
         return mTimeWhenStopped;
@@ -620,9 +633,9 @@ public class MinukuMainService extends Service {
 
         // Set the title, text, and icon
         builder.setContentTitle("mobility")
-                .setContentText( message)
+                .setContentText(message)
                 .setSmallIcon(android.R.drawable.ic_notification_overlay)
-                        // Get the Intent that starts the Location settings panel
+                // Get the Intent that starts the Location settings panel
                 .setContentIntent(getContentIntent());
 
         // Get an instance of the Notification Manager

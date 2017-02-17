@@ -518,7 +518,6 @@ public class RemoteDBHelper {
      * checking if Minuku is
      */
     public static void MinukuServiceCheckIn() {
-
         new HttpAsyncMinukuCheckin().execute();
     }
 
@@ -569,8 +568,7 @@ public class RemoteDBHelper {
             int responseCode = conn.getResponseCode();
             inputStream = conn.getInputStream();
             result = convertInputStreamToString(inputStream);
-//            Log.d(LOG_TAG, "[deviceChecking] device checking "  + responseCode + " result is " + result);
-
+            Log.d(LOG_TAG, "[deviceChecking] device checking "  + responseCode + " result is " + result);
         }
         catch (ProtocolException e) {
             e.printStackTrace();
@@ -1380,14 +1378,7 @@ public class RemoteDBHelper {
 
                     queryLastQuestionnaireIdUsingGET(queryLastSynHourURL);
                 }
-
-
-
-
             }
-
-
-
             return "result";
         }
         // onPostExecute displays the results of the AsyncTask.
@@ -1395,12 +1386,7 @@ public class RemoteDBHelper {
         protected void onPostExecute(String result) {
 
             Log.d(LOG_TAG, "[HttpAsyncQuery] the result is " + result);
-
-
-
         }
-
-
     }
 
 
@@ -1427,8 +1413,6 @@ public class RemoteDBHelper {
             Log.d(LOG_TAG, "get http post result" + result);
 
         }
-
-
     }
 
 
@@ -1470,19 +1454,16 @@ public class RemoteDBHelper {
                 MinunuServiceCheckinUsingPOST(AZURE_WEB_SERVICE_URL_DEVICE_CHECKING);
 
             else if (REMOTE_SERVER_CHOICE.equals(REMOTE_SERVER_MONGOLAB)){
-                Log.d(LOG_TAG, "[deviceChecking] ttpAsyncMinukuCheckin" + ProjectDatabaseName + " to collection " + DatabaseNameManager.MONGODB_COLLECTION_ISALIVE);
+                Log.d(LOG_TAG, "[deviceChecking] httpAsyncMinukuCheckin" + ProjectDatabaseName + " to collection " + DatabaseNameManager.MONGODB_COLLECTION_ISALIVE);
                 MinunuServiceCheckinUsingPOST(MongoDBHelper.postDocumentURL(ProjectDatabaseName, DatabaseNameManager.MONGODB_COLLECTION_ISALIVE));
             }
-
 
             return result;
         }
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
-
             Log.d(LOG_TAG, "get device checking result" + result);
-
         }
 
 
@@ -1491,34 +1472,33 @@ public class RemoteDBHelper {
 
 
     //use HTTPAsyncTask to post file
-    private static class HttpAsyncPostFileTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... params) {
-
-            String result=null;
-            String url = params[0];
-            String filePath = params[1];
-
-            try {
-                postFile(url, filePath);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return result;
-
-        }
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-
-            Log.d(LOG_TAG, "[onPostExecute] get http post result" + result);
-
-        }
-
-    }
+//    private static class HttpAsyncPostFileTask extends AsyncTask<String, Void, String> {
+//
+//        @Override
+//        protected String doInBackground(String... params) {
+//
+//            String result=null;
+//            String url = params[0];
+//            String filePath = params[1];
+//
+//            try {
+//                postFile(url, filePath);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            return result;
+//
+//        }
+//        // onPostExecute displays the results of the AsyncTask.
+//        @Override
+//        protected void onPostExecute(String result) {
+//            super.onPostExecute(result);
+//
+//            Log.d(LOG_TAG, "[onPostExecute] get http post result" + result);
+//        }
+//
+//    }
 
     public static long getLastServerSyncTime() {
         long time = PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, 0);

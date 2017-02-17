@@ -53,7 +53,7 @@ public class ProfileFragment extends Fragment {
     private ArrayList<User> userList;
     private ArrayList<Integer> userIdList;
     private int numOfPeopleUsing = 1;
-    private int currentSelected = 0;
+    private int currentSelected = 1;
     public static int OVERLAY_PERMISSION_REQ_CODE_CHATHEAD = 1234;
     public static int OVERLAY_PERMISSION_REQ_CODE_CHATHEAD_MSG = 5678;
 

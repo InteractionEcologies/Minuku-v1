@@ -32,6 +32,7 @@ import java.util.Map;
 import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.fragments.ProfileFragment;
 import edu.umich.si.inteco.minuku.services.MinukuMainService;
+import edu.umich.si.inteco.minuku.util.ConfigurationManager;
 import io.fabric.sdk.android.Fabric;
 
 /**
@@ -107,7 +108,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         currentTabPos = 0;
     }
 
-    public static Context getContext(){
+    public static Context getContext() {
         return context;
     }
 

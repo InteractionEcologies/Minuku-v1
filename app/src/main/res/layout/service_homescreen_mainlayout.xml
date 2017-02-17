@@ -1,28 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/home_screen_service_relativeLayout"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="@dimen/view_space">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/home_screen_service_chathead_img"
-            android:layout_width="@dimen/activity_login_user_icon_size"
-            android:layout_height="@dimen/activity_login_user_icon_size"
-            android:layout_margin="@dimen/view_space"
-            android:src="@mipmap/ic_launcher" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/home_screen_service_chathead_img"
+                android:layout_width="@dimen/activity_login_user_icon_size"
+                android:layout_height="@dimen/activity_login_user_icon_size"
+                android:layout_margin="@dimen/view_space"
+                android:src="@mipmap/app_launcher" />
 
             <GridLayout
                 android:id="@+id/home_screen_service_gridLayout"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/view_space"
+                android:background="@color/dark"
                 android:columnCount="6"
-                android:visibility="gone"></GridLayout>
-    </LinearLayout>
+                android:padding="@dimen/view_space"></GridLayout>
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/home_screen_service_btn_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|top"
+            android:layout_margin="@dimen/view_space"
+            android:background="@drawable/background_remove_button" />
+    </FrameLayout>
 </RelativeLayout>

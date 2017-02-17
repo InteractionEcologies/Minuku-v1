@@ -73,8 +73,6 @@ public class DataHandler {
 
             //the filename of the log should be the source name
 
-
-
         }
 
 
@@ -143,7 +141,7 @@ public class DataHandler {
 	 * write data to the local sqllite database
 	 * @param recordpool
 	 */
-	public static  void SaveRecordsToLocalDatabase(ArrayList<Record> recordpool, int session_id ){
+	public static void SaveRecordsToLocalDatabase(ArrayList<Record> recordpool, int session_id ){
 
         //no record to save into the database
         if (recordpool.size()==0)

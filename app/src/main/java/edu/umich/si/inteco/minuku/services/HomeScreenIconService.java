@@ -7,7 +7,6 @@ import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
@@ -19,9 +18,7 @@ import android.view.WindowManager;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -33,14 +30,12 @@ import edu.umich.si.inteco.minuku.model.Views.UserIcon;
 public class HomeScreenIconService extends Service {
     // Views
     private RelativeLayout removeView, homescreenServiceView;
-    private LinearLayout txtView, txt_linearlayout;
     private GridLayout gridLayout;
     private ImageView chatheadImg, removeImg;
-    private TextView txt1;
+    private ImageButton ibClose;
     private int x_init_cord, y_init_cord, x_init_margin, y_init_margin;
     private Point szWindow = new Point();
     private boolean isLeft = true;
-    private String sMsg = "";
 
     // Function
     private boolean ifUserIconOpen = false;
@@ -48,11 +43,8 @@ public class HomeScreenIconService extends Service {
     private UserSettingsDBHelper userSettingsDBHelper;
     private ArrayList<User> userList;
 
-    @SuppressWarnings("deprecation")
-
     @Override
     public void onCreate() {
-        // TODO Auto-generated method stub
         super.onCreate();
 
     }
@@ -60,7 +52,7 @@ public class HomeScreenIconService extends Service {
     private void handleStart() {
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        removeView = (RelativeLayout) inflater.inflate(R.layout.homescreen_service_remove, null);
+        removeView = (RelativeLayout) inflater.inflate(R.layout.service_homescreen_remove, null);
         WindowManager.LayoutParams paramRemove = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -68,37 +60,13 @@ public class HomeScreenIconService extends Service {
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 PixelFormat.TRANSLUCENT);
         paramRemove.gravity = Gravity.TOP | Gravity.LEFT;
-
         removeView.setVisibility(View.GONE);
         removeImg = (ImageView) removeView.findViewById(R.id.remove_img);
         windowManager.addView(removeView, paramRemove);
 
-
         homescreenServiceView = (RelativeLayout) inflater.inflate(R.layout.service_homescreen_mainlayout, null);
-        chatheadImg = (ImageView) homescreenServiceView.findViewById(R.id.home_screen_service_chathead_img);
-        chatheadImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null == userSettingsDBHelper)
-                    userSettingsDBHelper = new UserSettingsDBHelper(getApplicationContext());
-                if (ifUserIconOpen) {
-                    ifUserIconOpen = false;
-                    gridLayout.setVisibility(View.GONE);
-                } else {
-                    ifUserIconOpen = true;
-                    gridLayout.removeAllViews();
-                    userList = userSettingsDBHelper.getAllUserList();
-                    for (int i = 0; i < userList.size(); i++) {
-                        final User user = userList.get(i);
-                        UserIcon userIcon = new UserIcon(getApplicationContext(), user);
-                        ImageButton ib = userIcon.getIbUser();
-                        gridLayout.addView(userIcon.getView());
-                    }
-                    gridLayout.setVisibility(View.VISIBLE);
-                }
-            }
-        });
         gridLayout = (GridLayout) homescreenServiceView.findViewById(R.id.home_screen_service_gridLayout);
+        chatheadImg = (ImageView) homescreenServiceView.findViewById(R.id.home_screen_service_chathead_img);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             windowManager.getDefaultDisplay().getSize(szWindow);
@@ -117,9 +85,10 @@ public class HomeScreenIconService extends Service {
         params.gravity = Gravity.TOP | Gravity.LEFT;
         params.x = 0;
         params.y = 100;
+        params.width = windowManager.getDefaultDisplay().getWidth();
         windowManager.addView(homescreenServiceView, params);
 
-        homescreenServiceView.setOnTouchListener(new View.OnTouchListener() {
+        chatheadImg.setOnTouchListener(new View.OnTouchListener() {
             long time_start = 0, time_end = 0;
             boolean isLongclick = false, inBounded = false;
             int remove_img_width = 0, remove_img_height = 0;
@@ -129,7 +98,6 @@ public class HomeScreenIconService extends Service {
 
                 @Override
                 public void run() {
-
                     isLongclick = true;
                     removeView.setVisibility(View.VISIBLE);
                     chathead_longclick();
@@ -146,6 +114,7 @@ public class HomeScreenIconService extends Service {
 
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
+                        showUserIcon();
                         time_start = System.currentTimeMillis();
                         handler_longClick.postDelayed(runnable_longClick, 600);
 
@@ -157,11 +126,6 @@ public class HomeScreenIconService extends Service {
 
                         x_init_margin = layoutParams.x;
                         y_init_margin = layoutParams.y;
-
-                        if (txtView != null) {
-                            txtView.setVisibility(View.GONE);
-                            myHandler.removeCallbacks(myRunnable);
-                        }
                         break;
                     case MotionEvent.ACTION_MOVE:
                         int x_diff_move = x_cord - x_init_cord;
@@ -211,7 +175,6 @@ public class HomeScreenIconService extends Service {
 
                                 windowManager.updateViewLayout(removeView, param_remove);
                             }
-
                         }
 
 
@@ -228,24 +191,18 @@ public class HomeScreenIconService extends Service {
                         handler_longClick.removeCallbacks(runnable_longClick);
 
                         if (inBounded) {
-//                            if(MyDialog.active){
-//                                MyDialog.myDialog.finish();
-//                            }
-
                             stopService(new Intent(HomeScreenIconService.this, HomeScreenIconService.class));
                             inBounded = false;
                             break;
                         }
-
 
                         int x_diff = x_cord - x_init_cord;
                         int y_diff = y_cord - y_init_cord;
 
                         if (Math.abs(x_diff) < 5 && Math.abs(y_diff) < 5) {
                             time_end = System.currentTimeMillis();
-                            if ((time_end - time_start) < 300) {
-                                chathead_click();
-                            }
+//                            if ((time_end - time_start) < 300) {
+//                            }
                         }
 
                         y_cord_Destination = y_init_margin + y_diff;
@@ -257,10 +214,8 @@ public class HomeScreenIconService extends Service {
                             y_cord_Destination = szWindow.y - (homescreenServiceView.getHeight() + BarHeight);
                         }
                         layoutParams.y = y_cord_Destination;
-
                         inBounded = false;
                         resetPosition(x_cord);
-
                         break;
                     default:
                         break;
@@ -268,25 +223,33 @@ public class HomeScreenIconService extends Service {
                 return true;
             }
         });
-
-
-        txtView = (LinearLayout) inflater.inflate(R.layout.homescreen_service_txt, null);
-        txt1 = (TextView) txtView.findViewById(R.id.txt1);
-        txt_linearlayout = (LinearLayout) txtView.findViewById(R.id.txt_linearlayout);
-
-
-        WindowManager.LayoutParams paramsTxt = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_PHONE,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                PixelFormat.TRANSLUCENT);
-        paramsTxt.gravity = Gravity.TOP | Gravity.LEFT;
-
-        txtView.setVisibility(View.GONE);
-        windowManager.addView(txtView, paramsTxt);
     }
 
+    private void showUserIcon() {
+        if (null == userSettingsDBHelper)
+            userSettingsDBHelper = new UserSettingsDBHelper(getApplicationContext());
+        if (ifUserIconOpen) {
+            ifUserIconOpen = false;
+            gridLayout.setVisibility(View.GONE);
+        } else {
+            ifUserIconOpen = true;
+            gridLayout.removeAllViews();
+            userList = userSettingsDBHelper.getAllUserList();
+            for (int i = 0; i < userList.size(); i++) {
+                final User user = userList.get(i);
+                UserIcon userIcon = new UserIcon(getApplicationContext(), user);
+                ImageButton ib = userIcon.getIbUser();
+                ib.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // set selected icon
+                    }
+                });
+                gridLayout.addView(userIcon.getView());
+            }
+            gridLayout.setVisibility(View.VISIBLE);
+        }
+    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -305,10 +268,6 @@ public class HomeScreenIconService extends Service {
 
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
 
-            if (txtView != null) {
-                txtView.setVisibility(View.GONE);
-            }
-
             if (layoutParams.y + (homescreenServiceView.getHeight() + getStatusBarHeight()) > szWindow.y) {
                 layoutParams.y = szWindow.y - (homescreenServiceView.getHeight() + getStatusBarHeight());
                 windowManager.updateViewLayout(homescreenServiceView, layoutParams);
@@ -320,14 +279,9 @@ public class HomeScreenIconService extends Service {
 
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
 
-            if (txtView != null) {
-                txtView.setVisibility(View.GONE);
-            }
-
             if (layoutParams.x > szWindow.x) {
                 resetPosition(szWindow.x);
             }
-
         }
 
     }
@@ -391,17 +345,7 @@ public class HomeScreenIconService extends Service {
         return statusBarHeight;
     }
 
-    private void chathead_click() {
-//        if(MyDialog.active){
-//            MyDialog.myDialog.finish();
-//        }else{
-//            Intent it = new Intent(this,MyDialog.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//            startActivity(it);
-//        }
-    }
-
     private void chathead_longclick() {
-
         WindowManager.LayoutParams param_remove = (WindowManager.LayoutParams) removeView.getLayoutParams();
         int x_cord_remove = (szWindow.x - removeView.getWidth()) / 2;
         int y_cord_remove = szWindow.y - (removeView.getHeight() + getStatusBarHeight());
@@ -412,78 +356,8 @@ public class HomeScreenIconService extends Service {
         windowManager.updateViewLayout(removeView, param_remove);
     }
 
-    private void showMsg(String sMsg) {
-        if (txtView != null && homescreenServiceView != null) {
-            txt1.setText(sMsg);
-            myHandler.removeCallbacks(myRunnable);
-
-            WindowManager.LayoutParams param_chathead = (WindowManager.LayoutParams) homescreenServiceView.getLayoutParams();
-            WindowManager.LayoutParams param_txt = (WindowManager.LayoutParams) txtView.getLayoutParams();
-
-            txt_linearlayout.getLayoutParams().height = homescreenServiceView.getHeight();
-            txt_linearlayout.getLayoutParams().width = szWindow.x / 2;
-
-            if (isLeft) {
-                param_txt.x = param_chathead.x + chatheadImg.getWidth();
-                param_txt.y = param_chathead.y;
-
-                txt_linearlayout.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-            } else {
-                param_txt.x = param_chathead.x - szWindow.x / 2;
-                param_txt.y = param_chathead.y;
-
-                txt_linearlayout.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
-            }
-
-            txtView.setVisibility(View.VISIBLE);
-            windowManager.updateViewLayout(txtView, param_txt);
-
-            myHandler.postDelayed(myRunnable, 4000);
-
-        }
-
-    }
-
-    Handler myHandler = new Handler();
-    Runnable myRunnable = new Runnable() {
-
-        @Override
-        public void run() {
-            // TODO Auto-generated method stub
-            if (txtView != null) {
-                txtView.setVisibility(View.GONE);
-            }
-        }
-    };
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-        if (intent != null) {
-            Bundle bd = intent.getExtras();
-
-            if (bd != null)
-                sMsg = "";
-
-            if (sMsg != null && sMsg.length() > 0) {
-                if (startId == Service.START_STICKY) {
-                    new Handler().postDelayed(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            // TODO Auto-generated method stub
-                            showMsg(sMsg);
-                        }
-                    }, 300);
-
-                } else {
-                    showMsg(sMsg);
-                }
-
-            }
-
-        }
-
         if (startId == Service.START_STICKY) {
             handleStart();
             return super.onStartCommand(intent, flags, startId);
@@ -502,21 +376,14 @@ public class HomeScreenIconService extends Service {
             windowManager.removeView(homescreenServiceView);
         }
 
-        if (txtView != null) {
-            windowManager.removeView(txtView);
-        }
-
         if (removeView != null) {
             windowManager.removeView(removeView);
         }
 
     }
 
-
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
-
-
 }

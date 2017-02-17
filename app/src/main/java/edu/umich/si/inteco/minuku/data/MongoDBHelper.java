@@ -43,7 +43,7 @@ public class MongoDBHelper {
 
 
     public static String postDocumentURL(String database, String collection) {
-
+        // https://api.mongolab.com/api/1/databases/minuku/collections/backgroundlogging/?apiKey=FWFpLv7XFkbNeOnescJOFntgCrnHOiQR
         return  ( MONGOLAB_URL + database + "/" + "collections/" + collection + "/?" + MONGOLAB_APIKEY_PARAMETER + "=" + MongoAPIKey);
 
     }

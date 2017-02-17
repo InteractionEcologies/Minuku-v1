@@ -40,112 +40,122 @@ import edu.umich.si.inteco.minuku.model.actions.SavingRecordAction;
 
 public class ActionManager {
 
-	private static final String LOG_TAG = "ActionManager";
-	
-	private static Context mContext;
-	private static ArrayList<Action> mActionList;
-	private static ArrayList<ActionControl> mActionControlList;
-	private static ArrayList<Action> mRunningActionList;
-	private static LocalDBHelper mLocalDBHelper; 
-	private static DataHandler mDataHandler;
+    private static final String LOG_TAG = "ActionManager";
+
+    private static Context mContext;
+    private static ArrayList<Action> mActionList;
+    private static ArrayList<ActionControl> mActionControlList;
+    private static ArrayList<Action> mRunningActionList;
+    private static LocalDBHelper mLocalDBHelper;
+    private static DataHandler mDataHandler;
     private static ContextManager mContextManager;
-	
-	/**Even Monitor**/
-	private static EventManager mEventManager;
+
+    /**
+     * Even Monitor
+     **/
+    private static EventManager mEventManager;
 
     public static int RUNNING_ACTION_INITIAL_DELAY = 0;
     public static int RUNNING_ACTION_INTERVAL_IN_SECONDS = 5;
 
 
-	/**Handle repeating recoridng**/
-	/**Action id for user-initiated action**/
-	public static final int USER_INITIATED_RECORDING_ACTION_ID = 1000;
+    /**Handle repeating recoridng**/
+    /**
+     * Action id for user-initiated action
+     **/
+    public static final int USER_INITIATED_RECORDING_ACTION_ID = 1000;
     public static final int SYSTEM_INITIATED_RECORDING_ACTION_ID = 1001;
     public static final int USER_INITIATED_RESPONDING_TO_DAILY_REPORT = 1002;
-	
-	/***Action Type**/
-	public static final String ACTION_TYPE_MONITORING_SITUATION = "monitoring_situation";
-	public static final String ACTION_TYPE_QUESTIONNAIRE = "questionnaire";
+
+    /***
+     * Action Type
+     **/
+    public static final String ACTION_TYPE_MONITORING_SITUATION = "monitoring_situation";
+    public static final String ACTION_TYPE_QUESTIONNAIRE = "questionnaire";
     public static final String ACTION_TYPE_EMAIL_QUESTIONNAIRE = "email_questionnaire";
-	public static final String ACTION_TYPE_SAVING_RECORD = "saving_record";
-	public static final String ACTION_TYPE_EXTERNAL_ACTION = "external_action";
+    public static final String ACTION_TYPE_SAVING_RECORD = "saving_record";
+    public static final String ACTION_TYPE_EXTERNAL_ACTION = "external_action";
     public static final String ACTION_TYPE_ANNOTATE_AND_RECORD = "annotate_and_record";
     public static final String ACTION_TYPE_ANNOTATE = "annotate";
-	
-	/*** Constants for the user recording interface ***/
-	public static final String USER_START_RECORDING_ACTION_NAME = "user_start_recording";	
-	public static final String USER_STOP_RECORDING_ACTION_NAME = "user_pause_recording";		
-	public static final String USER_PAUSE_RECORDING_ACTION_NAME = "user_stop_recording";
+
+    /***
+     * Constants for the user recording interface
+     ***/
+    public static final String USER_START_RECORDING_ACTION_NAME = "user_start_recording";
+    public static final String USER_STOP_RECORDING_ACTION_NAME = "user_pause_recording";
+    public static final String USER_PAUSE_RECORDING_ACTION_NAME = "user_stop_recording";
     public static final String USER_RESPOND_TO_DAILY_REPORT_ACTION_NAME = "user_respond_to_daily_report";
 
-    /*** Constants for the system recording for annotating ***/
+    /***
+     * Constants for the system recording for annotating
+     ***/
     public static final String SYSTEM_GENERATED_RECORDING_BY_ANNOTATION_ACTION_NAME = "recording_generated_by_annotate_action";
 
-    public static final String ACTION_LAUNCH_STYLE_SCHEDULE= "schedule";
-    public static final String ACTION_LAUNCH_STYLE_TRIGGERED= "triggered";
-    public static final String ACTION_LAUNCH_STYLE_APP_START= "app_start";
+    public static final String ACTION_LAUNCH_STYLE_SCHEDULE = "schedule";
+    public static final String ACTION_LAUNCH_STYLE_TRIGGERED = "triggered";
+    public static final String ACTION_LAUNCH_STYLE_APP_START = "app_start";
 
-    public static final String ACTION_EXECUTION_STYLE_REPEATED= "repeated";
-    public static final String ACTION_EXECUTION_STYLE_ONETIME= "one_time";
+    public static final String ACTION_EXECUTION_STYLE_REPEATED = "repeated";
+    public static final String ACTION_EXECUTION_STYLE_ONETIME = "one_time";
 
 
     //within control
-	public static final String ACTION_CONTROL_TYPE_START_STRING  = "Start";
-	public static final String ACTION_CONTROL_TYPE_STOP_STRING = "Stop";
-	public static final String ACTION_CONTROL_TYPE_PAUSE_STRING = "Pause";
-	public static final String ACTION_CONTROL_TYPE_CANCEL_STRING = "Cancel";
-	public static final String ACTION_CONTROL_TYPE_LAUNCH_STRING= "Launch";
-	public static final String ACTION_CONTROL_TYPE_RESUME_STRING= "Resume";
-	
-	public static final int ACTION_CONTROL_TYPE_START  = 1;
-	public static final int ACTION_CONTROL_TYPE_STOP = 2;
-	public static final int ACTION_CONTROL_TYPE_PAUSE = 3;
-	public static final int ACTION_CONTROL_TYPE_CANCEL = 4;
-	public static final int ACTION_CONTROL_TYPE_RESUME = 5;
+    public static final String ACTION_CONTROL_TYPE_START_STRING = "Start";
+    public static final String ACTION_CONTROL_TYPE_STOP_STRING = "Stop";
+    public static final String ACTION_CONTROL_TYPE_PAUSE_STRING = "Pause";
+    public static final String ACTION_CONTROL_TYPE_CANCEL_STRING = "Cancel";
+    public static final String ACTION_CONTROL_TYPE_LAUNCH_STRING = "Launch";
+    public static final String ACTION_CONTROL_TYPE_RESUME_STRING = "Resume";
 
-    /** ProbeObject Class**/
-    public static final String ACTION_TRIGGER_CLASS_EVENT= "Situation";
-    public static final String ACTION_TRIGGER_CLASS_ACTION_STOP= "Action.Stop";
-    public static final String ACTION_TRIGGER_CLASS_ACTION_START= "Action.Start";
-    public static final String ACTION_TRIGGER_CLASS_ACTION_PAUSE= "Action.Pause";
-    public static final String ACTION_TRIGGER_CLASS_ACTION_RESUME= "Action.Resume";
-    public static final String ACTION_TRIGGER_CLASS_ACTION_CANCEL= "Action.Cancel";
-    public static final String ACTION_TRIGGER_CLASS_ACTIONCONTROL= "ActionControl";
+    public static final int ACTION_CONTROL_TYPE_START = 1;
+    public static final int ACTION_CONTROL_TYPE_STOP = 2;
+    public static final int ACTION_CONTROL_TYPE_PAUSE = 3;
+    public static final int ACTION_CONTROL_TYPE_CANCEL = 4;
+    public static final int ACTION_CONTROL_TYPE_RESUME = 5;
 
+    /**
+     * ProbeObject Class
+     **/
+    public static final String ACTION_TRIGGER_CLASS_EVENT = "Situation";
+    public static final String ACTION_TRIGGER_CLASS_ACTION_STOP = "Action.Stop";
+    public static final String ACTION_TRIGGER_CLASS_ACTION_START = "Action.Start";
+    public static final String ACTION_TRIGGER_CLASS_ACTION_PAUSE = "Action.Pause";
+    public static final String ACTION_TRIGGER_CLASS_ACTION_RESUME = "Action.Resume";
+    public static final String ACTION_TRIGGER_CLASS_ACTION_CANCEL = "Action.Cancel";
+    public static final String ACTION_TRIGGER_CLASS_ACTIONCONTROL = "ActionControl";
 
 
     //for running the runningAction thread
     private static ScheduledExecutorService mRunningActionExecutor;
 
-	public ActionManager(Context context, ContextManager contextManager){
-		
-		mContext = context;
-		mActionList = new ArrayList<Action> ();
-        mContextManager = contextManager;
-		mActionControlList = new ArrayList<ActionControl>();
-		mRunningActionList = new ArrayList<Action> ();
-		mLocalDBHelper = new LocalDBHelper(mContext, Constants.TEST_DATABASE_NAME);
-		mDataHandler = new DataHandler (mContext);
-        mRunningActionExecutor = Executors.newScheduledThreadPool(5);
-		//registerActions();
-	}
-	
-	
-	
-	/**
-	 * Given the action id, find out the action instance and execute it by calling Execute (action)
-	 * @param id
-	 */
-	public static void startAction(int id){
-		
-		Log.d(LOG_TAG, " [in startAction] the action id is  " + id +" find actions...");
-		
-		Action action =getAction(id);
-		
-		startAction(action);
-		
-	}
+    public ActionManager(Context context, ContextManager contextManager) {
 
+        mContext = context;
+        mActionList = new ArrayList<Action>();
+        mContextManager = contextManager;
+        mActionControlList = new ArrayList<ActionControl>();
+        mRunningActionList = new ArrayList<Action>();
+        mLocalDBHelper = new LocalDBHelper(mContext, Constants.TEST_DATABASE_NAME);
+        mDataHandler = new DataHandler(mContext);
+        mRunningActionExecutor = Executors.newScheduledThreadPool(5);
+        //registerActions();
+    }
+
+
+    /**
+     * Given the action id, find out the action instance and execute it by calling Execute (action)
+     *
+     * @param id
+     */
+    public static void startAction(int id) {
+
+        Log.d(LOG_TAG, " [in startAction] the action id is  " + id + " find actions...");
+
+        Action action = getAction(id);
+
+        startAction(action);
+
+    }
 
 
     /**
@@ -156,17 +166,17 @@ public class ActionManager {
         Runnable recordContextRunnable = new Runnable() {
             @Override
             public void run() {
-                try{
+                try {
 
                     Log.d(LOG_TAG, "[startRunningActionThread]running in  recordContextRunnable  ");
 
-                    for (int i=0; i < ActionManager.getRunningActionList().size(); i++){
+                    for (int i = 0; i < ActionManager.getRunningActionList().size(); i++) {
 
                         Action action = ActionManager.getRunningActionList().get(i);
 
                         Log.d(LOG_TAG, "startRunningActionThread running continuous actions: pause " + action.getId() + action.isPaused());
                         //if the action is not paused, run the action
-                        if (!action.isPaused()){
+                        if (!action.isPaused()) {
 
                             Log.d(LOG_TAG, "startRunningActionThread running continuous and non-paused actions" + action.getId());
                             ActionManager.executeAction(action);
@@ -174,7 +184,7 @@ public class ActionManager {
                     }
 
 
-                }catch (IllegalArgumentException e){
+                } catch (IllegalArgumentException e) {
                     //Log.e(LOG_TAG, "Could not unregister receiver " + e.getMessage()+"");
                 }
             }
@@ -187,23 +197,24 @@ public class ActionManager {
 
 
     }
-	
-	
-	/***
-	 * Get the input action and start it 
-	 * @param action
-	 */
-	public static void startAction (Action action) {
 
-        Log.d(LOG_TAG, "in startAction, going to execute action " + action.getName() + " " + action.getId() +  " continuous: " + action.isContinuous());
 
-		//if found the action, execute the action
-		if (action!=null){
+    /***
+     * Get the input action and start it
+     *
+     * @param action
+     */
+    public static void startAction(Action action) {
 
-			/** 1. First check whether the action is continuous. If the action is continuous, instantiate the action and put the action into the runninActionList.
-			//if the action is not continuous, then directly execute it. Usually a continuous action is either a monitoring action or a saving record action. 
-			**/
-             if (action.isContinuous()){
+        Log.d(LOG_TAG, "in startAction, going to execute action " + action.getName() + " " + action.getId() + " continuous: " + action.isContinuous());
+
+        //if found the action, execute the action
+        if (action != null) {
+
+            /** 1. First check whether the action is continuous. If the action is continuous, instantiate the action and put the action into the runninActionList.
+             //if the action is not continuous, then directly execute it. Usually a continuous action is either a monitoring action or a saving record action.
+             **/
+            if (action.isContinuous()) {
 
                 /**2. for savingRecord action or monitoring event, we first need to check whether the ContextSource has been
                  * enabled in the correspoonding ContextStateManager. If not, we will need to enable it. A ContextSource is said to be
@@ -216,31 +227,29 @@ public class ActionManager {
                     //TODO: update ContextSource in the ContextSourceManager
 
 
-
-
                 }
 
 
                 /** 3. Then according to whetehr it's monitoring or saving record we do different things**/
-				//if the action is to monitor events
-				if (action.getType().equals(ActionManager.ACTION_TYPE_MONITORING_SITUATION)){
-			
-					//instantiate a monitoring action first, and then put it into the runningAction list
-					MonitoringSituationAction monitoringAction = (MonitoringSituationAction) action;
-					addRunningAction(monitoringAction);
+                //if the action is to monitor events
+                if (action.getType().equals(ActionManager.ACTION_TYPE_MONITORING_SITUATION)) {
+
+                    //instantiate a monitoring action first, and then put it into the runningAction list
+                    MonitoringSituationAction monitoringAction = (MonitoringSituationAction) action;
+                    addRunningAction(monitoringAction);
 
                     //log
-                    LogManager.log( LogManager.LOG_TYPE_SYSTEM_LOG,
+                    LogManager.log(LogManager.LOG_TYPE_SYSTEM_LOG,
                             LogManager.LOG_TAG_ACTION_START,
-                            "Start Action:\t" + monitoringAction.getType() + "\t" + monitoringAction.getId() + "\t" +monitoringAction.getName());
+                            "Start Action:\t" + monitoringAction.getType() + "\t" + monitoringAction.getId() + "\t" + monitoringAction.getName());
                 }
-				
-				
-				//if the action is to recording records  
-				else if (action.getType().equals(ActionManager.ACTION_TYPE_SAVING_RECORD)){
+
+
+                //if the action is to recording records
+                else if (action.getType().equals(ActionManager.ACTION_TYPE_SAVING_RECORD)) {
 
                     /**1. create a SavingRecordAction **/
-					SavingRecordAction savingRecordAction = (SavingRecordAction) action;
+                    SavingRecordAction savingRecordAction = (SavingRecordAction) action;
 
                     /**2.  get associated logging tasks**/
                     ArrayList<Integer> loggingTaskIds = savingRecordAction.getLoggingTasks();
@@ -248,20 +257,20 @@ public class ActionManager {
                     /**3. call ConteLtManagT to assign logging task to appropropriates ContextSTateManager**/
                     mContextManager.executeLoggingTasksRequestedByAction(loggingTaskIds);
 
-					
-					/** when start a new recorind action, we need to start a new session, and add the session id io the action
-					//so that Probe knows where to store records associatd withhis action.
-					//So we need to first know how many sessions have been stored in the database
+
+                    /** when start a new recorind action, we need to start a new session, and add the session id io the action
+                     //so that Probe knows where to store records associatd withhis action.
+                     //So we need to first know how many sessions have been stored in the database
                      **/
-					int sessionId  = (int) mLocalDBHelper.querySessionCount()+1;
+                    int sessionId = (int) mLocalDBHelper.querySessionCount() + 1;
 
                     Log.d(LOG_TAG, "[test currunningSession ]start saving record action with session " + sessionId);
 
                     //save the session info to the saveRecord action
-					savingRecordAction.setSessionId(sessionId);
-					
-					//create a session and insert the session into the session table
-					Session session = new Session(ContextManager.getCurrentTimeInMillis(), savingRecordAction.getTaskId());
+                    savingRecordAction.setSessionId(sessionId);
+
+                    //create a session and insert the session into the session table
+                    Session session = new Session(ContextManager.getCurrentTimeInMillis(), savingRecordAction.getTaskId());
 
                     //a session is associate with a list of ContextSource names, and put it in the metadata.
                     session.setContextSourceTypes(ContextManager.getSourceNamesFromLoggingTasks(savingRecordAction.getLoggingTasks()));
@@ -271,77 +280,77 @@ public class ActionManager {
                     RecordingAndAnnotateManager.addCurRecordingSession(session);
 
                     //add the continuous recoridng action into the runningaction
-					addRunningAction(savingRecordAction);
+                    addRunningAction(savingRecordAction);
 
                     //log
-                    LogManager.log( LogManager.LOG_TYPE_SYSTEM_LOG,
+                    LogManager.log(LogManager.LOG_TYPE_SYSTEM_LOG,
                             LogManager.LOG_TAG_ACTION_START,
-                            "Start Action:\t" + savingRecordAction.getType() + "\t" + savingRecordAction.getId()  + "\t" +savingRecordAction.getName());
+                            "Start Action:\t" + savingRecordAction.getType() + "\t" + savingRecordAction.getId() + "\t" + savingRecordAction.getName());
 
-					
-				}
-		
-			}
-			//directly execute it 
-			else {
-				
-				executeAction(action);
+
+                }
+
+            }
+            //directly execute it
+            else {
+
+                executeAction(action);
 
                 //log
-                LogManager.log( LogManager.LOG_TYPE_SYSTEM_LOG,
+                LogManager.log(LogManager.LOG_TYPE_SYSTEM_LOG,
                         LogManager.LOG_TAG_ACTION_START,
-                        "Start Action:\t" + action.getType() + "\t" + action.getId() + "\t" +action.getName());
-				
-			}
-			
-			
-		}
-		
-	}
-	
-	
-	
-	/**
-	 * actually execute action  
-	 * @param action
-	 */
-	public static void executeAction (Action action) {
-		
-		//if found the action, execute the action
-		if (action!=null){
-			
-			//if the action is not currently paused, then we execute it.
-			if (!action.isPaused()){
-				
-				Log.d(LOG_TAG, " [ActionManager Execute] going to execute the action.., the type of the action " + action.getId() + " is " + action.getType());
-				
-				/***decide action based on the action type**/
+                        "Start Action:\t" + action.getType() + "\t" + action.getId() + "\t" + action.getName());
+
+            }
+
+
+        }
+
+    }
+
+
+    /**
+     * actually execute action
+     *
+     * @param action
+     */
+    public static void executeAction(Action action) {
+
+        //if found the action, execute the action
+        if (action != null) {
+
+            //if the action is not currently paused, then we execute it.
+            if (!action.isPaused()) {
+
+                Log.d(LOG_TAG, " [ActionManager Execute] going to execute the action.., the type of the action " + action.getId() + " is " + action.getType());
+
+                /***decide action based on the action type**/
 
                 action.addExecutionCount();
 
-				//if the action is questionnaire..
-				if (action.getType().equals(ActionManager.ACTION_TYPE_QUESTIONNAIRE)){
-					
-					GeneratingQuestionnaireAction a  = (GeneratingQuestionnaireAction) action; 
-					
-					/**
-                     * first create questionnaire object, then create notification. The reason is that we need to
-					record the generated time of the questionnaire.
-					The time when a user clicks on the notificaiton is defined as "attendedTime", different from the
-					"generatedTime"
-					**/
+                //if the action is questionnaire..
+                if (action.getType().equals(ActionManager.ACTION_TYPE_QUESTIONNAIRE)) {
 
-					/** 1. first we insert a questionnaire in the databse with a generated time, and get the id of the questionnaire**/
-					
-					
-					int study_id = action.getStudyId();
+                    GeneratingQuestionnaireAction a = (GeneratingQuestionnaireAction) action;
+
+                    /**
+                     * first create questionnaire object, then create notification. The reason is that we need to
+                     record the generated time of the questionnaire.
+                     The time when a user clicks on the notificaiton is defined as "attendedTime", different from the
+                     "generatedTime"
+                     **/
+
+                    /** 1. first we insert a questionnaire in the databse with a generated time, and get the id of the questionnaire**/
+
+
+                    int study_id = action.getStudyId();
                     //know which template the questionnaire will use
-					int questionnaireTemplateId = a.getQuestionnaireId();
+                    int questionnaireTemplateId = a.getQuestionnaireId();
                     //log the time when the questionnaire is generated
-					long generatedTime = getCurrentTimeInMillis();
-					
-					//the questionnaire needs to remember which template it uses, which study it belongs, and generated time
-					Questionnaire questionnaire = new Questionnaire (generatedTime, study_id, questionnaireTemplateId);
+                    long generatedTime = getCurrentTimeInMillis();
+
+                    //the questionnaire needs to remember which template it uses, which study it belongs, and generated time
+                    Questionnaire questionnaire = new Questionnaire(generatedTime, study_id, questionnaireTemplateId);
 
                     //we retrieve the number of the questionnaire that have been generated in the app
                     int row = (int) mLocalDBHelper.insertQuestionnaireTable(questionnaire, DatabaseNameManager.QUESTIONNAIRE_TABLE_NAME);
@@ -354,10 +363,10 @@ public class ActionManager {
 
 
                     //the action has a notification
-					if (action.hasNotification()){
+                    if (action.hasNotification()) {
 
                         //exectute all notifications that need to be executed
-                        for (int i=0; i<action.getNotifications().size(); i++){
+                        for (int i = 0; i < action.getNotifications().size(); i++) {
 
                             Notification noti = action.getNotifications().get(i);
 
@@ -368,24 +377,21 @@ public class ActionManager {
                                     questionnaire.getId()
                             );
                         }
-					}
+                    }
 
 
-
-				}
-
-
+                }
 
 
                 //if the aciton is an email questionnaire
-                else if (action.getType().equals(ActionManager.ACTION_TYPE_EMAIL_QUESTIONNAIRE)){
+                else if (action.getType().equals(ActionManager.ACTION_TYPE_EMAIL_QUESTIONNAIRE)) {
 
-                    GenerateEmailQuestionnaireAction generateEmailQuestionnaireAction  = (GenerateEmailQuestionnaireAction) action;
+                    GenerateEmailQuestionnaireAction generateEmailQuestionnaireAction = (GenerateEmailQuestionnaireAction) action;
 
                     //get the template of the questionnaire
                     int questionnaireTemplateId = generateEmailQuestionnaireAction.getQuestionnaireId();
 
-                    Log.d(LOG_TAG,"[execute EmailQuestionnaire Action]  the email questionnaire id is " + questionnaireTemplateId);
+                    Log.d(LOG_TAG, "[execute EmailQuestionnaire Action]  the email questionnaire id is " + questionnaireTemplateId);
 
 
                     //create an intent for starting the email composing activity
@@ -396,11 +402,11 @@ public class ActionManager {
                         Intent intent = generateEmailQuestionnaireIntent(questionnaireTemplateId);
 
                         //if the action has a notification, we send the notification to start composing
-                        if (action.hasNotification()){
+                        if (action.hasNotification()) {
 
                             // Log.d(LOG_TAG,"[execute EmailQuestionnaire Action] the user starts the daily journal from notification");
                             //exectute all notifications that need to be executed
-                            for (int i=0; i<action.getNotifications().size(); i++){
+                            for (int i = 0; i < action.getNotifications().size(); i++) {
 
                                 Notification noti = action.getNotifications().get(i);
 
@@ -425,25 +431,25 @@ public class ActionManager {
                     else if (QuestionnaireManager.QUESTIONNAIRE_SENT_FROM_SOURCE.equals(QuestionnaireManager.QUESTIONNAIRE_FROM_SERVER)) {
 
                         EmailQuestionnaireTemplate template = (EmailQuestionnaireTemplate) QuestionnaireManager.getQuestionnaireTemplate(questionnaireTemplateId);
-                        JSONArray trips  = new JSONArray();
-                        String emailBody="";
+                        JSONArray trips = new JSONArray();
+                        String emailBody = "";
                         //we get the dynamic content
-                        if (template!=null) {
+                        if (template != null) {
                             //Log.d(LOG_TAG, "[getEmailQuestionnaireContent] we use the template " + questionnaireTemplateId + " the title is " + title);
                             ArrayList<Question> questions = template.getQuestions();
 
-                            for (int i=0; i<questions.size(); i++) {
+                            for (int i = 0; i < questions.size(); i++) {
 
                                 Question qu = questions.get(i);
 
                                 String questionText = qu.getText();
 
 
-                                if (qu.getDataJSON()!=null){
+                                if (qu.getDataJSON() != null) {
 
-                                   // emailBody += questionText+"\n\n<br /><br />";
+                                    // emailBody += questionText+"\n\n<br /><br />";
                                     trips = QuestionnaireManager.createDataJSONContent(qu.getDataJSON());
-                                 //   emailBody += dataStr + "\n\n\n<br />";
+                                    //   emailBody += dataStr + "\n\n\n<br />";
 
                                 }
 
@@ -454,12 +460,12 @@ public class ActionManager {
 
                         }
 
-                        Log.d(LOG_TAG,"[execute EmailQuestionnaire Action] emailBody " + trips);
-                        Log.d(LOG_TAG,"[execute EmailQuestionnaire Action] deviceId " + Constants.DEVICE_ID);
-                        Log.d(LOG_TAG,"[execute EmailQuestionnaire Action] Study condition " + Constants.CURRENT_STUDY_CONDITION);
+                        Log.d(LOG_TAG, "[execute EmailQuestionnaire Action] emailBody " + trips);
+                        Log.d(LOG_TAG, "[execute EmailQuestionnaire Action] deviceId " + Constants.DEVICE_ID);
+                        Log.d(LOG_TAG, "[execute EmailQuestionnaire Action] Study condition " + Constants.CURRENT_STUDY_CONDITION);
                         //we need to tell the server which condition it is in, email subject, email content. device id
                         String emailSubject = QuestionnaireManager.getEmailQuestionnaireSubject(questionnaireTemplateId);
-                        Log.d(LOG_TAG,"[execute EmailQuestionnaire Action] emailSubject " + emailSubject);
+                        Log.d(LOG_TAG, "[execute EmailQuestionnaire Action] emailSubject " + emailSubject);
 
 
                         JSONObject requestEmailJSON = new JSONObject();
@@ -479,51 +485,49 @@ public class ActionManager {
                     }
 
 
+                }
 
+
+                /** if the action is to monitor events, ContextMAnager will inform ContextStateManagers
+                 * of relevance to convert raw data into states. **/
+                else if (action.getType().equals(ActionManager.ACTION_TYPE_MONITORING_SITUATION)) {
+
+                    MonitoringSituationAction a = (MonitoringSituationAction) action;
+
+                    ArrayList<Integer> ids = a.getMonitoredCircumstanceIds();
+
+                    //Log.d(LOG_TAG, " [ActionManager Execute] Ready to execute monitoring action" + a.getId() + ", which monitor events  " + evt_ids.toString());
+
+                    //TODO: ContextManager monitors the states of ContextStateManagers.
 
                 }
 
 
-				/** if the action is to monitor events, ContextMAnager will inform ContextStateManagers
-                 * of relevance to convert raw data into states. **/
-				else if (action.getType().equals(ActionManager.ACTION_TYPE_MONITORING_SITUATION)){
-			
-					MonitoringSituationAction a = (MonitoringSituationAction) action;
-					
-					ArrayList<Integer> ids = a.getMonitoredCircumstanceIds();
-					
-					//Log.d(LOG_TAG, " [ActionManager Execute] Ready to execute monitoring action" + a.getId() + ", which monitor events  " + evt_ids.toString());
+                /** if the action is to recording records, we save records in the public record pool in the local SQLLite database  **/
+                else if (action.getType().equals(ActionManager.ACTION_TYPE_SAVING_RECORD)) {
 
-                    //TODO: ContextManager monitors the states of ContextStateManagers.
-					
-				}
-				
-				
-				/** if the action is to recording records, we save records in the public record pool in the local SQLLite database  **/
-				else if (action.getType().equals(ActionManager.ACTION_TYPE_SAVING_RECORD)){
+                    Log.d(LOG_TAG, "execute saving record action, this is the " + action.getExecutionCount() + "th time of this action");
 
-				    Log.d(LOG_TAG, "execute saving record action, this is the " + action.getExecutionCount() + "th time of this action");
-
-					SavingRecordAction savingRecordAction = (SavingRecordAction) action;
+                    SavingRecordAction savingRecordAction = (SavingRecordAction) action;
 
                     Log.d(LOG_TAG, "execute saving record action to session " + savingRecordAction.getSessionId());
 
-                     //TODO: get a list of record to save and put it into the recording list.
+                    //TODO: get a list of record to save and put it into the recording list.
 
-                     /** we call ContextManager to move data records from local record pool to publid record pool
-                      * by passing which logging task the action is associated with
-                      * ContextMAnageer will know which ContextStateMAnager will have data in localRecordPool
-                      * **/
+                    /** we call ContextManager to move data records from local record pool to publid record pool
+                     * by passing which logging task the action is associated with
+                     * ContextMAnageer will know which ContextStateMAnager will have data in localRecordPool
+                     * **/
                     ContextManager.copyRecordFromLocalRecordPoolToPublicRecordPool(savingRecordAction.getLoggingTasks());
 
                     //save data from publie record pool to database
-					mDataHandler.SaveRecordsToLocalDatabase(ContextManager.getPublicRecordPool(), savingRecordAction.getSessionId() );
+                    mDataHandler.SaveRecordsToLocalDatabase(ContextManager.getPublicRecordPool(), savingRecordAction.getSessionId());
 
                     //check if the recording allows users to add annotation in process. If yes, we add an
                     //"ongoing notification" to indicate that there is an ongoing recording
 
 
-                    if (savingRecordAction.getExecutionCount()<2 && savingRecordAction.isAllowAnnotationInProcess()){
+                    if (savingRecordAction.getExecutionCount() < 2 && savingRecordAction.isAllowAnnotationInProcess()) {
 
                         NotificationHelper.createAnnotateNotification(
                                 savingRecordAction.getId(),
@@ -538,28 +542,25 @@ public class ActionManager {
 
                     }
 
-					
-				}
 
-
-                else if (action.getType().equals(ActionManager.ACTION_TYPE_ANNOTATE)) {
+                } else if (action.getType().equals(ActionManager.ACTION_TYPE_ANNOTATE)) {
 
 
                     AnnotateAction annotateAction = (AnnotateAction) action;
                     String reviewMode = annotateAction.getReviewRecordingMode();
 
 
-                    if (annotateAction.getMode().equals(RecordingAndAnnotateManager.ANNOTATE_MODE_MANUAL)){
+                    if (annotateAction.getMode().equals(RecordingAndAnnotateManager.ANNOTATE_MODE_MANUAL)) {
                         //if we will review a list of recording..
 
 
                         if (annotateAction.hasNotification()) {
-                            for (int i=0; i<annotateAction.getNotifications().size(); i++){
+                            for (int i = 0; i < annotateAction.getNotifications().size(); i++) {
 
                                 Notification noti = annotateAction.getNotifications().get(i);
 
                                 //see what notification needs to be fired when the action is started
-                                if (noti.getLaunch().equals(NotificationHelper.NOTIFICATION_LAUNCH_WHEN_START_ACTION) ){
+                                if (noti.getLaunch().equals(NotificationHelper.NOTIFICATION_LAUNCH_WHEN_START_ACTION)) {
 
                                     NotificationHelper.createShowRecordingListNotification(
                                             reviewMode,
@@ -573,7 +574,7 @@ public class ActionManager {
                         }
 
 
-                      //  RecordingAndAnnotateManager.startListRecordingActivity(reviewMode);
+                        //  RecordingAndAnnotateManager.startListRecordingActivity(reviewMode);
                     }
 
 
@@ -587,32 +588,31 @@ public class ActionManager {
 
 
                 /** Annotate Action ***/
-                else if (action.getType().equals(ActionManager.ACTION_TYPE_ANNOTATE_AND_RECORD)){
+                else if (action.getType().equals(ActionManager.ACTION_TYPE_ANNOTATE_AND_RECORD)) {
 
 
-                    AnnotateRecordingAction annotateRecordingAction= (AnnotateRecordingAction) action;
+                    AnnotateRecordingAction annotateRecordingAction = (AnnotateRecordingAction) action;
                     int sessionId = 0;
 
-                    Log.d(LOG_TAG, " [ActionManager Execute] the annotateRecording action is "  + action.getName() + " we need the recording to start by user ? "
+                    Log.d(LOG_TAG, " [ActionManager Execute] the annotateRecording action is " + action.getName() + " we need the recording to start by user ? "
                             + annotateRecordingAction.isRecordingStartByUser());
 
                     //check the recording type to determine whether we need to start a new recording
 
-                    if (annotateRecordingAction.getRecordingType().equals(RecordingAndAnnotateManager.ANNOTATE_RECORDING_NEW)){
+                    if (annotateRecordingAction.getRecordingType().equals(RecordingAndAnnotateManager.ANNOTATE_RECORDING_NEW)) {
 
                         //1. if the annotation is for a new recording, then we start a new SavingRecordAction. but we need to check whether the recording
                         //should be started automatically or after the user clicks on notification
 
                         //the system automatically starts a new session, regardless of whether there's a notification
-                        if (!annotateRecordingAction.isRecordingStartByUser()){
+                        if (!annotateRecordingAction.isRecordingStartByUser()) {
 
-                           sessionId = createSavingRecordAction(annotateRecordingAction.getId());
+                            sessionId = createSavingRecordAction(annotateRecordingAction.getId());
 
                         }
 
 
-                    }
-                    else if (annotateRecordingAction.getRecordingType().equals(RecordingAndAnnotateManager.ANNOTATE_RECORDING_BACKGROUND)){
+                    } else if (annotateRecordingAction.getRecordingType().equals(RecordingAndAnnotateManager.ANNOTATE_RECORDING_BACKGROUND)) {
 
                         //if the annotation is for the background recording, then the session number is 1, and we don't need to start a new recording
                         sessionId = (Constants.BACKGOUND_RECORDING_SESSION_ID);
@@ -625,22 +625,22 @@ public class ActionManager {
 
                     /** check annotate mode, if the mode is manual, we need to lead the user to the annotate activity through notification  **/
 
-                    if (annotateRecordingAction.getMode().equals(RecordingAndAnnotateManager.ANNOTATE_MODE_MANUAL)){
+                    if (annotateRecordingAction.getMode().equals(RecordingAndAnnotateManager.ANNOTATE_MODE_MANUAL)) {
 
                         //if the mode is manual, bring users to the annotateActivity. The annotation created in the annotateActivity by default is
                         //applied to the entire session.
                         //2. then we start the annotateActivity to let users manually annotate recording
 
                         //the action has a notification
-                        if (annotateRecordingAction.hasNotification()){
+                        if (annotateRecordingAction.hasNotification()) {
 
                             //exectute all notifications that need to be executed
-                            for (int i=0; i<action.getNotifications().size(); i++){
+                            for (int i = 0; i < action.getNotifications().size(); i++) {
 
                                 Notification noti = action.getNotifications().get(i);
 
                                 //see what notification needs to be fired when the action is started
-                                if (noti.getLaunch().equals(NotificationHelper.NOTIFICATION_LAUNCH_WHEN_START_ACTION) ){
+                                if (noti.getLaunch().equals(NotificationHelper.NOTIFICATION_LAUNCH_WHEN_START_ACTION)) {
 
                                     NotificationHelper.createAnnotateNotification(
                                             action.getId(),
@@ -660,13 +660,13 @@ public class ActionManager {
                         else {
 
                             //directly bring users to the annotating process
-                            Log.d(LOG_TAG, " start by useR? " +annotateRecordingAction.isRecordingStartByUser());
+                            Log.d(LOG_TAG, " start by useR? " + annotateRecordingAction.isRecordingStartByUser());
                             startAnnotateActivity(sessionId, annotateRecordingAction.isRecordingStartByUser(), annotateRecordingAction.getId(), annotateRecordingAction.getReviewRecordingMode());
 
                         }
 
 
-                    }else if (annotateRecordingAction.getMode().equals(RecordingAndAnnotateManager.ANNOTATE_MODE_AUTO)) {
+                    } else if (annotateRecordingAction.getMode().equals(RecordingAndAnnotateManager.ANNOTATE_MODE_AUTO)) {
 
                         //TODO: automatically add annotations to the recording. We cna do this by guessing the lable of the activity
 
@@ -674,38 +674,37 @@ public class ActionManager {
                     }
 
 
-
-
                 }
 
                 //not record continuous action
                 if (!action.isContinuous())
-				//log the action
-				LogManager.log(LogManager.LOG_TYPE_SYSTEM_LOG,
-                        LogManager.LOG_TAG_ACTION_EXECUTION,
-                        "Execute Action:\t" + action.getId() + "\t" +action.getName()
-                );
-				
-			}//if not paused
+                    //log the action
+                    LogManager.log(LogManager.LOG_TYPE_SYSTEM_LOG,
+                            LogManager.LOG_TAG_ACTION_EXECUTION,
+                            "Execute Action:\t" + action.getId() + "\t" + action.getName()
+                    );
 
-		}// (if action!=null)
+            }//if not paused
+
+        }// (if action!=null)
         else {
 
             Log.e(LOG_TAG, "the action is null");
 
         }
-		
-	}
+
+    }
 
 
     /**
      * Create savingRecording action for an annotateRecordingAction
+     *
      * @param annotateRecordingActionId
      * @return
      */
     public static int createSavingRecordAction(int annotateRecordingActionId) {
 
-        int sessionId=0;
+        int sessionId = 0;
 
         //when clicking on the recording action, execute the saveRecordAction
         SavingRecordAction savingRecordAction = new SavingRecordAction(
@@ -729,7 +728,7 @@ public class ActionManager {
         annotateRecordingAction.setAssociatedSavingRecordAction(savingRecordAction);
 
         //get the session number and assign it to the session Id
-        sessionId  = (int) mLocalDBHelper.querySessionCount() + 1;
+        sessionId = (int) mLocalDBHelper.querySessionCount() + 1;
         savingRecordAction.setSessionId(sessionId);
 
 
@@ -746,31 +745,30 @@ public class ActionManager {
 
 
         //log the stop Action
-        LogManager.log( LogManager.LOG_TYPE_SYSTEM_LOG,
+        LogManager.log(LogManager.LOG_TYPE_SYSTEM_LOG,
                 LogManager.LOG_TAG_ACTION_GENERATION,
-                "Generate Action:"  + "\t"  + savingRecordAction.getType()  + "\t"  + savingRecordAction.getId()  + "\t"  +savingRecordAction.getName());
+                "Generate Action:" + "\t" + savingRecordAction.getType() + "\t" + savingRecordAction.getId() + "\t" + savingRecordAction.getName());
 
         return sessionId;
     }
-	
-	/**
-	 * 
-	 * @param action
-	 */
-	public static void stopAction (Action action) {
 
-        if (action!=null) {
+    /**
+     * @param action
+     */
+    public static void stopAction(Action action) {
 
-            Log.d(LOG_TAG, "[stopAction] going to stop Action " + action.getId() + " " + action.getName() + " " +action.getType() + " action is continuous? " + action.isContinuous());
+        if (action != null) {
+
+            Log.d(LOG_TAG, "[stopAction] going to stop Action " + action.getId() + " " + action.getName() + " " + action.getType() + " action is continuous? " + action.isContinuous());
 
             //check if the action is a continuous action. If the action is continuous, just remove it from the running action list
-            if (action.isContinuous()){
-                Log.d(LOG_TAG, "[stopAction] going to remove Action " + action.getId() + " " + action.getName() + " " +action.getType() +" from the running action");
+            if (action.isContinuous()) {
+                Log.d(LOG_TAG, "[stopAction] going to remove Action " + action.getId() + " " + action.getName() + " " + action.getType() + " from the running action");
                 getRunningActionList().remove(action);
             }
 
             //if the action is saving record, we need to add the endtime of the recording
-            if (action.getType().equals(ActionManager.ACTION_TYPE_SAVING_RECORD)){
+            if (action.getType().equals(ActionManager.ACTION_TYPE_SAVING_RECORD)) {
 
                 SavingRecordAction savingRecordAction = (SavingRecordAction) action;
 
@@ -780,16 +778,16 @@ public class ActionManager {
                 //get associated loggingtask ids
                 ArrayList<Integer> loggingTaskIds = savingRecordAction.getLoggingTasks();
 
-                Log.d(LOG_TAG,"[stopAction] examineTransportation the recording session " + sessionId + " has to be stoped");
+                Log.d(LOG_TAG, "[stopAction] examineTransportation the recording session " + sessionId + " has to be stoped");
                 Session session = RecordingAndAnnotateManager.getCurRecordingSession(sessionId);
 
                 //the session does exist (sometimes we stop the savingRecord that has never existed)
-                if (session!=null) {
+                if (session != null) {
 
                     //add EndTime to the session
                     long endTime = ContextManager.getCurrentTimeInMillis();
                     mLocalDBHelper.updateSessionEndTime(savingRecordAction.getSessionId(), DatabaseNameManager.SESSION_TABLE_NAME, endTime);
-                    Log.d(LOG_TAG,"[stopAction] examineTransportation stop saving record, the " + session.getId() + " endtime is " + ScheduleAndSampleManager.getTimeString(endTime));
+                    Log.d(LOG_TAG, "[stopAction] examineTransportation stop saving record, the " + session.getId() + " endtime is " + ScheduleAndSampleManager.getTimeString(endTime));
                     //remove the session from the curRuningSession
                     RecordingAndAnnotateManager.getCurRecordingSessions().remove(session);
                     NotificationHelper.cancelNotification(NotificationHelper.NOTIFICATION_ID_ONGOING_RECORDING_ANNOTATE_IN_PROCESS);
@@ -801,9 +799,7 @@ public class ActionManager {
                 mContextManager.stopLoggingTasksRequestedByAction(loggingTaskIds);
 
 
-            }
-
-            else if (action.getType().equals(ActionManager.ACTION_TYPE_ANNOTATE)) {
+            } else if (action.getType().equals(ActionManager.ACTION_TYPE_ANNOTATE)) {
 
 
             }
@@ -819,16 +815,16 @@ public class ActionManager {
 
                 //if the annotateRecordingAction has created an associated savingRecordingAction..
                 //we need to stop the savingrecord action and see if there's a notification we need to generate
-                if (savingRecordAction!=null) {
+                if (savingRecordAction != null) {
                     Log.d(LOG_TAG, "[stopAction]stop the action of saving session  " + savingRecordAction.getSessionId());
                     stopAction(savingRecordAction);
 
 
                     /**check if we need to generate annotate notification when we stop it */
-                    if (annotateRecordingAction.hasNotification()){
+                    if (annotateRecordingAction.hasNotification()) {
 
                         //exectute all notifications that need to be executed
-                        for (int i=0; i<annotateRecordingAction.getNotifications().size(); i++){
+                        for (int i = 0; i < annotateRecordingAction.getNotifications().size(); i++) {
 
                             Notification noti = annotateRecordingAction.getNotifications().get(i);
 
@@ -864,28 +860,26 @@ public class ActionManager {
             }
 
             //log the stop Action
-            LogManager.log( LogManager.LOG_TYPE_SYSTEM_LOG,
+            LogManager.log(LogManager.LOG_TYPE_SYSTEM_LOG,
                     LogManager.LOG_TAG_ACTION_EXECUTION,
-                    "Stop Action:" + "\t"  + action.getType() + "\t"  + action.getId() + "\t"  +action.getName());
+                    "Stop Action:" + "\t" + action.getType() + "\t" + action.getId() + "\t" + action.getName());
 
-        }
-        else {
+        } else {
 
             Log.e(LOG_TAG, "the action is null");
 
         }
 
 
-	}
-	
-	
-	/**
-	 * 
-	 * @param action
-	 */
-	public static void pauseAction (Action action) {
+    }
 
-        if (action!=null) {
+
+    /**
+     * @param action
+     */
+    public static void pauseAction(Action action) {
+
+        if (action != null) {
 
             Log.d(LOG_TAG, " [pauseAction] [test pause resume] Going to pause the action " + action.getId());
 
@@ -895,39 +889,37 @@ public class ActionManager {
 
             //if the action is for saving records, we also need to mark the curRunningSession paused so that
             //the recordPool will not wait for this paused session.
-            if (action.getType().equals(ActionManager.ACTION_TYPE_SAVING_RECORD)){
+            if (action.getType().equals(ActionManager.ACTION_TYPE_SAVING_RECORD)) {
 
                 SavingRecordAction savingRecordAction = (SavingRecordAction) action;
                 int sessionId = savingRecordAction.getSessionId();
                 Session session = RecordingAndAnnotateManager.getCurRecordingSession(sessionId);
                 session.setPaused(true);
 
-                Log.d(LOG_TAG, " [pauseAction] pause the session " + session.getId() + " pause is " + session.isPaused()  );
+                Log.d(LOG_TAG, " [pauseAction] pause the session " + session.getId() + " pause is " + session.isPaused());
 
             }
 
             //log
-            LogManager.log( LogManager.LOG_TYPE_SYSTEM_LOG,
+            LogManager.log(LogManager.LOG_TYPE_SYSTEM_LOG,
                     LogManager.LOG_TAG_ACTION_PAUSE,
-                    "Pause Action:" + "\t"  + action.getType() + "\t"  + action.getId() + "\t"  +action.getName());
+                    "Pause Action:" + "\t" + action.getType() + "\t" + action.getId() + "\t" + action.getName());
 
-        }
-        else {
+        } else {
 
             Log.e(LOG_TAG, "the action is null");
 
         }
 
 
-		
-	}
-	
-	public static void resumeAction(Action action) {
+    }
 
-        if (action!=null) {
+    public static void resumeAction(Action action) {
+
+        if (action != null) {
 
 
-            Log.d(LOG_TAG, " [resumeAction] [test pause resume] Going to resume the action " + action.getId() );
+            Log.d(LOG_TAG, " [resumeAction] [test pause resume] Going to resume the action " + action.getId());
 
             //set pause first because it is resumed;
             //while the system continouously checks whether action is paused before they are executed,
@@ -935,165 +927,153 @@ public class ActionManager {
             action.setPaused(false);
 
             //if the action is for saving records, we also need to mark the curRunningSession back to unpaused
-            if (action.getType().equals(ActionManager.ACTION_TYPE_SAVING_RECORD)){
+            if (action.getType().equals(ActionManager.ACTION_TYPE_SAVING_RECORD)) {
 
                 SavingRecordAction savingRecordAction = (SavingRecordAction) action;
                 int sessionId = savingRecordAction.getSessionId();
                 Session session = RecordingAndAnnotateManager.getCurRecordingSession(sessionId);
                 session.setPaused(false);
 
-                Log.d(LOG_TAG, " [resumeAction] resume the session " + session.getId() + " pause is " + session.isPaused()  );
+                Log.d(LOG_TAG, " [resumeAction] resume the session " + session.getId() + " pause is " + session.isPaused());
 
             }
 
             //log
-            LogManager.log( LogManager.LOG_TYPE_SYSTEM_LOG,
+            LogManager.log(LogManager.LOG_TYPE_SYSTEM_LOG,
                     LogManager.LOG_TAG_ACTION_RESUME,
-                    "Resume Action:" + "\t"  + action.getType() + "\t"  + action.getId() + "\t"  +action.getName());
-        }
-        else {
+                    "Resume Action:" + "\t" + action.getType() + "\t" + action.getId() + "\t" + action.getName());
+        } else {
 
             Log.e(LOG_TAG, "the action is null");
 
         }
-		
-	}
-	
-	
-	/**
-	 * 
-	 * @param action
-	 */
-	public static void cancelAction (Action action) {
+
+    }
 
 
-        if (action!=null) {
+    /**
+     * @param action
+     */
+    public static void cancelAction(Action action) {
 
-            Log.d(LOG_TAG, " [stopAction] Going to cancel/unregister the action " );
-        }
-        else {
+
+        if (action != null) {
+
+            Log.d(LOG_TAG, " [stopAction] Going to cancel/unregister the action ");
+        } else {
 
             Log.e(LOG_TAG, "the action is null");
 
         }
-		
-		
-		
-		
-	}
-	
-	
-	public static void executeActionControl (int id) {
 
-		for (int i=0; i< mActionControlList.size(); i++){
-			if (mActionControlList.get(i).getId()==id){				
-				//Log.d(LOG_TAG, "[executeActionControl] examine the action control" +mActionControlList.get(i).getId() + " match with the target action control " + id);
-				executeActionControl(mActionControlList.get(i));
-			}
-				
-		}		
-	}
+
+    }
+
+
+    public static void executeActionControl(int id) {
+
+        for (int i = 0; i < mActionControlList.size(); i++) {
+            if (mActionControlList.get(i).getId() == id) {
+                //Log.d(LOG_TAG, "[executeActionControl] examine the action control" +mActionControlList.get(i).getId() + " match with the target action control " + id);
+                executeActionControl(mActionControlList.get(i));
+            }
+
+        }
+    }
 
 
     /**
      * Here will decide what operation to take on actions based on the action control type
+     *
      * @param actionControl
      */
-	public static void executeActionControl (ActionControl actionControl) {
-		
-		Log.d(LOG_TAG, "[executeActionControl] executing the action control " + actionControl.getId() + " which is to " 
-				+getActionControlTypeName(actionControl.getType()) + " action " + actionControl.getAction().getId() + " " + actionControl.getAction().getName()  );
+    public static void executeActionControl(ActionControl actionControl) {
 
-		Action action= actionControl.getAction();
-		
-		if (actionControl.getType()==ActionManager.ACTION_CONTROL_TYPE_START){
-			
-			startAction(action);
+        Log.d(LOG_TAG, "[executeActionControl] executing the action control " + actionControl.getId() + " which is to "
+                + getActionControlTypeName(actionControl.getType()) + " action " + actionControl.getAction().getId() + " " + actionControl.getAction().getName());
+
+        Action action = actionControl.getAction();
+
+        if (actionControl.getType() == ActionManager.ACTION_CONTROL_TYPE_START) {
+
+            startAction(action);
 
             //see if the action control will trigger event, action control or action
 
             Log.d(LOG_TAG, "[executeActionControl] the action control start has  " + actionControl.getTriggerLinks().size() + " triggerlinks, should start trigger!");
             TriggerManager.executeTriggers(actionControl);
-		}
-		
-		else if (actionControl.getType()==ActionManager.ACTION_CONTROL_TYPE_CANCEL){
-		
-			cancelAction(action);
+        } else if (actionControl.getType() == ActionManager.ACTION_CONTROL_TYPE_CANCEL) {
+
+            cancelAction(action);
             TriggerManager.executeTriggers(actionControl);
-		}
-		
-		else if (actionControl.getType()==ActionManager.ACTION_CONTROL_TYPE_STOP){
-			
-			stopAction(action);
+        } else if (actionControl.getType() == ActionManager.ACTION_CONTROL_TYPE_STOP) {
+
+            stopAction(action);
             TriggerManager.executeTriggers(actionControl);
-		}
-				
-				
-		else if (actionControl.getType()==ActionManager.ACTION_CONTROL_TYPE_PAUSE){
-			
-			pauseAction(action);
+        } else if (actionControl.getType() == ActionManager.ACTION_CONTROL_TYPE_PAUSE) {
+
+            pauseAction(action);
             TriggerManager.executeTriggers(actionControl);
-		}
-		
-		//if the action control is to resume a currently paused action
-		else if (actionControl.getType()==ActionManager.ACTION_CONTROL_TYPE_RESUME) {
-			
-			//checked whether the action is being paused now..if yes, we resumed the action
-			if (actionControl.getAction().isPaused()){
-				resumeAction(action);
-			}
+        }
+
+        //if the action control is to resume a currently paused action
+        else if (actionControl.getType() == ActionManager.ACTION_CONTROL_TYPE_RESUME) {
+
+            //checked whether the action is being paused now..if yes, we resumed the action
+            if (actionControl.getAction().isPaused()) {
+                resumeAction(action);
+            }
             TriggerManager.executeTriggers(actionControl);
-			
-		}
-		
-		
-	}
+
+        }
 
 
-	/**
-	 * this function is called when the probe service starts . It will execute all that need to launch when the service starts
+    }
+
+
+    /**
+     * this function is called when the probe service starts . It will execute all that need to launch when the service starts
      * and all that are scheduled without triggers.
-	 *
-	 */
-	public static void registerActionControls(){
-		Log.d(LOG_TAG, "[testRandom][ registerActionControls] enter registerActionControls");
+     */
+    public static void registerActionControls() {
+        Log.d(LOG_TAG, "[testRandom][ registerActionControls] enter registerActionControls");
 
-		
-		for (int i=0; i<mActionControlList.size(); i++){
-			
-			Action action = mActionControlList.get(i).getAction();
-			
-					
-			Log.d(LOG_TAG, "[testRandom][ registerActionControls] examine action control " + mActionControlList.get(i).getId() + mActionControlList.get(i).getType() +
-					" of action " + action.getId() + " of which the type is " + action.getType() + " and the continuity is " + action.isContinuous()
-					+" the rate is " + action.getActionRate()
-					);
-			
-			
-			//get the action control which should launch when the Probe service starts. 
-			if (mActionControlList.get(i).getLaunchMethod().equals(ActionManager.ACTION_LAUNCH_STYLE_APP_START)){
-				
-				Log.d(LOG_TAG, "[testRandom] [ registerActionControls] action control " + mActionControlList.get(i).getId() +
-						" needs to start at the beginning, it continuity is " + action.isContinuous());
+
+        for (int i = 0; i < mActionControlList.size(); i++) {
+
+            Action action = mActionControlList.get(i).getAction();
+
+
+            Log.d(LOG_TAG, "[testRandom][ registerActionControls] examine action control " + mActionControlList.get(i).getId() + mActionControlList.get(i).getType() +
+                    " of action " + action.getId() + " of which the type is " + action.getType() + " and the continuity is " + action.isContinuous()
+                    + " the rate is " + action.getActionRate()
+            );
+
+
+            //get the action control which should launch when the Probe service starts.
+            if (mActionControlList.get(i).getLaunchMethod().equals(ActionManager.ACTION_LAUNCH_STYLE_APP_START)) {
+
+                Log.d(LOG_TAG, "[testRandom] [ registerActionControls] action control " + mActionControlList.get(i).getId() +
+                        " needs to start at the beginning, it continuity is " + action.isContinuous());
 
                 startAction(mActionControlList.get(i).getAction());
 
-			}
-			//get the actionContorl which belongs to scheduled type	
-			else if (mActionControlList.get(i).getLaunchMethod().equals(ActionManager.ACTION_LAUNCH_STYLE_SCHEDULE)){
-				
-				Log.d(LOG_TAG, "[testRandom][ registerActionControls] action control " + mActionControlList.get(i).getId() +
-						" needs to be scheduled: " + mActionControlList.get(i).getSchedule());
-				
-				//register the actioncontrol
+            }
+            //get the actionContorl which belongs to scheduled type
+            else if (mActionControlList.get(i).getLaunchMethod().equals(ActionManager.ACTION_LAUNCH_STYLE_SCHEDULE)) {
+
+                Log.d(LOG_TAG, "[testRandom][ registerActionControls] action control " + mActionControlList.get(i).getId() +
+                        " needs to be scheduled: " + mActionControlList.get(i).getSchedule());
+
+                //register the actioncontrol
                 ScheduleAndSampleManager.registerActionControl(mActionControlList.get(i));
-			}
-			
-			
-		}
-		
-		
-	}
+            }
+
+
+        }
+
+
+    }
 
     /**
      * This is called everyday in the early morning (after bed time) to reschedule action controls that need to be
@@ -1102,12 +1082,12 @@ public class ActionManager {
     public static void updateActionControlSchedules() {
 
 
-        for (int i=0; i<mActionControlList.size(); i++){
+        for (int i = 0; i < mActionControlList.size(); i++) {
 
             Action action = mActionControlList.get(i).getAction();
 
             //get the actionContorl which belongs to scheduled type
-            if (mActionControlList.get(i).getLaunchMethod().equals(ActionManager.ACTION_LAUNCH_STYLE_SCHEDULE)){
+            if (mActionControlList.get(i).getLaunchMethod().equals(ActionManager.ACTION_LAUNCH_STYLE_SCHEDULE)) {
 
                 Log.d(LOG_TAG, "[test reschedule][ updateActionControlSchedules] action control " + mActionControlList.get(i).getId() +
                         " needs to be scheduled: " + mActionControlList.get(i).getSchedule());
@@ -1122,43 +1102,41 @@ public class ActionManager {
     }
 
 
-	
+    public static ActionControl getActionControl(int id) {
 
-	public static ActionControl getActionControl (int id){
+        for (int i = 0; i < mActionControlList.size(); i++) {
+            if (id == mActionControlList.get(i).getId()) {
+                return mActionControlList.get(i);
+            }
+        }
+        return null;
 
-		for (int i=0; i<mActionControlList.size(); i++){
-			if (id==mActionControlList.get(i).getId()){
-				return mActionControlList.get(i);
-			}
-		}		
-		return null;
-		
-	}
-	
-	public static Action getAction (int id){
+    }
 
-		for (int i=0; i<mActionList.size(); i++){
-			if (id==mActionList.get(i).getId()){
-				return mActionList.get(i);
-			}
-		}		
-		return null;
-		
-	}
+    public static Action getAction(int id) {
+
+        for (int i = 0; i < mActionList.size(); i++) {
+            if (id == mActionList.get(i).getId()) {
+                return mActionList.get(i);
+            }
+        }
+        return null;
+
+    }
 
     //Get all the action controls in a certain type of a specific action
-    public static ArrayList<ActionControl> getActionControls (Action action, int actionControlType){
+    public static ArrayList<ActionControl> getActionControls(Action action, int actionControlType) {
 
         ArrayList<ActionControl> actionControls = new ArrayList<ActionControl>();
 
-        Log.d(LOG_TAG, "[getActionControls] going to find actioncontrols of action " + action.getId() + " " + action.getName() );
+        Log.d(LOG_TAG, "[getActionControls] going to find actioncontrols of action " + action.getId() + " " + action.getName());
 
         for (int i = 0; i < getActionControlList().size(); i++) {
 
             ActionControl ac = getActionControlList().get(i);
 
-            if (ac.getAction()==action && ac.getType()== actionControlType) {
-                Log.d(LOG_TAG, "[getActionControls] found action control  " + ac.getId() + " of which the action is " +ac.getAction().getId());
+            if (ac.getAction() == action && ac.getType() == actionControlType) {
+                Log.d(LOG_TAG, "[getActionControls] found action control  " + ac.getId() + " of which the action is " + ac.getAction().getId());
 
                 actionControls.add(ac);
             }
@@ -1171,76 +1149,76 @@ public class ActionManager {
 
     public static void addAction(Action action) {
 
-        if (mActionList==null){
+        if (mActionList == null) {
             mActionList = new ArrayList<Action>();
         }
 
         mActionList.add(action);
     }
 
-	
-	public static ArrayList<ActionControl> getActionControlList() {		
-		return mActionControlList;
-	}
-	
-	public static ArrayList<Action> getActionList() {		
-		return mActionList;
-	}
-	
-	public static ArrayList<Action> getRunningActionList() {		
-		return mRunningActionList;
-	}
 
-	
-	public static void addRunningAction(Action action){
-		
-		if (mRunningActionList==null){
-			mRunningActionList = new ArrayList<Action>();
-		}
-		
-		mRunningActionList.add(action);
-	}
+    public static ArrayList<ActionControl> getActionControlList() {
+        return mActionControlList;
+    }
 
-	public static Action getRunningAction (int id){
+    public static ArrayList<Action> getActionList() {
+        return mActionList;
+    }
 
-		for (int i=0; i<mRunningActionList.size(); i++){
-			if (id==mRunningActionList.get(i).getId()){
-				return mRunningActionList.get(i);
-			}
-		}		
-		return null;
-		
-	}
-		
-	
-	
-	
-	
-	/**get the current time in milliseconds**/
-	public static long getCurrentTimeInMillis(){		
-		//get timzone		
-		TimeZone tz = TimeZone.getDefault();		
-		Calendar cal = Calendar.getInstance(tz);
-		long t = cal.getTimeInMillis();		
-		return t;
-	}
-	
-	/**convert long to timestring**/
-	
-	public static String getTimeString(long time){		
+    public static ArrayList<Action> getRunningActionList() {
+        return mRunningActionList;
+    }
 
-		SimpleDateFormat sdf_now = new SimpleDateFormat(Constants.DATE_FORMAT_NOW);
-		String currentTimeString = sdf_now.format(time);
-		
-		return currentTimeString;
-	}
+
+    public static void addRunningAction(Action action) {
+
+        if (mRunningActionList == null) {
+            mRunningActionList = new ArrayList<Action>();
+        }
+
+        mRunningActionList.add(action);
+    }
+
+    public static Action getRunningAction(int id) {
+
+        for (int i = 0; i < mRunningActionList.size(); i++) {
+            if (id == mRunningActionList.get(i).getId()) {
+                return mRunningActionList.get(i);
+            }
+        }
+        return null;
+
+    }
+
 
     /**
-     *
+     * get the current time in milliseconds
+     **/
+    public static long getCurrentTimeInMillis() {
+        //get timzone
+        TimeZone tz = TimeZone.getDefault();
+        Calendar cal = Calendar.getInstance(tz);
+        long t = cal.getTimeInMillis();
+        return t;
+    }
+
+    /**
+     * convert long to timestring
+     **/
+
+    public static String getTimeString(long time) {
+
+        SimpleDateFormat sdf_now = new SimpleDateFormat(Constants.DATE_FORMAT_NOW);
+        String currentTimeString = sdf_now.format(time);
+
+        return currentTimeString;
+    }
+
+    /**
      * @param sessionId
      * @param startRecording: indicate whether we should start a new recording when entering the activity.
      */
-    public static void startAnnotateActivity(int sessionId, boolean startRecording, int annotateRecordingActionId, String reviewMode){
+    public static void startAnnotateActivity(int sessionId, boolean startRecording, int annotateRecordingActionId, String reviewMode) {
 
         Log.d(LOG_TAG, " [startAnnotateActivity] start by user? " + startRecording);
 
@@ -1260,7 +1238,7 @@ public class ActionManager {
         mContext.startActivity(intent);
 
         //log
-        LogManager.log( LogManager.LOG_TYPE_SYSTEM_LOG,
+        LogManager.log(LogManager.LOG_TYPE_SYSTEM_LOG,
                 LogManager.LOG_TAG_ACTIVITY_START,
                 "Start manually annotate session" + "\t" + sessionId + "\t" + "for action " + "\t" + annotateRecordingActionId);
 
@@ -1279,36 +1257,36 @@ public class ActionManager {
         String[] recipients = QuestionnaireManager.getEmailQuestionnaireRecipients(questionnaireTemplateId);
 
         //we need to attach title and body of the email to the intent
-        intent.putExtra(Intent.EXTRA_EMAIL  , recipients);
+        intent.putExtra(Intent.EXTRA_EMAIL, recipients);
         intent.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
-        intent.putExtra(Intent.EXTRA_TEXT,  emailBody);
+        intent.putExtra(Intent.EXTRA_TEXT, emailBody);
 
         //log
-        LogManager.log( LogManager.LOG_TYPE_SYSTEM_LOG,
+        LogManager.log(LogManager.LOG_TYPE_SYSTEM_LOG,
                 LogManager.LOG_TAG_ACTIVITY_START,
                 "Generate daily report using questionnaire template" + "\t" + questionnaireTemplateId);
 
         return intent;
     }
 
-	
-   public static String getActionControlTypeName(int actionControlType) {
 
-        switch(actionControlType) {
-        case ActionManager.ACTION_CONTROL_TYPE_START:
-            return ActionManager.ACTION_CONTROL_TYPE_START_STRING;
-        case ActionManager.ACTION_CONTROL_TYPE_CANCEL:
-            return ActionManager.ACTION_CONTROL_TYPE_CANCEL_STRING;
-        case ActionManager.ACTION_CONTROL_TYPE_STOP:
-            return ActionManager.ACTION_CONTROL_TYPE_STOP_STRING;
-        case ActionManager.ACTION_CONTROL_TYPE_PAUSE:
-            return ActionManager.ACTION_CONTROL_TYPE_PAUSE_STRING;
-        case ActionManager.ACTION_CONTROL_TYPE_RESUME:
-            return ActionManager.ACTION_CONTROL_TYPE_RESUME_STRING;
+    public static String getActionControlTypeName(int actionControlType) {
+
+        switch (actionControlType) {
+            case ActionManager.ACTION_CONTROL_TYPE_START:
+                return ActionManager.ACTION_CONTROL_TYPE_START_STRING;
+            case ActionManager.ACTION_CONTROL_TYPE_CANCEL:
+                return ActionManager.ACTION_CONTROL_TYPE_CANCEL_STRING;
+            case ActionManager.ACTION_CONTROL_TYPE_STOP:
+                return ActionManager.ACTION_CONTROL_TYPE_STOP_STRING;
+            case ActionManager.ACTION_CONTROL_TYPE_PAUSE:
+                return ActionManager.ACTION_CONTROL_TYPE_PAUSE_STRING;
+            case ActionManager.ACTION_CONTROL_TYPE_RESUME:
+                return ActionManager.ACTION_CONTROL_TYPE_RESUME_STRING;
         }
         return "unknown";
-	}
-	
+    }
+
 }
 
 

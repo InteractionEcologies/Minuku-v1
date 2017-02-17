@@ -148,7 +148,6 @@ public class LocalDBHelper extends SQLiteOpenHelper{
     	db.execSQL(cmd);
     }
 
-
     /**
      *
      * @param db
