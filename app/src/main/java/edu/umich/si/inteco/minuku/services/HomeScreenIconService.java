@@ -15,10 +15,13 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 
 import java.util.ArrayList;
 
@@ -32,6 +35,9 @@ public class HomeScreenIconService extends Service {
     private RelativeLayout removeView, homescreenServiceView;
     private GridLayout gridLayout;
     private ImageView chatheadImg, removeImg;
+    private FrameLayout mainLayout;
+    private Spinner spinner;
+    private Button btnSave;
     private ImageButton ibClose;
     private int x_init_cord, y_init_cord, x_init_margin, y_init_margin;
     private Point szWindow = new Point();
@@ -42,6 +48,9 @@ public class HomeScreenIconService extends Service {
     private WindowManager windowManager;
     private UserSettingsDBHelper userSettingsDBHelper;
     private ArrayList<User> userList;
+    private ArrayList<Integer> userIdList;
+    private int numOfPeopleUsing = 1;
+    private int currentSelected = 1;
 
     @Override
     public void onCreate() {
@@ -66,6 +75,9 @@ public class HomeScreenIconService extends Service {
 
         homescreenServiceView = (RelativeLayout) inflater.inflate(R.layout.service_homescreen_mainlayout, null);
         gridLayout = (GridLayout) homescreenServiceView.findViewById(R.id.home_screen_service_gridLayout);
+        mainLayout = (FrameLayout) homescreenServiceView.findViewById(R.id.home_screen_service_main_layout);
+        spinner = (Spinner) homescreenServiceView.findViewById(R.id.home_screen_service_spinner);
+        btnSave = (Button) homescreenServiceView.findViewById(R.id.home_screen_service_btnSave);
         chatheadImg = (ImageView) homescreenServiceView.findViewById(R.id.home_screen_service_chathead_img);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -230,25 +242,43 @@ public class HomeScreenIconService extends Service {
             userSettingsDBHelper = new UserSettingsDBHelper(getApplicationContext());
         if (ifUserIconOpen) {
             ifUserIconOpen = false;
-            gridLayout.setVisibility(View.GONE);
+            mainLayout.setVisibility(View.GONE);
         } else {
             ifUserIconOpen = true;
-            gridLayout.removeAllViews();
-            userList = userSettingsDBHelper.getAllUserList();
-            for (int i = 0; i < userList.size(); i++) {
-                final User user = userList.get(i);
-                UserIcon userIcon = new UserIcon(getApplicationContext(), user);
-                ImageButton ib = userIcon.getIbUser();
-                ib.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // set selected icon
-                    }
-                });
-                gridLayout.addView(userIcon.getView());
-            }
-            gridLayout.setVisibility(View.VISIBLE);
+            setUserIconView();
+            mainLayout.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void setUserIconView() {
+        gridLayout.removeAllViews();
+        userList = userSettingsDBHelper.getAllUserList();
+        userIdList = userSettingsDBHelper.getAllIdList();
+        for (int i = 0; i < userList.size(); i++) {
+            final User user = userList.get(i);
+            final String id = userIdList.get(i).toString();
+            UserIcon userIcon = new UserIcon(getApplicationContext(), user);
+            ImageButton ib = userIcon.getIbUser();
+            ib.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setSelectedTabColor(id, user);
+                }
+            });
+            gridLayout.addView(userIcon.getView());
+        }
+    }
+
+    private void setSelectedTabColor(String id, User user) {
+        if (currentSelected >= numOfPeopleUsing) {
+            userSettingsDBHelper.setAllUserUnSelected();
+            currentSelected = 1;
+        } else {
+            currentSelected++;
+        }
+        user.setIfSelected(true);
+        userSettingsDBHelper.updateDB(id, user);
+        setUserIconView();
     }
 
     @Override
