@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import edu.umich.si.inteco.minuku.model.User;
 
 /**
- * Created by tsung on 2017/2/10.
+ * Created by Michael Ho on 2/10/2017.
  */
 
 public class UserSettingsDBHelper extends SQLiteOpenHelper {

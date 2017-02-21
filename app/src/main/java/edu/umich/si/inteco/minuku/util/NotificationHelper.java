@@ -5,6 +5,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -16,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import edu.umich.si.inteco.minuku.MainActivity;
 import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.OldMainActivity;
 import edu.umich.si.inteco.minuku.R;
@@ -23,6 +26,7 @@ import edu.umich.si.inteco.minuku.activities.AnnotateActivity;
 import edu.umich.si.inteco.minuku.activities.ListRecordingActivity;
 import edu.umich.si.inteco.minuku.activities.QuestionnaireActivity;
 import edu.umich.si.inteco.minuku.activities.RequestPermissionActivity;
+import edu.umich.si.inteco.minuku.services.MinukuMainService;
 
 public class NotificationHelper {
 

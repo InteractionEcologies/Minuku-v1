@@ -73,6 +73,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             Log.d(LOG_TAG, "[test service running]  going start the probe service isServiceRunning:" + MinukuMainService.isServiceRunning());
             Intent intent = new Intent();
             intent.setClass(MainActivity.this, MinukuMainService.class);
+            intent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
             //start the Minuku service
             startService(intent);
         }
