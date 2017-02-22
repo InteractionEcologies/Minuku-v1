@@ -16,6 +16,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -52,9 +53,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private int currentTabPos = -1;
     public static Context context;
 
-    //MAC address
+    // Device info
     public static String wifiMacAddr;
     public static String btMacAddr;
+    public static int screenWidth;
+    public static int screenHeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,11 +65,14 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
         setContentView(R.layout.activity_main);
         context = MainActivity.this;
+
         //permissions
         if (checkAndRequestPermissions()) {
             // carry on the normal flow, as the case of  permissions  granted.
         }
 
+        // Get screen info
+        getScreenInfo();
 
         /**start the contextManager service**/
         if (!MinukuMainService.isServiceRunning()) {
@@ -234,6 +240,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         } catch (Exception ex) {
         }
         btMacAddr = android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");
+    }
+
+    private void getScreenInfo() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        screenWidth = metrics.widthPixels;
+        screenHeight = metrics.heightPixels;
     }
 
     @Override

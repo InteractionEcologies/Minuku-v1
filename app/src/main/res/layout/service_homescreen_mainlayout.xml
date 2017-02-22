@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/home_screen_service_relativeLayout"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="@dimen/view_space">
 
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/rl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -23,6 +24,7 @@
             android:id="@+id/home_screen_service_main_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/home_screen_service_chathead_img"
             android:background="@color/dark"
             android:visibility="gone">
 
@@ -31,31 +33,31 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="50dp"
-                    android:layout_marginRight="50dp"
-                    android:orientation="horizontal"
-                    android:padding="20dp">
+                <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginLeft="50dp"-->
+                <!--android:layout_marginRight="50dp"-->
+                <!--android:orientation="horizontal"-->
+                <!--android:padding="20dp">-->
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="right"
-                        android:text="Number of People Using:"
-                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/white" />
+                <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="1"-->
+                <!--android:gravity="right"-->
+                <!--android:text="Number of People Using:"-->
+                <!--android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"-->
+                <!--android:textColor="@color/white" />-->
 
-                    <Spinner
-                        android:id="@+id/home_screen_service_spinner"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:padding="2dp"></Spinner>
-                </LinearLayout>
+                <!--<Spinner-->
+                <!--android:id="@+id/home_screen_service_spinner"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1"-->
+                <!--android:gravity="center"-->
+                <!--android:padding="2dp"></Spinner>-->
+                <!--</LinearLayout>-->
 
                 <GridLayout
                     android:id="@+id/home_screen_service_gridLayout"
@@ -66,11 +68,24 @@
                     android:columnCount="6"
                     android:padding="@dimen/view_space"></GridLayout>
 
-                <Button
-                    android:id="@+id/home_screen_service_btnSave"
+                <TextView
+                    android:id="@+id/home_screen_service_tvSave"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Save"
+                    android:layout_margin="@dimen/view_space"
+                    android:gravity="center"
+                    android:padding="@dimen/view_space"
+                    android:text="All changes are saved!"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/lightgreen"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/home_screen_service_btnOpen"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/view_space"
+                    android:text="Open Minuku App"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
             </LinearLayout>
 
@@ -82,5 +97,5 @@
                 android:layout_margin="@dimen/view_space"
                 android:background="@drawable/background_remove_button" />
         </FrameLayout>
-    </LinearLayout>
+    </RelativeLayout>
 </RelativeLayout>

@@ -72,6 +72,21 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         return count;
     }
 
+    public boolean getIfUserSelectedById(String id) {
+        boolean select = false;
+        SQLiteDatabase db = getReadableDatabase();
+        String[] columns = {IF_SELECTED};
+        String whereClause = ID + " = ?;";
+        String[] whereArgs = {id};
+        Cursor cursor = db.query(TABLENAME, columns, whereClause, whereArgs,
+                null, null, null);
+        if (cursor.moveToNext())
+            if ("1".equalsIgnoreCase(cursor.getString(0)))
+                select = true;
+
+        return select;
+    }
+
     public int setAllUserSelected() {
         ArrayList<User> userList = getAllUserList();
         ArrayList<Integer> idList = getAllIdList();

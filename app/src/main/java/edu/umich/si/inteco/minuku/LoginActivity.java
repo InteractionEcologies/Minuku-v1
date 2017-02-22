@@ -8,11 +8,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.multidex.MultiDex;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 
+import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -53,6 +55,26 @@ public class LoginActivity extends Activity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                BackgroundMail.newBuilder(LoginActivity.this)
+                        .withUsername("tsungwei50521@gmail.com")
+                        .withPassword("A8016168a")
+                        .withMailto("twho@umich.edu")
+                        .withType(BackgroundMail.TYPE_PLAIN)
+                        .withSubject("Minuku")
+                        .withBody("Minuku service started.")
+                        .withOnSuccessCallback(new BackgroundMail.OnSuccessCallback() {
+                            @Override
+                            public void onSuccess() {
+                                // TODO
+                            }
+                        })
+                        .withOnFailCallback(new BackgroundMail.OnFailCallback() {
+                            @Override
+                            public void onFail() {
+                                // TODO
+                            }
+                        })
+                        .send();
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
             }
