@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -26,18 +27,45 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import edu.umich.si.inteco.minuku.MainActivity;
 import edu.umich.si.inteco.minuku.R;
 import edu.umich.si.inteco.minuku.constants.UserIconReference;
+import edu.umich.si.inteco.minuku.data.MongoDBHelper;
 import edu.umich.si.inteco.minuku.data.UserSettingsDBHelper;
 import edu.umich.si.inteco.minuku.model.User;
-import edu.umich.si.inteco.minuku.model.Views.DialogUserIcon;
 import edu.umich.si.inteco.minuku.model.Views.UserIcon;
 import edu.umich.si.inteco.minuku.services.HomeScreenIconService;
+import edu.umich.si.inteco.minuku.util.DatabaseNameManager;
+import edu.umich.si.inteco.minuku.util.LogManager;
+import edu.umich.si.inteco.minuku.util.RecordingAndAnnotateManager;
+import edu.umich.si.inteco.minuku.util.ScheduleAndSampleManager;
 
 public class ProfileFragment extends Fragment {
+    private static String LOG_TAG = "ProfileFragment";
 
     private static Context context;
     private View rootView;
@@ -182,17 +210,38 @@ public class ProfileFragment extends Fragment {
                     }
                     break;
                 case R.id.fragment_profile_btnStart:
-                    startHomeScreenIcon();
-                    if (showMessage) {
-                        showHomeIconMsg();
-                        showMessage = false;
-                    } else {
-                        showMessage = true;
+                    ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(0);
+//                    startHomeScreenIcon();
+//                    if (showMessage) {
+//                        showHomeIconMsg();
+//                        showMessage = false;
+//                    } else {
+//                        showMessage = true;
+//                    }
+                    for (int i = 0; i < documents.size(); i++) {
+                        String json = documents.get(i).toString();
+
+                        Log.d(LOG_TAG, "[testbackend][syncWithRemoteDatabase] background document post to mongolab");
+
+                        String postURL = MongoDBHelper.postDocumentURL(ProjectDatabaseName, DatabaseNameManager.MONGODB_COLLECTION_BACKGROUNDLOGGING);
+
+//                    Log.d (LOG_TAG, "[testbackend][syncWithRemoteDatabase] background document " + postURL  + " with json: " + json);
+
+                        System.out.println("[testbackend]" + json);
+
+                        new HttpAsyncPostJsonTask().execute(postURL,
+                                json,
+                                DATA_TYPE_BACKGROUND_LOGGING,
+                                ScheduleAndSampleManager.getTimeString(0));
                     }
+
                     break;
             }
         }
     }
+
+    public static final String DATA_TYPE_BACKGROUND_LOGGING = "background_recording";
+    public static String ProjectDatabaseName = DatabaseNameManager.DATABASE_NAME_MINUKU;
 
     private void startHomeScreenIcon() {
         requestPermission(OVERLAY_PERMISSION_REQ_CODE_CHATHEAD);
@@ -216,6 +265,172 @@ public class ProfileFragment extends Fragment {
                 intent.setData(Uri.parse("package:" + context.getPackageName()));
                 startActivityForResult(intent, requestCode);
             }
+        }
+    }
+
+    // TODO for test only
+
+    //use HTTPAsyncTask to post data
+    private static class HttpAsyncPostJsonTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            String result = null;
+            String url = params[0];
+            String data = params[1];
+            String dataType = params[2];
+            String lastSyncTime = params[3];
+
+            postJSON(url, data, dataType, lastSyncTime);
+
+            return result;
+        }
+
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+
+            Log.d(LOG_TAG, "get http post result" + result);
+
+        }
+    }
+
+    public static final int HTTP_TIMEOUT = 10000; // millisecond
+    public static final int SOCKET_TIMEOUT = 20000;
+
+    public static String postJSON(String address, String json, String dataType, String lastSyncTime) {
+
+        Log.d(LOG_TAG, "[postJSON] testbackend post data to " + address);
+
+        LogManager.log(LogManager.LOG_TYPE_FILE_UPLOAD_LOG, "POSTJSON", json);
+
+        InputStream inputStream = null;
+        String result = "";
+
+        try {
+
+            URL url = new URL(address);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            Log.d(LOG_TAG, "[postJSON] testbackend connecting to " + address);
+
+            if (url.getProtocol().toLowerCase().equals("https")) {
+                Log.d(LOG_TAG, "[postJSON] [using https]");
+                trustAllHosts();
+                HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
+                https.setHostnameVerifier(DO_NOT_VERIFY);
+                conn = https;
+            } else {
+                conn = (HttpURLConnection) url.openConnection();
+            }
+
+
+            SSLContext sc;
+            sc = SSLContext.getInstance("TLS");
+            sc.init(null, null, new java.security.SecureRandom());
+
+            conn.setReadTimeout(HTTP_TIMEOUT);
+            conn.setConnectTimeout(SOCKET_TIMEOUT);
+            conn.setRequestMethod("POST");
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.connect();
+
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+            wr.write(json);
+            wr.close();
+
+            LogManager.log(LogManager.LOG_TYPE_SYSTEM_LOG,
+                    LogManager.LOG_TAG_POST_DATA,
+                    "Post:\t" + dataType + "\t" + "for lastSyncTime:" + lastSyncTime);
+
+            int responseCode = conn.getResponseCode();
+
+            if (responseCode >= 400)
+                inputStream = conn.getErrorStream();
+            else
+                inputStream = conn.getInputStream();
+
+//            inputStream = conn.getInputStream();
+            result = convertInputStreamToString(inputStream);
+
+            Log.d(LOG_TAG, "[postJSON] the result response code is " + responseCode);
+            Log.d(LOG_TAG, "[postJSON] the result is " + result);
+
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+
+    }
+
+    private static String convertInputStreamToString(InputStream inputStream) throws IOException {
+
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        String line = "";
+        String result = "";
+        while ((line = bufferedReader.readLine()) != null) {
+//            Log.d(LOG_TAG, "[syncWithRemoteDatabase] " + line);
+            result += line;
+        }
+
+        inputStream.close();
+        return result;
+
+    }
+
+    public static HostnameVerifier DO_NOT_VERIFY = new HostnameVerifier() {
+
+        public boolean verify(String hostname, SSLSession session) {
+            return true;
+        }
+    };
+
+    private static void trustAllHosts() {
+
+        X509TrustManager easyTrustManager = new X509TrustManager() {
+
+            public void checkClientTrusted(
+                    X509Certificate[] chain,
+                    String authType) throws CertificateException {
+                // Oh, I am easy!
+            }
+
+            public void checkServerTrusted(
+                    X509Certificate[] chain,
+                    String authType) throws CertificateException {
+                // Oh, I am easy!
+            }
+
+            public X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+        };
+
+        // Create a trust manager that does not validate certificate chains
+        TrustManager[] trustAllCerts = new TrustManager[]{easyTrustManager};
+
+        // Install the all-trusting trust manager
+        try {
+            SSLContext sc = SSLContext.getInstance("TLS");
+
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

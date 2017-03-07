@@ -58,7 +58,7 @@ public class LoginActivity extends Activity {
                 BackgroundMail.newBuilder(LoginActivity.this)
                         .withUsername("tsungwei50521@gmail.com")
                         .withPassword("A8016168a")
-                        .withMailto("twho@umich.edu")
+                        .withMailto("parentingteen@umich.edu")
                         .withType(BackgroundMail.TYPE_PLAIN)
                         .withSubject("Minuku")
                         .withBody("Minuku service started.")
