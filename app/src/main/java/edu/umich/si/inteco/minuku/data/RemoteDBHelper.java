@@ -831,6 +831,7 @@ public class RemoteDBHelper {
 
             JSONObject obj = new JSONObject();
             try {
+                obj.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_USERS, "13212312313");
                 obj.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_DATA_TYPE, DATA_TYPE_BACKGROUND_LOGGING);
                 obj.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_DEVICE_ID, Constants.DEVICE_ID);
 //                LogManager.log(LogManager.LOG_TYPE_SYSTEM_LOG,
