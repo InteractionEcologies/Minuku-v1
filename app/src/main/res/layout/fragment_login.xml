@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/view_space"
+        android:background="@color/dark"
+        android:gravity="center"
+        android:padding="@dimen/activity_vertical_margin"
+        android:text="Minuku Setup"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/view_space"
+        android:gravity="center"
+        android:padding="@dimen/view_space"
+        android:text="please tell us who uses this tablet"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+    <TextView
+        android:id="@+id/fragment_login_tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/view_space"
+        android:gravity="center"
+        android:padding="@dimen/view_space"
+        android:text="Choose an icon for the child enrolled in this study"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/fragment_login_btnAdd"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/view_space"
+            android:text="Add an user" />
+
+        <Button
+            android:id="@+id/fragment_login_btnFinish"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/view_space"
+            android:text="Finish" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="520dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/view_space"
+        android:gravity="center"
+        android:padding="@dimen/view_space"
+        android:text="Who else uses this tablet?  Please choose an icon for when they use the tablet"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+    <ListView
+        android:id="@+id/fragment_login_lv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/view_space"></ListView>
+
+</LinearLayout>

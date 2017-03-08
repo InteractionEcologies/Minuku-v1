@@ -42,8 +42,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.google.android.gms:play-services:8.4.0'
-    compile 'com.android.support:appcompat-v7:23.1.0'
-    compile 'com.android.support:design:23.1.0'
+    compile 'com.android.support:appcompat-v7:25.2.0'
+    compile 'com.android.support:design:25.2.0'
     compile 'com.google.android.gms:play-services-analytics:8.4.0'
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;

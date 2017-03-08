@@ -2,8 +2,10 @@ package edu.umich.si.inteco.minuku.adapters;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,7 @@ import edu.umich.si.inteco.minuku.LoginActivity;
 import edu.umich.si.inteco.minuku.R;
 import edu.umich.si.inteco.minuku.constants.UserIconReference;
 import edu.umich.si.inteco.minuku.data.UserSettingsDBHelper;
+import edu.umich.si.inteco.minuku.fragments.LoginFragment;
 import edu.umich.si.inteco.minuku.model.User;
 import edu.umich.si.inteco.minuku.model.Views.DialogUserIcon;
 
@@ -29,12 +32,17 @@ import edu.umich.si.inteco.minuku.model.Views.DialogUserIcon;
 
 public class UserIconAdapter extends BaseAdapter {
     private Context context;
-    private ArrayList<User> allUserList;
-    private UserIconReference userIconReference;
-    private UserSettingsDBHelper userSettingsDBHelper;
+
+    // Views
     private Dialog dialog;
     private GridLayout gridLayout;
     private String iconImgNum;
+
+    // Functions
+    private FragmentManager fragmentManager;
+    private ArrayList<User> allUserList;
+    private UserIconReference userIconReference;
+    private UserSettingsDBHelper userSettingsDBHelper;
 
     public UserIconAdapter(Context context, ArrayList<User> allUserList) {
         this.context = context;
@@ -62,13 +70,36 @@ public class UserIconAdapter extends BaseAdapter {
         userIconReference = new UserIconReference(context);
 
         if (convertView == null) {
-            convertView = li.inflate(R.layout.activity_login_list_item, null);
+            convertView = li.inflate(R.layout.fragment_login_list_item, null);
 
             final ViewHolder viewHolder = new ViewHolder();
             viewHolder.ivUserIcon = (ImageView) convertView.findViewById(R.id.activity_login_list_item_iv);
-            viewHolder.edUserName = (EditText) convertView.findViewById(R.id.activity_login_list_item_edName);
-            viewHolder.edUserAge = (EditText) convertView.findViewById(R.id.activity_login_list_item_edAge);
             viewHolder.ibRemove = (ImageButton) convertView.findViewById(R.id.activity_login_list_item_btn_remove);
+
+            viewHolder.edUserName = (EditText) convertView.findViewById(R.id.activity_login_list_item_edName);
+            viewHolder.edUserName.setText(allUserList.get(getCount() - position - 1).getUserAge());
+            viewHolder.edUserName.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    // unused
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    // unused
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if (null == userSettingsDBHelper)
+                        userSettingsDBHelper = new UserSettingsDBHelper(context);
+                    User user = allUserList.get(getCount() - position - 1);
+                    user.setUserAge(viewHolder.edUserAge.getText().toString());
+                    userSettingsDBHelper.updateDB(userSettingsDBHelper.getAllIdList().get(getCount() - position - 1).toString(), user);
+                }
+            });
+
+            viewHolder.edUserAge = (EditText) convertView.findViewById(R.id.activity_login_list_item_edAge);
             viewHolder.edUserName.setText(allUserList.get(getCount() - position - 1).getUserName());
             viewHolder.edUserName.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -97,13 +128,20 @@ public class UserIconAdapter extends BaseAdapter {
                     setDialog(position, allUserList.get(getCount() - position - 1));
                 }
             });
+
             viewHolder.ibRemove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (null == userSettingsDBHelper)
                         userSettingsDBHelper = new UserSettingsDBHelper(context);
                     userSettingsDBHelper.deleteUserById(userSettingsDBHelper.getAllIdList().get(getCount() - position - 1));
-                    ((LoginActivity) LoginActivity.getContext()).setListView();
+
+                    if (null == fragmentManager)
+                        fragmentManager = ((LoginActivity) LoginActivity.getContext()).getSupportFragmentManager();
+
+                    LoginFragment loginFragment = (LoginFragment) fragmentManager.findFragmentByTag(LoginActivity.LOGIN_FRAGMENT);
+
+                    loginFragment.setListView();
                 }
             });
         }
@@ -120,7 +158,7 @@ public class UserIconAdapter extends BaseAdapter {
     private void setDialog(final int position, final User user) {
         dialog = new Dialog(context);
         LayoutInflater li = LayoutInflater.from(context);
-        View dialogView = li.inflate(R.layout.activity_login_user_icon_dialog, null);
+        View dialogView = li.inflate(R.layout.fragment_login_user_icon_dialog, null);
         dialog.setContentView(dialogView);
         dialog.setTitle("Select an icon");
         gridLayout = (GridLayout) dialogView.findViewById(R.id.activity_login_user_icon_dialog_gridLayout);
@@ -133,7 +171,12 @@ public class UserIconAdapter extends BaseAdapter {
                 }
                 user.setImgNumber(iconImgNum);
                 userSettingsDBHelper.updateDB(userSettingsDBHelper.getAllIdList().get(getCount() - position - 1) + "", user);
-                ((LoginActivity) LoginActivity.getContext()).setListView();
+
+                if (null == fragmentManager)
+                    fragmentManager = ((LoginActivity) LoginActivity.getContext()).getSupportFragmentManager();
+
+                LoginFragment loginFragment = (LoginFragment) fragmentManager.findFragmentByTag(LoginActivity.LOGIN_FRAGMENT);
+                loginFragment.setListView();
                 dialog.dismiss();
             }
         });

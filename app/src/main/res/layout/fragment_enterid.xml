@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:background="@color/dark"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/view_space"
+        android:gravity="center"
+        android:padding="@dimen/activity_vertical_margin"
+        android:text="Minuku Login"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Please confirm these users are using the tablet before logging in."
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/view_space">
+
+        <GridLayout
+            android:id="@+id/fragment_enterid_gridLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:columnCount="6"
+            android:padding="@dimen/view_space"></GridLayout>
+    </HorizontalScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="@dimen/view_space">
+
+        <TextView
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="Please enter your study id:"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+        <EditText
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/fragment_enterid_btnLogin"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/view_space"
+        android:padding="@dimen/view_space"
+        android:text="Login" />
+
+    <Button
+        android:id="@+id/fragment_enterid_btnBack"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/view_space"
+        android:padding="@dimen/view_space"
+        android:text="Back" />
+</LinearLayout>

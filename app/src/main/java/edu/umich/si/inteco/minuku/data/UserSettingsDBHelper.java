@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import edu.umich.si.inteco.minuku.model.User;
@@ -18,7 +20,7 @@ import edu.umich.si.inteco.minuku.model.User;
 public class UserSettingsDBHelper extends SQLiteOpenHelper {
 
     static final String DBNAME = "usersettings.sqlite";
-    static final int VERSION = 2;
+    static final int VERSION = 3;
     static final String TABLENAME = "usersettings_list";
     // DB params
     private String ID = "Id";
@@ -194,4 +196,5 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         db.close();
         return userCount;
     }
+
 }

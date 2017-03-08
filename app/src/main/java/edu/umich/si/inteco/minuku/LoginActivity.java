@@ -1,53 +1,31 @@
 package edu.umich.si.inteco.minuku;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.multidex.MultiDex;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.TextView;
+import android.os.IBinder;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.inputmethod.InputMethodManager;
 
-import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
-import com.google.gson.Gson;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import edu.umich.si.inteco.minuku.adapters.UserIconAdapter;
-import edu.umich.si.inteco.minuku.constants.UserIconReference;
-import edu.umich.si.inteco.minuku.data.UserSettingsDBHelper;
-import edu.umich.si.inteco.minuku.model.User;
-import edu.umich.si.inteco.minuku.util.AnimUtilities;
+import edu.umich.si.inteco.minuku.fragments.EnterIdFragment;
+import edu.umich.si.inteco.minuku.fragments.LoginFragment;
 
 /**
  * Created by tsung on 2017/2/6.
  */
 
-public class LoginActivity extends Activity {
-
+public class LoginActivity extends AppCompatActivity {
+    private String TAG = "LoginActivity";
     public static Context context;
 
-    // UI widgets
-    private Button btnLogin, btnAddUser;
-    private TextView tvTitle;
-    private ListView lvUsers;
-    private UserIconAdapter userIconAdapter;
-
-    // Functions
-    private UserSettingsDBHelper userSettingsDBHelper;
-    private int limitOfUsers = 8;
-    private AnimUtilities animUtilities;
+    // Function
+    private String defaultFragment = LOGIN_FRAGMENT;
+    private FragmentManager fragmentManager;
+    public static final String LOGIN_FRAGMENT = "LoginFragment";
+    public static final String ENTERID_FRAGMENT = "EnterIdFragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,80 +36,41 @@ public class LoginActivity extends Activity {
     }
 
     private void init() {
-        animUtilities = new AnimUtilities(context);
-        userSettingsDBHelper = new UserSettingsDBHelper(this);
+        fragmentManager = getSupportFragmentManager();
+        setFragment(defaultFragment);
+    }
 
-        btnLogin = (Button) findViewById(R.id.activity_login_btnLogin);
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BackgroundMail.newBuilder(LoginActivity.this)
-                        .withUsername("tsungwei50521@gmail.com")
-                        .withPassword("A8016168a")
-                        .withMailto("twho@umich.edu")
-                        .withType(BackgroundMail.TYPE_PLAIN)
-                        .withSubject("Minuku")
-                        .withBody("Minuku service started.")
-                        .withOnSuccessCallback(new BackgroundMail.OnSuccessCallback() {
-                            @Override
-                            public void onSuccess() {
-                                // TODO
-                            }
-                        })
-                        .withOnFailCallback(new BackgroundMail.OnFailCallback() {
-                            @Override
-                            public void onFail() {
-                                // TODO
-                            }
-                        })
-                        .send();
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-            }
-        });
-        btnAddUser = (Button) findViewById(R.id.activity_login_btnAdd);
-        btnAddUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (userSettingsDBHelper.getTotalNumOfUser() < limitOfUsers) {
-                    userSettingsDBHelper.insertDB(new User());
-                    setListView();
+    public void setFragment(String fragmentTag) {
+        Fragment fragment = null;
+        switch (fragmentTag) {
+            case LOGIN_FRAGMENT:
+                if (null != fragmentManager.findFragmentByTag(LOGIN_FRAGMENT)){
+                    fragment = fragmentManager.findFragmentByTag(LOGIN_FRAGMENT);
                 } else {
-                    new AlertDialog.Builder(getContext())
-                            .setTitle("Reach the User Limit")
-                            .setMessage("The user limit for this device is " + limitOfUsers + ".")
-                            .setCancelable(false)
-                            .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            }).show();
+                    fragment = new LoginFragment();
                 }
-            }
-        });
-        lvUsers = (ListView) findViewById(R.id.activity_login_lv);
-        tvTitle = (TextView) findViewById(R.id.activity_login_tv_title);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                tvTitle.setText("Now choose an icon for yourself");
-            }
-        }, 5000);
-        setListView();
+                break;
+            case ENTERID_FRAGMENT:
+                if (null != fragmentManager.findFragmentByTag(ENTERID_FRAGMENT)){
+                    fragment = fragmentManager.findFragmentByTag(ENTERID_FRAGMENT);
+                } else {
+                    fragment = new EnterIdFragment();
+                }
+                break;
+        }
+
+        try {
+            android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager()
+                    .beginTransaction();
+            transaction.replace(R.id.activity_login_container, fragment, fragmentTag).addToBackStack(fragmentTag).commit();
+            transaction.commit();
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
     }
 
     public static Context getContext() {
         return context;
-    }
-
-    public void setTitleText(String text) {
-        tvTitle.setText(text);
-        animUtilities.setTvAnimToVisible(tvTitle);
-    }
-
-    public void setListView() {
-        userIconAdapter = new UserIconAdapter(context, userSettingsDBHelper.getAllUserList());
-        lvUsers.setAdapter(userIconAdapter);
     }
 
     @Override
@@ -142,5 +81,10 @@ public class LoginActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    public static void closeKeyboard(Context context, IBinder windowToken) {
+        InputMethodManager mgr = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        mgr.hideSoftInputFromWindow(windowToken, 0);
     }
 }

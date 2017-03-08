@@ -23,7 +23,7 @@
         android:clickable="false"
         android:padding="10dp"
         android:scaleType="centerInside"
-        android:src="@drawable/fragment_profile_role_icon9" />
+        android:src="@drawable/fragment_profile_icon9" />
 
     <View
         android:id="@+id/obj_user_icon_selectedView"
