@@ -12,6 +12,7 @@
     <color name="blue">#0000FF</color>
     <color name="navy">#6699FF</color>
     <color name="sky">#0099CC</color>
+    <color name="dark_gray">#484848</color>
     <color name="gray">#808080</color>
     <color name="lightgray">#e7e7e7</color>
     <color name="lightgray02">#bfbfbf</color>

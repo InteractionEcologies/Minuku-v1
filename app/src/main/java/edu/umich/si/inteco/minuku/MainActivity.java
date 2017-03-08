@@ -52,6 +52,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import edu.umich.si.inteco.minuku.constants.Constants;
+import edu.umich.si.inteco.minuku.fragments.EnterIdFragment;
+import edu.umich.si.inteco.minuku.fragments.LoginFragment;
 import edu.umich.si.inteco.minuku.fragments.ProfileFragment;
 import edu.umich.si.inteco.minuku.services.MinukuMainService;
 import edu.umich.si.inteco.minuku.util.ConfigurationManager;
@@ -62,7 +64,7 @@ import io.fabric.sdk.android.Fabric;
  * Created by tsung on 2017/2/7.
  */
 
-public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
+public class MainActivity extends FragmentActivity {
 
     private static final String LOG_TAG = "MainActivity";
 
@@ -70,9 +72,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
 
     // View pager and fragments
-    private AppSectionsPagerAdapter mAppSectionsPagerAdapter;
-    private ViewPager mViewPager;
-    private int currentTabPos = -1;
+    private static String PROFILE_FRAGMENT;
+    private FragmentManager fragmentManager;
     public static Context context;
 
     // Device info
@@ -109,32 +110,27 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         /** Create the adapter that will return a fragment for each of the three primary sections
          // of the app.**/
-        mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager());
+        fragmentManager = getSupportFragmentManager();
+        setFragment();
+    }
 
-        // Set up the action bar.
-        final ActionBar actionBar = getActionBar();
+    public void setFragment() {
+        Fragment fragment;
 
-        // Specify that the Home/Up button should not be enabled, since there is no hierarchical
-        // parent.
-        actionBar.setHomeButtonEnabled(false);
+        if (null != fragmentManager.findFragmentByTag(PROFILE_FRAGMENT)) {
+            fragment = fragmentManager.findFragmentByTag(PROFILE_FRAGMENT);
+        } else {
+            fragment = new ProfileFragment();
+        }
 
-        // Specify that we will be displaying tabs in the action bar.
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-        // Set up the ViewPager, attaching the adapter and setting up a listener for when the
-        // user swipes between sections.
-        mViewPager = (ViewPager) findViewById(R.id.main_layout);
-        mViewPager.setAdapter(mAppSectionsPagerAdapter);
-        mViewPager.setOffscreenPageLimit(3);
-        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                actionBar.setSelectedNavigationItem(position);
-            }
-        });
-
-        actionBar.addTab(actionBar.newTab().setText(Constants.MAIN_ACTIVITY_TAB_TASKS).setTabListener(this));
-        currentTabPos = 0;
+        try {
+            android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager()
+                    .beginTransaction();
+            transaction.replace(R.id.activity_main_container, fragment, PROFILE_FRAGMENT).addToBackStack(PROFILE_FRAGMENT).commit();
+            transaction.commit();
+        } catch (Exception e) {
+            Log.e(LOG_TAG, e.toString());
+        }
     }
 
     public static Context getContext() {
@@ -278,42 +274,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     }
 
     @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-
-    }
-
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
-
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
-
-    }
-
-    public class AppSectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public AppSectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int i) {
-            ProfileFragment profileFragment = new ProfileFragment();
-            profileFragment.setRetainInstance(true);
-            return profileFragment;
-        }
-
-        @Override
-        public int getCount() {
-            //only one page
-            return 1;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return "Section " + (position + 1);
-        }
+    public void onBackPressed()
+    {
+        // Leave empty if you want nothing to happen on back press.
     }
 }

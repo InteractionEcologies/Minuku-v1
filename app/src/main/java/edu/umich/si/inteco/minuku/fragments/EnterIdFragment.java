@@ -78,7 +78,9 @@ public class EnterIdFragment extends Fragment {
                         .withOnSuccessCallback(new BackgroundMail.OnSuccessCallback() {
                             @Override
                             public void onSuccess() {
-                                // TODO
+                                Intent intent = new Intent(getActivity(), MainActivity.class);
+                                startActivity(intent);
+                                getActivity().finish();
                             }
                         })
                         .withOnFailCallback(new BackgroundMail.OnFailCallback() {
@@ -88,8 +90,6 @@ public class EnterIdFragment extends Fragment {
                             }
                         })
                         .send();
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                startActivity(intent);
             }
         });
 

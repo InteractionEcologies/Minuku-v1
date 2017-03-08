@@ -5,10 +5,9 @@
     android:orientation="vertical">
 
     <TextView
-        android:background="@color/dark"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/view_space"
+        android:background="@color/dark_gray"
         android:gravity="center"
         android:padding="@dimen/activity_vertical_margin"
         android:text="Minuku Login"
@@ -17,7 +16,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/view_space"
         android:gravity="center"
+        android:padding="@dimen/view_space"
         android:text="Please confirm these users are using the tablet before logging in."
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
