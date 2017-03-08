@@ -8,11 +8,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.multidex.MultiDex;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
 import com.google.gson.Gson;
@@ -26,6 +28,7 @@ import edu.umich.si.inteco.minuku.adapters.UserIconAdapter;
 import edu.umich.si.inteco.minuku.constants.UserIconReference;
 import edu.umich.si.inteco.minuku.data.UserSettingsDBHelper;
 import edu.umich.si.inteco.minuku.model.User;
+import edu.umich.si.inteco.minuku.util.AnimUtilities;
 
 /**
  * Created by tsung on 2017/2/6.
@@ -34,12 +37,17 @@ import edu.umich.si.inteco.minuku.model.User;
 public class LoginActivity extends Activity {
 
     public static Context context;
-    private UserSettingsDBHelper userSettingsDBHelper;
-    private int limitOfUsers = 8;
+
     // UI widgets
     private Button btnLogin, btnAddUser;
+    private TextView tvTitle;
     private ListView lvUsers;
     private UserIconAdapter userIconAdapter;
+
+    // Functions
+    private UserSettingsDBHelper userSettingsDBHelper;
+    private int limitOfUsers = 8;
+    private AnimUtilities animUtilities;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +58,9 @@ public class LoginActivity extends Activity {
     }
 
     private void init() {
+        animUtilities = new AnimUtilities(context);
         userSettingsDBHelper = new UserSettingsDBHelper(this);
+
         btnLogin = (Button) findViewById(R.id.activity_login_btnLogin);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,7 +68,7 @@ public class LoginActivity extends Activity {
                 BackgroundMail.newBuilder(LoginActivity.this)
                         .withUsername("tsungwei50521@gmail.com")
                         .withPassword("A8016168a")
-                        .withMailto("parentingteen@umich.edu")
+                        .withMailto("twho@umich.edu")
                         .withType(BackgroundMail.TYPE_PLAIN)
                         .withSubject("Minuku")
                         .withBody("Minuku service started.")
@@ -100,11 +110,23 @@ public class LoginActivity extends Activity {
             }
         });
         lvUsers = (ListView) findViewById(R.id.activity_login_lv);
+        tvTitle = (TextView) findViewById(R.id.activity_login_tv_title);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                tvTitle.setText("Now choose an icon for yourself");
+            }
+        }, 5000);
         setListView();
     }
 
     public static Context getContext() {
         return context;
+    }
+
+    public void setTitleText(String text) {
+        tvTitle.setText(text);
+        animUtilities.setTvAnimToVisible(tvTitle);
     }
 
     public void setListView() {

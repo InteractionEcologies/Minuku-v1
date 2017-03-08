@@ -10,8 +10,27 @@
         android:layout_margin="@dimen/view_space"
         android:gravity="center"
         android:padding="@dimen/view_space"
-        android:text="Minuku Login"
+        android:text="Minuku Setup"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/view_space"
+        android:gravity="center"
+        android:padding="@dimen/view_space"
+        android:text="please tell us who uses this tablet"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+    <TextView
+        android:id="@+id/activity_login_tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/view_space"
+        android:gravity="center"
+        android:padding="@dimen/view_space"
+        android:text="Choose an icon for the child enrolled in this study"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -36,11 +55,21 @@
             android:text="Login" />
     </LinearLayout>
 
+    <TextView
+        android:layout_width="520dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/view_space"
+        android:gravity="center"
+        android:padding="@dimen/view_space"
+        android:text="Who else uses this tablet?  Please choose an icon for when they use the tablet"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:gravity="center"
+        android:orientation="horizontal"
         android:padding="@dimen/view_space">
 
         <TextView

@@ -66,7 +66,8 @@ public class UserIconAdapter extends BaseAdapter {
 
             final ViewHolder viewHolder = new ViewHolder();
             viewHolder.ivUserIcon = (ImageView) convertView.findViewById(R.id.activity_login_list_item_iv);
-            viewHolder.edUserName = (EditText) convertView.findViewById(R.id.activity_login_list_item_tv);
+            viewHolder.edUserName = (EditText) convertView.findViewById(R.id.activity_login_list_item_edName);
+            viewHolder.edUserAge = (EditText) convertView.findViewById(R.id.activity_login_list_item_edAge);
             viewHolder.ibRemove = (ImageButton) convertView.findViewById(R.id.activity_login_list_item_btn_remove);
             viewHolder.edUserName.setText(allUserList.get(getCount() - position - 1).getUserName());
             viewHolder.edUserName.addTextChangedListener(new TextWatcher() {
@@ -112,6 +113,7 @@ public class UserIconAdapter extends BaseAdapter {
     private class ViewHolder {
         ImageView ivUserIcon;
         EditText edUserName;
+        EditText edUserAge;
         ImageButton ibRemove;
     }
 

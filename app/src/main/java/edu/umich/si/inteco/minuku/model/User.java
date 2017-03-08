@@ -10,16 +10,18 @@ public class User {
     // Img number refrence in UserIconReference.class
     private String imgNumber;
     private String ifSelected;
+    private String userAge;
 
     public User() {
         imgNumber = "8";
         ifSelected = "0";
     }
 
-    public User(String userName, String imgNumber, String ifSelected) {
+    public User(String userName, String userAge, String imgNumber, String ifSelected) {
         this.userName = userName;
         this.imgNumber = imgNumber;
         this.ifSelected = ifSelected;
+        this.userAge = userAge;
     }
 
     public String getUserName() {
@@ -28,6 +30,14 @@ public class User {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getUserAge() {
+        return this.userAge;
+    }
+
+    public void setUserAge(String userAge) {
+        this.userAge = userAge;
     }
 
     public String getImgNumber() {

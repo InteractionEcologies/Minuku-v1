@@ -23,6 +23,7 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
     // DB params
     private String ID = "Id";
     private String USER_NAME = "USER_NAME";
+    private String USER_AGE = "USER_AGE";
     private String USER_IMGNUM = "USER_IMGNUM";
     private String IF_SELECTED = "IF_SELECTED";
 
@@ -39,6 +40,7 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + TABLENAME + "(" +
                 ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                 USER_NAME + " VARCHAR(30)," +
+                USER_AGE + " VARCHAR(30)," +
                 USER_IMGNUM + " VARCHAR(30)," +
                 IF_SELECTED + " VARCHAR(15)" + ");");
     }
@@ -53,6 +55,7 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(USER_NAME, user.getUserName());
+        values.put(USER_AGE, user.getUserAge());
         values.put(USER_IMGNUM, user.getImgNumber());
         values.put(IF_SELECTED, user.getIfSelected());
         long rowId = db.insert(TABLENAME, null, values);
@@ -64,6 +67,7 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(USER_NAME, user.getUserName());
+        values.put(USER_AGE, user.getUserAge());
         values.put(USER_IMGNUM, user.getImgNumber());
         values.put(IF_SELECTED, user.getIfSelected());
         String whereClause = ID + "='" + id + "'";
@@ -95,6 +99,7 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         for (int i = 0; i < userList.size(); i++) {
             ContentValues values = new ContentValues();
             values.put(USER_NAME, userList.get(i).getUserName());
+            values.put(USER_AGE, userList.get(i).getUserAge());
             values.put(USER_IMGNUM, userList.get(i).getImgNumber());
             values.put(IF_SELECTED, "1");
             String whereClause = ID + "='" + idList.get(i) + "'";
@@ -112,6 +117,7 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         for (int i = 0; i < userList.size(); i++) {
             ContentValues values = new ContentValues();
             values.put(USER_NAME, userList.get(i).getUserName());
+            values.put(USER_AGE, userList.get(i).getUserAge());
             values.put(USER_IMGNUM, userList.get(i).getImgNumber());
             values.put(IF_SELECTED, "0");
             String whereClause = ID + "='" + idList.get(i) + "'";
@@ -136,9 +142,10 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(sql, null);
         while (cursor.moveToNext()) {
             String userName = cursor.getString(1);
-            String userImgNum = cursor.getString(2);
-            String ifSelected = cursor.getString(3);
-            User user = new User(userName, userImgNum, ifSelected);
+            String useAge = cursor.getString(2);
+            String userImgNum = cursor.getString(3);
+            String ifSelected = cursor.getString(4);
+            User user = new User(userName, useAge, userImgNum, ifSelected);
             usertList.add(user);
         }
         cursor.close();

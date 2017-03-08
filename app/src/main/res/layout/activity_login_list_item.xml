@@ -18,14 +18,31 @@
             android:layout_margin="@dimen/view_space"
             android:src="@drawable/fragment_profile_role_icon9" />
 
-        <EditText
-            android:id="@+id/activity_login_list_item_tv"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="@dimen/view_space"
-            android:gravity="center_vertical"
-            android:hint="Enter user name"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/activity_login_list_item_edName"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/view_space"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:hint="Enter user name"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+            <EditText
+                android:id="@+id/activity_login_list_item_edAge"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/view_space"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:hint="Enter user's age"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        </LinearLayout>
     </LinearLayout>
 
     <ImageButton
