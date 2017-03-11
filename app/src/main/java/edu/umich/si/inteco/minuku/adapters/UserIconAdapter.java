@@ -43,10 +43,14 @@ public class UserIconAdapter extends BaseAdapter {
     private ArrayList<User> allUserList;
     private UserIconReference userIconReference;
     private UserSettingsDBHelper userSettingsDBHelper;
+    private User user;
 
     public UserIconAdapter(Context context, ArrayList<User> allUserList) {
         this.context = context;
         this.allUserList = allUserList;
+
+        if (null == userSettingsDBHelper)
+            userSettingsDBHelper = new UserSettingsDBHelper(context);
     }
 
     @Override
@@ -77,29 +81,6 @@ public class UserIconAdapter extends BaseAdapter {
             viewHolder.ibRemove = (ImageButton) convertView.findViewById(R.id.activity_login_list_item_btn_remove);
 
             viewHolder.edUserName = (EditText) convertView.findViewById(R.id.activity_login_list_item_edName);
-            viewHolder.edUserName.setText(allUserList.get(getCount() - position - 1).getUserAge());
-            viewHolder.edUserName.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    // unused
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    // unused
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    if (null == userSettingsDBHelper)
-                        userSettingsDBHelper = new UserSettingsDBHelper(context);
-                    User user = allUserList.get(getCount() - position - 1);
-                    user.setUserAge(viewHolder.edUserAge.getText().toString());
-                    userSettingsDBHelper.updateDB(userSettingsDBHelper.getAllIdList().get(getCount() - position - 1).toString(), user);
-                }
-            });
-
-            viewHolder.edUserAge = (EditText) convertView.findViewById(R.id.activity_login_list_item_edAge);
             viewHolder.edUserName.setText(allUserList.get(getCount() - position - 1).getUserName());
             viewHolder.edUserName.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -114,13 +95,33 @@ public class UserIconAdapter extends BaseAdapter {
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    if (null == userSettingsDBHelper)
-                        userSettingsDBHelper = new UserSettingsDBHelper(context);
                     User user = allUserList.get(getCount() - position - 1);
-                    user.setUserName(viewHolder.edUserName.getText().toString());
+                    user.setUserAge(viewHolder.edUserAge.getText().toString());
                     userSettingsDBHelper.updateDB(userSettingsDBHelper.getAllIdList().get(getCount() - position - 1).toString(), user);
                 }
             });
+
+            viewHolder.edUserAge = (EditText) convertView.findViewById(R.id.activity_login_list_item_edAge);
+            viewHolder.edUserAge.setText(allUserList.get(getCount() - position - 1).getUserAge());
+            viewHolder.edUserAge.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    // unused
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    // unused
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    User user = allUserList.get(getCount() - position - 1);
+                    user.setUserAge(viewHolder.edUserAge.getText().toString());
+                    userSettingsDBHelper.updateDB(userSettingsDBHelper.getAllIdList().get(getCount() - position - 1).toString(), user);
+                }
+            });
+
             viewHolder.ivUserIcon.setImageDrawable(userIconReference.getIcon(allUserList.get(getCount() - position - 1).getImgNumber()));
             viewHolder.ivUserIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -156,12 +157,13 @@ public class UserIconAdapter extends BaseAdapter {
     }
 
     private void setDialog(final int position, final User user) {
+        this.user = user;
         dialog = new Dialog(context);
         LayoutInflater li = LayoutInflater.from(context);
         View dialogView = li.inflate(R.layout.fragment_login_user_icon_dialog, null);
         dialog.setContentView(dialogView);
         dialog.setTitle("Select an icon");
-        gridLayout = (GridLayout) dialogView.findViewById(R.id.activity_login_user_icon_dialog_gridLayout);
+
         Button btnSave = (Button) dialogView.findViewById(R.id.activity_login_user_icon_dialog_btnSave);
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,10 +182,14 @@ public class UserIconAdapter extends BaseAdapter {
                 dialog.dismiss();
             }
         });
+
         UserIconReference userIconReference = new UserIconReference(context);
+        gridLayout = (GridLayout) dialogView.findViewById(R.id.activity_login_user_icon_dialog_gridLayout);
         for (int i = 0; i < userIconReference.getIconsReference().size(); i++) {
-            DialogUserIcon dialogUserIcon = new DialogUserIcon(context, i + "", this);
-            gridLayout.addView(dialogUserIcon.getView());
+            if (!userSettingsDBHelper.checkIfIconTaken(i + "") || (i + "").equalsIgnoreCase(user.getImgNumber())) {
+                DialogUserIcon dialogUserIcon = new DialogUserIcon(context, i + "", this);
+                gridLayout.addView(dialogUserIcon.getView());
+            }
         }
         dialog.show();
     }
@@ -196,7 +202,10 @@ public class UserIconAdapter extends BaseAdapter {
             if (String.valueOf(i).equalsIgnoreCase(iconImgNum)) {
                 dialogUserIcon.setSelectedView();
             }
-            gridLayout.addView(dialogUserIcon.getView());
+
+            if (!userSettingsDBHelper.checkIfIconTaken(i + "") || (i + "").equalsIgnoreCase(user.getImgNumber())) {
+                gridLayout.addView(dialogUserIcon.getView());
+            }
         }
     }
 }

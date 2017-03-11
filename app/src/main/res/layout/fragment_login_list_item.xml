@@ -32,6 +32,7 @@
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:hint="Enter user name"
+                android:inputType="text"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
             <EditText
@@ -42,7 +43,7 @@
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:hint="Enter user's age"
-                android:inputType="number"
+                android:inputType="text"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
         </LinearLayout>
     </LinearLayout>

@@ -63,8 +63,19 @@ public class LoginFragment extends Fragment {
         btnFinish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (userSettingsDBHelper.getTotalNumOfUser() > 0)
+                if (userSettingsDBHelper.getTotalNumOfUser() > 0 && !userSettingsDBHelper.getIfColumnContainNull()) {
                     ((LoginActivity) LoginActivity.getContext()).setFragment(LoginActivity.ENTERID_FRAGMENT);
+                } else {
+                    new AlertDialog.Builder(getContext())
+                            .setTitle("Column contains Empty value")
+                            .setMessage("Please check you have at least one user and no column contains empty value.")
+                            .setCancelable(false)
+                            .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            }).show();
+                }
             }
         });
 

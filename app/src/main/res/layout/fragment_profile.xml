@@ -58,7 +58,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:columnCount="6"
+                    android:columnCount="2"
                     android:padding="@dimen/view_space"></GridLayout>
             </HorizontalScrollView>
 

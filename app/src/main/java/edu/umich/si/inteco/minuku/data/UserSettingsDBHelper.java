@@ -90,6 +90,8 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
             if ("1".equalsIgnoreCase(cursor.getString(0)))
                 select = true;
 
+        cursor.close();
+        db.close();
         return select;
     }
 
@@ -197,4 +199,35 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         return userCount;
     }
 
+    public boolean getIfColumnContainNull() {
+        boolean containNull = false;
+        SQLiteDatabase db = getReadableDatabase();
+        String[] columns = {USER_NAME, USER_AGE};
+        Cursor cursor = db.query(TABLENAME, columns, null, null, null, null, null);
+
+        while (cursor.moveToNext()) {
+            if ("".equalsIgnoreCase(cursor.getString(0)) || "".equalsIgnoreCase(cursor.getString(1)))
+                containNull = true;
+        }
+
+        cursor.close();
+        db.close();
+        return containNull;
+    }
+
+    public boolean checkIfIconTaken(String imgNum) {
+        boolean ifIconTaken = false;
+        SQLiteDatabase db = getReadableDatabase();
+        String[] columns = {USER_IMGNUM};
+        Cursor cursor = db.query(TABLENAME, columns, null, null, null, null, null);
+
+        while (cursor.moveToNext()) {
+            if (imgNum.equalsIgnoreCase(cursor.getString(0)))
+                ifIconTaken = true;
+        }
+
+        cursor.close();
+        db.close();
+        return ifIconTaken;
+    }
 }

@@ -28,6 +28,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import edu.umich.si.inteco.minuku.MainActivity;
@@ -85,10 +86,12 @@ public class ProfileFragment extends Fragment {
         userSettingsDBHelper = new UserSettingsDBHelper(context);
         spNumOfPeople = (Spinner) rootView.findViewById(R.id.fragment_profile_spinner);
         gridLayout = (GridLayout) rootView.findViewById(R.id.fragment_profile_gridLayout);
+
         this.arraySpinner = new ArrayList<String>();
         for (int i = 1; i <= userSettingsDBHelper.getTotalNumOfUser(); i++) {
             arraySpinner.add(String.valueOf(i));
         }
+
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
                 android.R.layout.simple_spinner_item, arraySpinner);
         spNumOfPeople.setAdapter(adapter);
@@ -110,14 +113,18 @@ public class ProfileFragment extends Fragment {
                 spNumOfPeople.setSelection(numOfPeopleUsing - 1);
             }
         });
+
         btnSave = (Button) rootView.findViewById(R.id.fragment_profile_btnSave);
         btnSave.setOnClickListener(profileButtonListener);
+
         tv1 = (TextView) rootView.findViewById(R.id.fragment_profile_wifimac);
         tv2 = (TextView) rootView.findViewById(R.id.fragment_profile_btmac);
-        tv1.setText("WiFi MAC Address: " + MainActivity.wifiMacAddr);
-        tv2.setText("Bluetooth MAC Address: " + MainActivity.btMacAddr);
+
+
         btnStart = (Button) rootView.findViewById(R.id.fragment_profile_btnStart);
+        btnStart.setVisibility(View.GONE);
         btnStart.setOnClickListener(profileButtonListener);
+
         setUserIconView();
     }
 
@@ -134,12 +141,24 @@ public class ProfileFragment extends Fragment {
             final User user = userList.get(i);
             UserIcon userIcon = new UserIcon(context, user);
             ImageButton ib = userIcon.getIbUser();
-            ib.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    setSelectedTabColor(id, user);
-                }
-            });
+
+            if (Integer.parseInt(user.getUserAge()) > 18) {
+                ib.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        setSelectedTabColor(id, user);
+                        return false;
+                    }
+                });
+            } else {
+                ib.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        setSelectedTabColor(id, user);
+                    }
+                });
+            }
+
             gridLayout.addView(userIcon.getView());
         }
     }
@@ -147,6 +166,9 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        tv1.setText("WiFi MAC Address: " + MainActivity.wifiMacAddr);
+        tv2.setText("Bluetooth MAC Address: " + MainActivity.btMacAddr);
     }
 
     @Override
@@ -201,7 +223,7 @@ public class ProfileFragment extends Fragment {
                         @Override
                         public void run() {
                             String queryLastSynHourURL = MongoDBHelper.getQueryOfSynLatestDocumentURL(ProjectDatabaseName, DatabaseNameManager.MONGODB_COLLECTION_BACKGROUNDLOGGING);
-                            Log.d(LOG_TAG, "syncWithRemoteDatabase going to query background recording on MogoLab ON URL: " +queryLastSynHourURL);
+                            Log.d(LOG_TAG, "syncWithRemoteDatabase going to query background recording on MogoLab ON URL: " + queryLastSynHourURL);
                             RemoteDBHelper.queryLastBackgroundLoggingSyncHourUsingGET(queryLastSynHourURL);
                         }
                     }).start();
