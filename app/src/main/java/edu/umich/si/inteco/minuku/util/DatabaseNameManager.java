@@ -220,7 +220,6 @@ public class DatabaseNameManager {
 	public static final int COL_INDEX_RECORD_TIMESTAMP_LONG = 4;
 
 
-
     //JSON properties name for remote DB
     public static final String MONGO_DB_DOCUMENT_PROPERTIES_USERS= "users";
     public static final String MONGO_DB_DOCUMENT_PROPERTIES_OTHERS= "others";

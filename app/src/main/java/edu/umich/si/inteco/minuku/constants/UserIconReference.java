@@ -49,6 +49,7 @@ public class UserIconReference {
                 put("21", context.getResources().getDrawable(R.drawable.fragment_profile_icon22));
                 put("22", context.getResources().getDrawable(R.drawable.fragment_profile_icon23));
                 put("23", context.getResources().getDrawable(R.drawable.fragment_profile_icon24));
+                put("24", context.getResources().getDrawable(R.drawable.fragment_profile_icon_default));
             }
         };
     }

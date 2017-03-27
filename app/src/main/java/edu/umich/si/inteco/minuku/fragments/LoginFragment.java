@@ -16,6 +16,8 @@ import android.widget.TextView;
 
 import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
 
+import java.util.ArrayList;
+
 import edu.umich.si.inteco.minuku.LoginActivity;
 import edu.umich.si.inteco.minuku.MainActivity;
 import edu.umich.si.inteco.minuku.R;
@@ -99,6 +101,7 @@ public class LoginFragment extends Fragment {
                 }
             }
         });
+
         lvUsers = (ListView) view.findViewById(R.id.fragment_login_lv);
         tvTitle = (TextView) view.findViewById(R.id.fragment_login_tv_title);
         new Handler().postDelayed(new Runnable() {

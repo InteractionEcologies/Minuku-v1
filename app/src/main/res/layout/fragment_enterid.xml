@@ -60,6 +60,7 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
                 <EditText
+                    android:id="@+id/fragment_enterid_edStudy"
                     android:layout_width="260dp"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium" />

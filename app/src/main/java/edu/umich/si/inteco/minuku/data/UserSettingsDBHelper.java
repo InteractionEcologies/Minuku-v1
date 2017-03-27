@@ -208,6 +208,9 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         while (cursor.moveToNext()) {
             if ("".equalsIgnoreCase(cursor.getString(0)) || "".equalsIgnoreCase(cursor.getString(1)))
                 containNull = true;
+
+            if (null == cursor.getString(0) || null == cursor.getString(1))
+                containNull = true;
         }
 
         cursor.close();

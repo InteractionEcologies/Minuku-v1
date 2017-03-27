@@ -13,7 +13,7 @@ public class User {
     private String userAge;
 
     public User() {
-        imgNumber = "8";
+        imgNumber = "24";
         ifSelected = "0";
     }
 

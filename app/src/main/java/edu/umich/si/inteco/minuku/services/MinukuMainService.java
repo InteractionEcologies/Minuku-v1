@@ -327,6 +327,7 @@ public class MinukuMainService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
+
         if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
             Log.i(LOG_TAG, "Received Start Foreground Intent ");
             showNotification();
@@ -525,16 +526,6 @@ public class MinukuMainService extends Service {
                 if (ConfigurationManager.MINUKU_SERVICE_CHECKIN_ENABLED) {
 
                     if (mDeviceCheckingTimeCountDown == 0) {
-
-                        //if we want to use Google Analytic to check alive status
-                        if (ConfigurationManager.MINUKU_SERVICE_CHECKIN_GOOGLE_ANALYTICS_ENABLED) {
-                            //If Google Analytic Tracker is enabled, we periodically send data to the
-                            mTracker.send(new HitBuilders.EventBuilder()
-                                    .setCategory(Constants.MINUKU_SERVICE_CHECKING_ISALIVE)
-                                    .setAction(Constants.USER_ID)
-                                    .setLabel(Constants.USER_ID)
-                                    .build());
-                        }
 
                         //if we want to use remote MongoDB to check alive status
                         if (ConfigurationManager.MINUKU_SERVICE_CHECKIN_MONGODB_ENABLED) {

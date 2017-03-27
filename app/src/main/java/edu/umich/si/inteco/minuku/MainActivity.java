@@ -255,7 +255,8 @@ public class MainActivity extends FragmentActivity {
                 }
                 wifiMacAddr = res1.toString();
             }
-        } catch (Exception ex) {
+        } catch (Exception exception) {
+            Log.d(LOG_TAG, exception.getMessage());
         }
         btMacAddr = android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");
     }
@@ -274,8 +275,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
         // Leave empty if you want nothing to happen on back press.
     }
 }

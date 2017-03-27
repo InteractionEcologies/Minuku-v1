@@ -2,6 +2,7 @@ package edu.umich.si.inteco.minuku.adapters;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -36,7 +37,7 @@ public class UserIconAdapter extends BaseAdapter {
     // Views
     private Dialog dialog;
     private GridLayout gridLayout;
-    private String iconImgNum;
+    private String iconImgNum = "";
 
     // Functions
     private FragmentManager fragmentManager;
@@ -96,7 +97,7 @@ public class UserIconAdapter extends BaseAdapter {
                 @Override
                 public void afterTextChanged(Editable s) {
                     User user = allUserList.get(getCount() - position - 1);
-                    user.setUserAge(viewHolder.edUserAge.getText().toString());
+                    user.setUserName(viewHolder.edUserName.getText().toString());
                     userSettingsDBHelper.updateDB(userSettingsDBHelper.getAllIdList().get(getCount() - position - 1).toString(), user);
                 }
             });
@@ -168,9 +169,20 @@ public class UserIconAdapter extends BaseAdapter {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
                 if (null == userSettingsDBHelper) {
                     userSettingsDBHelper = new UserSettingsDBHelper(context);
                 }
+
+                if ("".equalsIgnoreCase(iconImgNum))
+                    iconImgNum = "24";
+
                 user.setImgNumber(iconImgNum);
                 userSettingsDBHelper.updateDB(userSettingsDBHelper.getAllIdList().get(getCount() - position - 1) + "", user);
 
@@ -179,14 +191,13 @@ public class UserIconAdapter extends BaseAdapter {
 
                 LoginFragment loginFragment = (LoginFragment) fragmentManager.findFragmentByTag(LoginActivity.LOGIN_FRAGMENT);
                 loginFragment.setListView();
-                dialog.dismiss();
             }
         });
 
         UserIconReference userIconReference = new UserIconReference(context);
         gridLayout = (GridLayout) dialogView.findViewById(R.id.activity_login_user_icon_dialog_gridLayout);
         for (int i = 0; i < userIconReference.getIconsReference().size(); i++) {
-            if (!userSettingsDBHelper.checkIfIconTaken(i + "") || (i + "").equalsIgnoreCase(user.getImgNumber())) {
+            if (!userSettingsDBHelper.checkIfIconTaken(i + "") && !(i + "").equalsIgnoreCase(user.getImgNumber()) && i != 24) {
                 DialogUserIcon dialogUserIcon = new DialogUserIcon(context, i + "", this);
                 gridLayout.addView(dialogUserIcon.getView());
             }
@@ -203,7 +214,7 @@ public class UserIconAdapter extends BaseAdapter {
                 dialogUserIcon.setSelectedView();
             }
 
-            if (!userSettingsDBHelper.checkIfIconTaken(i + "") || (i + "").equalsIgnoreCase(user.getImgNumber())) {
+            if (!userSettingsDBHelper.checkIfIconTaken(i + "") && !(i + "").equalsIgnoreCase(user.getImgNumber()) && i != 24) {
                 gridLayout.addView(dialogUserIcon.getView());
             }
         }
