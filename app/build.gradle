@@ -40,22 +40,28 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
+
     compile 'com.android.support:multidex:1.0.1'
-    compile 'com.google.android.gms:play-services:8.4.0'
+    compile 'com.google.android.gms:play-services:10.2.0'
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile 'com.android.support:design:25.2.0'
-    compile 'com.google.android.gms:play-services-analytics:8.4.0'
+    compile 'com.google.code.gson:gson:2.8.0'
+    compile 'com.google.firebase:firebase-core:10.2.0'
+    compile 'com.google.firebase:firebase-database:10.2.0'
+    compile 'com.google.firebase:firebase-auth:10.2.0'
+
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
     compile('com.crashlytics.sdk.android:crashlytics-ndk:1.1.2@aar') {
         transitive = true;
     }
-    compile 'com.google.code.gson:gson:2.8.0'
+
     compile 'com.github.yesidlazaro:GmailBackground:1.2.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
+
 crashlytics {
     enableNdk true
     androidNdkOut 'src/main/obj'

@@ -1,45 +1,42 @@
 {
   "project_info": {
-    "project_id": "minuku-102d8",
-    "project_number": "251533599654",
-    "name": "Minuku"
+    "project_number": "226121850392",
+    "firebase_url": "https://minuku-pilot.firebaseio.com",
+    "project_id": "minuku-pilot",
+    "storage_bucket": "minuku-pilot.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:251533599654:android:cf80a3fcbd3e521b",
-        "client_id": "android:edu.umich.si.inteco.minuku",
-        "client_type": 1,
+        "mobilesdk_app_id": "1:226121850392:android:cf80a3fcbd3e521b",
         "android_client_info": {
           "package_name": "edu.umich.si.inteco.minuku"
         }
       },
-      "oauth_client": [],
-      "api_key": [],
+      "oauth_client": [
+        {
+          "client_id": "226121850392-e9ufsgko2cetk0n13b5fklk2pffkcej8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDig1AL7SQPUc22uLNFzfrAnLKPhQqoKeM"
+        }
+      ],
       "services": {
         "analytics_service": {
-          "status": 2,
-          "analytics_property": {
-            "tracking_id": "UA-73385152-1"
-          }
-        },
-        "cloud_messaging_service": {
-          "status": 1,
-          "apns_config": []
+          "status": 1
         },
         "appinvite_service": {
           "status": 1,
           "other_platform_oauth_client": []
         },
-        "google_signin_service": {
-          "status": 1
-        },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }
   ],
-  "client_info": [],
-  "ARTIFACT_VERSION": "1"
+  "configuration_version": "1"
 }

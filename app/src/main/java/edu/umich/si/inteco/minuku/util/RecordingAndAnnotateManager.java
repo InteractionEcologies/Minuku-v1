@@ -955,7 +955,7 @@ public class RecordingAndAnnotateManager {
             document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_ID, Constants.USER_ID + "-" + ScheduleAndSampleManager.getTimeString(startTime, sdf_id));
             //TODO: study condition should not be hardcoded
             document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_OTHERS, Constants.CURRENT_STUDY_CONDITION);
-            document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_USERS, "13212312313");
+//            document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_USERS, "13212312313");
             document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_DEVICE_ID, Constants.DEVICE_ID);
             document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_USER_ID, Constants.USER_ID);
             document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_DATA_TYPE, DatabaseNameManager.MONGODB_COLLECTION_BACKGROUNDLOGGING);
@@ -980,94 +980,95 @@ public class RecordingAndAnnotateManager {
 
             Log.d(LOG_TAG, "[getBackgroundRecordingDocument][testgetdata] contextsource of session " + session.getId() + " are: " + sourceName);
             //get data from the database
-            ArrayList<String> res = DataHandler.getDataBySession(RecordingAndAnnotateManager.BACKGOUND_LOGGING_SESSION_ID,
-                    sourceName, startTime, endTime);
+            if (sourceName.contains("AppUsage")) {
+                ArrayList<String> res = DataHandler.getDataBySession(RecordingAndAnnotateManager.BACKGOUND_LOGGING_SESSION_ID,
+                        sourceName, startTime, endTime);
+                Log.d(LOG_TAG, "[getBackgroundRecordingDocument][testgetdata] the data of contextsource " + sourceName + " is "
+                        + res);
 
-            Log.d(LOG_TAG, "[getBackgroundRecordingDocument][testgetdata] the data of contextsource " + sourceName + " is "
-                    + res);
+                //so far we're not sure what "minute" key will be used later. So we just create sixty JSONObject. Later we will only add the JSONObjects that are not null
+                //to the final JSONObject
+                JSONObject[] minuteJSONArray = new JSONObject[60];
+                /** make it a jSON object **/
 
-            //so far we're not sure what "minute" key will be used later. So we just create sixty JSONObject. Later we will only add the JSONObjects that are not null
-            //to the final JSONObject
-            JSONObject[] minuteJSONArray = new JSONObject[60];
-            /** make it a jSON object **/
+                //this JSON will add non-null minuteJSONObject to it
+                JSONObject recordTypeJSON = new JSONObject();
 
-            //this JSON will add non-null minuteJSONObject to it
-            JSONObject recordTypeJSON = new JSONObject();
+                //result for a recordType
+                for (int j = 0; j < res.size(); j++) {
 
-            //result for a recordType
-            for (int j = 0; j < res.size(); j++) {
+                    //each record
+                    String recordStr = res.get(j);
+                    String[] separated = recordStr.split(Constants.DELIMITER);
 
-                //each record
-                String recordStr = res.get(j);
-                String[] separated = recordStr.split(Constants.DELIMITER);
+                    /** based on the time of record assign to the right key **/
+                    long timestamp = Long.parseLong(separated[DatabaseNameManager.COL_INDEX_RECORD_TIMESTAMP_LONG]);
+                    //get data, which is in JSON format
+                    String data = separated[DatabaseNameManager.COL_INDEX_RECORD_DATA];
 
-                /** based on the time of record assign to the right key **/
-                long timestamp = Long.parseLong(separated[DatabaseNameManager.COL_INDEX_RECORD_TIMESTAMP_LONG]);
-                //get data, which is in JSON format
-                String data = separated[DatabaseNameManager.COL_INDEX_RECORD_DATA];
+                    //get time
+                    SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_HOUR_MIN_SECOND);
+                    String timeStr = ScheduleAndSampleManager.getTimeString(timestamp, sdf);
+                    String[] timeparts = timeStr.split(":");
 
-                //get time
-                SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_HOUR_MIN_SECOND);
-                String timeStr = ScheduleAndSampleManager.getTimeString(timestamp, sdf);
-                String[] timeparts = timeStr.split(":");
-
-                //get minute and second
-                String hour = timeparts[0];
-                String min = timeparts[1];
-                String second = timeparts[2];
+                    //get minute and second
+                    String hour = timeparts[0];
+                    String min = timeparts[1];
+                    String second = timeparts[2];
 
 //                 Log.d (LOG_TAG, "[getBackgroundRecordingDocument][testgetdata] recordStr MINUTE IS " + min + " seconds: " + second );
 
-                //when we know which minute this record should be located in, we check if the corresponding JSONObject in minuteJSONArray has been initialized.
-                //if not, we initialize it.
-                if (minuteJSONArray[(Integer.parseInt(min))] == null) {
-                    minuteJSONArray[(Integer.parseInt(min))] = new JSONObject();
-                }
+                    //when we know which minute this record should be located in, we check if the corresponding JSONObject in minuteJSONArray has been initialized.
+                    //if not, we initialize it.
+                    if (minuteJSONArray[(Integer.parseInt(min))] == null) {
+                        minuteJSONArray[(Integer.parseInt(min))] = new JSONObject();
+                    }
 
-                //create "second" key
-                JSONObject secondRecordJSON = null;
-
-                try {
-                    secondRecordJSON = new JSONObject(data);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                //add the secondJSON to the minuteJSON
-                try {
-                    minuteJSONArray[(Integer.parseInt(min))].put(second, secondRecordJSON);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-            //add all minuteJSON to the recordTypeJSON
-            for (int minuteJSONIndex = 0; minuteJSONIndex < minuteJSONArray.length; minuteJSONIndex++) {
-
-                if (minuteJSONArray[minuteJSONIndex] != null) {
+                    //create "second" key
+                    JSONObject secondRecordJSON = null;
 
                     try {
-                        recordTypeJSON.put((minuteJSONIndex) + "", minuteJSONArray[minuteJSONIndex]);
+                        secondRecordJSON = new JSONObject(data);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+
+                    //add the secondJSON to the minuteJSON
+                    try {
+                        minuteJSONArray[(Integer.parseInt(min))].put(second, secondRecordJSON);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                 }
-            }
 
-            //HourJSOn add recordTypeJSON
-            try {
-                hourJSON.put(sourceName, recordTypeJSON);
-                Log.d(LOG_TAG, "getBackgroundRecordingDocument [testgetdata] the hourJSON is " + hourJSON);
+                //add all minuteJSON to the recordTypeJSON
+                for (int minuteJSONIndex = 0; minuteJSONIndex < minuteJSONArray.length; minuteJSONIndex++) {
 
-                document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_RECORDS, hourJSON);
+                    if (minuteJSONArray[minuteJSONIndex] != null) {
 
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+                        try {
+                            recordTypeJSON.put((minuteJSONIndex) + "", minuteJSONArray[minuteJSONIndex]);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
 
-        }//end of contextsource document
+                //HourJSOn add recordTypeJSON
+                try {
+                    hourJSON.put(sourceName, recordTypeJSON);
+                    Log.d(LOG_TAG, "getBackgroundRecordingDocument [testgetdata] the hourJSON is " + hourJSON);
+
+                    document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_RECORDS, hourJSON);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }//end of contextsource document
+        }
 
         Log.d(LOG_TAG, "getBackgroundRecordingDocument [testbackend] document " + document);
         return document;

@@ -183,13 +183,13 @@ public class AnnotateActivity extends Activity implements OnItemSelectedListener
     }
 
 
-    private void setUpMapIfNeeded() {
-
-        if (map==null) {
-            map = ((MapFragment) getFragmentManager().findFragmentById(R.id.mapFragment)).getMap();
-        }
-
-    }
+//    private void setUpMapIfNeeded() {
+//
+//        if (map==null) {
+//            map = ((MapFragment) getFragmentManager().findFragmentById(R.id.mapFragment)).getMap();
+//        }
+//
+//    }
 
     public ArrayList<LatLng> getLocationPointsToDrawOnMap(int sessionId) {
 
@@ -232,7 +232,7 @@ public class AnnotateActivity extends Activity implements OnItemSelectedListener
         if (vizType.equals(RecordingAndAnnotateManager.ANNOTATION_VISUALIZATION_TYPE_LOCATION)) {
 
             //validate map
-            setUpMapIfNeeded();
+//            setUpMapIfNeeded();
 
             //draw map
             if (map!=null){

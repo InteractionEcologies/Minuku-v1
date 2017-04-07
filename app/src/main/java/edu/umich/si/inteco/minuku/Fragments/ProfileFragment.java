@@ -122,7 +122,7 @@ public class ProfileFragment extends Fragment {
 
 
         btnStart = (Button) rootView.findViewById(R.id.fragment_profile_btnStart);
-        btnStart.setVisibility(View.GONE);
+//        btnStart.setVisibility(View.GONE);
         btnStart.setOnClickListener(profileButtonListener);
 
         setUserIconView();
@@ -219,14 +219,18 @@ public class ProfileFragment extends Fragment {
 //                        showMessage = true;
 //                    }
 
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            String queryLastSynHourURL = MongoDBHelper.getQueryOfSynLatestDocumentURL(ProjectDatabaseName, DatabaseNameManager.MONGODB_COLLECTION_BACKGROUNDLOGGING);
-                            Log.d(LOG_TAG, "syncWithRemoteDatabase going to query background recording on MogoLab ON URL: " + queryLastSynHourURL);
-                            RemoteDBHelper.queryLastBackgroundLoggingSyncHourUsingGET(queryLastSynHourURL);
-                        }
-                    }).start();
+//                    new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            String queryLastSynHourURL = MongoDBHelper.getQueryOfSynLatestDocumentURL(ProjectDatabaseName, DatabaseNameManager.MONGODB_COLLECTION_BACKGROUNDLOGGING);
+//                            Log.d(LOG_TAG, "syncWithRemoteDatabase going to query background recording on MogoLab ON URL: " + queryLastSynHourURL);
+//                            RemoteDBHelper.queryLastBackgroundLoggingSyncHourUsingGET(queryLastSynHourURL);
+//                        }
+//                    }).start();
+
+                    Log.d("asdasd", documents.get(documents.size()-1).toString());
+
+
 
                     break;
             }

@@ -219,15 +219,8 @@ public class MinukuMainService extends Service {
             Log.d(LOG_TAG, "[test permission] we've got a device id " + Constants.DEVICE_ID + " user id: " + Constants.USER_ID);
         }
 
-        /** Google Analytic. Use the ID to track on Google Analytic **/
-        // [START shared_tracker]
-        AnalyticsMinuku application = (AnalyticsMinuku) getApplication();
-        mTracker = application.getDefaultTracker();
-        mTracker.set("&uid", Constants.USER_ID);
-        // [END shared_tracker]
-
         //clean up the database for renewing configurations.
-        //TODO: THis IS TEMPORARILY! After we have a remote database and use it to query configurations, we should kill this line.
+        //TODO: This is TEMPORARILY! After we have a remote database and use it to query configurations, we should kill this line.
 
         cleanUpDatabaseBeforeWeCanUpdateConfiguration();
 

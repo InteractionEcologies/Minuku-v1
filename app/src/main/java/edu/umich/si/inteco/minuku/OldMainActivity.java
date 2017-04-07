@@ -91,16 +91,6 @@ public class OldMainActivity extends FragmentActivity implements ActionBar.TabLi
         Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
         setContentView(R.layout.activity_main);
 
-        /**For Google Analytic**/
-        // [START shared_tracker]
-        // Obtain the shared Tracker instance.
-        AnalyticsMinuku application = (AnalyticsMinuku) getApplication();
-        mTracker = application.getDefaultTracker();
-
-        //RemoteDBHelper.syncWithRemoteDatabase();
-        // Log.d(LOG_TAG, "[queryLastBackgroundLoggingSyncHourUsingPOST] get the synTime is " + lastSynhour);
-
-
         //permissions
         if (checkAndRequestPermissions()) {
             // carry on the normal flow, as the case of  permissions  granted.
