@@ -34,40 +34,41 @@ import edu.umich.si.inteco.minuku.util.ScheduleAndSampleManager;
 
 public class DataHandler {
 
-	private static final String LOG_TAG = "DataHandler";
-	
-	private static Context mContext;
-	
-	private static MinukuMainService mContextManager;
-	
-	//handle alarmManager
-	private static AlarmManager mAlarmManager;
-	
-	
-	//A flag indicating whether the phone is currently connected to Wifi
-	private boolean isWiFIConnected;
-	
-	public DataHandler (Context c){
-		
-		Log.d(LOG_TAG, " entering Data Handler");
-		
-		mContext= c;
-		
-		mContextManager = (MinukuMainService) c;
+    private static final String LOG_TAG = "DataHandler";
 
-		mAlarmManager  = (AlarmManager)mContext.getSystemService( mContext.ALARM_SERVICE );
+    private static Context mContext;
 
-	}
+    private static MinukuMainService mContextManager;
+
+    //handle alarmManager
+    private static AlarmManager mAlarmManager;
+
+
+    //A flag indicating whether the phone is currently connected to Wifi
+    private boolean isWiFIConnected;
+
+    public DataHandler(Context c) {
+
+        Log.d(LOG_TAG, " entering Data Handler");
+
+        mContext = c;
+
+        mContextManager = (MinukuMainService) c;
+
+        mAlarmManager = (AlarmManager) mContext.getSystemService(mContext.ALARM_SERVICE);
+
+    }
 
 
     /**
      * based on the logging task list, determine what to write into the log
+     *
      * @param loggingTaskArrayList
      */
     public static void SaveRecordsToFileSystem(ArrayList<LoggingTask> loggingTaskArrayList) {
 
         //TODO: according to the logging taks, log data to file system
-        for (int i=0; i<loggingTaskArrayList.size(); i++){
+        for (int i = 0; i < loggingTaskArrayList.size(); i++) {
 
             LoggingTask loggingTask = loggingTaskArrayList.get(i);
 
@@ -77,12 +78,12 @@ public class DataHandler {
 
 
         /**** for travel diary study **/
-        String travelHistoryMessage="NA";
+        String travelHistoryMessage = "NA";
 
                 /*we create a travel log here*/
-        if (ActivityRecognitionManager.getProbableActivities()!=null &&
-                LocationManager.getCurrentLocation()!=null ){
-            travelHistoryMessage= MobilityManager.getMobility() + "\t" +
+        if (ActivityRecognitionManager.getProbableActivities() != null &&
+                LocationManager.getCurrentLocation() != null) {
+            travelHistoryMessage = MobilityManager.getMobility() + "\t" +
                     TransportationModeManager.getConfirmedActvitiyString() + "\t" +
                     "FSM:" + TransportationModeManager.getCurrentStateString() + "\t" +
                     ActivityRecognitionManager.getProbableActivities().toString() + "\t" +
@@ -99,25 +100,23 @@ public class DataHandler {
         );
 
 
-
         /**** logging  app usage **/
         String appUsageMessage = "NA";
 
-        if (PhoneStatusManager.getLatestForegroundPackage()!=null && PhoneStatusManager.getScreenStatus()!=null ){
+        if (PhoneStatusManager.getLatestForegroundPackage() != null && PhoneStatusManager.getScreenStatus() != null) {
 
-            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
                 Log.d(LOG_TAG, "test loggin app usage >5 ");
                 appUsageMessage = PhoneStatusManager.getScreenStatus() + "\t" +
-                        PhoneStatusManager.getLatestForegroundPackage()  + "\t" +
-                        PhoneStatusManager.getLatestForegroundPackageTime()  + "\t" +
-                        PhoneStatusManager.getRecentUsedAppsInLastHour() ;
-            }
-            else {
+                        PhoneStatusManager.getLatestForegroundPackage() + "\t" +
+                        PhoneStatusManager.getLatestForegroundPackageTime() + "\t" +
+                        PhoneStatusManager.getRecentUsedAppsInLastHour();
+            } else {
 
                 Log.d(LOG_TAG, "test loggin app usage  < 5: ");
                 appUsageMessage = PhoneStatusManager.getScreenStatus() + "\t" +
-                        PhoneStatusManager.getLatestForegroundPackage()  + "\t" +
+                        PhoneStatusManager.getLatestForegroundPackage() + "\t" +
                         PhoneStatusManager.getLatestForegroundActivity();
             }
 
@@ -132,37 +131,36 @@ public class DataHandler {
         }
 
 
-
-
     }
 
-	 
-	/**
-	 * write data to the local sqllite database
-	 * @param recordpool
-	 */
-	public static void SaveRecordsToLocalDatabase(ArrayList<Record> recordpool, int session_id ){
+
+    /**
+     * write data to the local sqllite database
+     *
+     * @param recordpool
+     */
+    public static void SaveRecordsToLocalDatabase(ArrayList<Record> recordpool, int session_id) {
 
         //no record to save into the database
-        if (recordpool.size()==0)
+        if (recordpool.size() == 0)
             return;
 
 //		Log.d(LOG_TAG, "[SaveRecordsToLocalDatabase][test logging]  there are " + recordpool.size() + "  records in the public pool, saving records to session " + session_id);
 
-          /** Because a record may need to be saved by different sessions, we will mark the record which session it has been saved for
+        /** Because a record may need to be saved by different sessions, we will mark the record which session it has been saved for
          *  Before we save a record, we need to check whether the record has been saved by the target session. Because the inspection starts from
          *  the end of the record pool, we will iterate the whole record pool. Record generated record are more likely not to have been saved yet
          *  We navigate until the record that has been saved by the session. And we consider it the start at which we should start saving**/
 
 
-        int indexOfStartForSavingRecord=0;
-        int indexOfLastSavedByCurSession=0;
-        int indexOfEndForSavingRecord=recordpool.size()-1;
+        int indexOfStartForSavingRecord = 0;
+        int indexOfLastSavedByCurSession = 0;
+        int indexOfEndForSavingRecord = recordpool.size() - 1;
 
         // we first inspect which record has been saved by the current session. We start from the end of the record pool
         //  Log.d(LOG_TAG, "[SaveRecordsToLocalDatabase] inspecting record at " + i + ". Its has been saved by " +  recordpool.get(i).getSavedSessionIds());
         /** 1. check whether the record has been saved by the session **/
-        for (int i=recordpool.size()-1; i>=0; i--) {
+        for (int i = recordpool.size() - 1; i >= 0; i--) {
 
             if (recordpool.get(i).getSavedSessionIds().contains(session_id)) {
                 //once we found the last record been saved by the session, we mark it as the starting point to save records.
@@ -174,19 +172,19 @@ public class DataHandler {
         //if indexOfLastSavedByCurSession =0, none of the records has been saved, so the start index should be 0
         if (indexOfLastSavedByCurSession == 0)
             indexOfStartForSavingRecord = 0;
-        //otherwise, we start from the next of the lastsaved..
+            //otherwise, we start from the next of the lastsaved..
         else
-            indexOfStartForSavingRecord = indexOfLastSavedByCurSession+1;
+            indexOfStartForSavingRecord = indexOfLastSavedByCurSession + 1;
 
 //        Log.d(LOG_TAG, "[SaveRecordsToLocalDatabase] Finishing inspectation. The starting point to save the record is " + indexOfStartForSavingRecord + " and the end is " + indexOfEndForSavingRecord);
 
         //write each record to record tables based on their type and source; each source is written to a separate file
-		for (int i=indexOfStartForSavingRecord; i<= indexOfEndForSavingRecord; i++){
+        for (int i = indexOfStartForSavingRecord; i <= indexOfEndForSavingRecord; i++) {
 
-            try{
+            try {
 
                 //LocalDBHelper will save the record according to the type of the record
-                LocalDBHelper.insertRecordTable ( recordpool.get(i), getTableNameByContextSourceName(recordpool.get(i).getSource()), session_id);
+                LocalDBHelper.insertRecordTable(recordpool.get(i), getTableNameByContextSourceName(recordpool.get(i).getSource()), session_id);
 
                 //mark the record as being saved by the session.
                 if (!recordpool.get(i).getSavedSessionIds().contains(session_id))
@@ -195,33 +193,33 @@ public class DataHandler {
 //                 Log.d(LOG_TAG, "[SaveRecordsToLocalDatabase] finishing saving record " + recordpool.get(i).getSourceType() +  " at " + i + ", mark it has been saved by " + session_id + " now it has been saved by " +  recordpool.get(i).getSavedSessionIds());
 
 
-            }catch (IndexOutOfBoundsException e ){
+            } catch (IndexOutOfBoundsException e) {
 
                 e.printStackTrace();
             }
 
 
-		}
+        }
 
 
         /** Clean the recordpool: check all the records and exmaine whether the record has been saved by all currently running sessions.
          * If yes, we dont need that record anymore. **/
 
-        for (int i=0; i<recordpool.size(); i++){
+        for (int i = 0; i < recordpool.size(); i++) {
 
             //We first set the flag true. If we found any session that is not contained in getSavedSessionIds(), we set the flag false, i.e.
             //the record has not been saved in all sessions
 
             boolean savedByAllSessions = true;
 
-            for (int j=0; j< RecordingAndAnnotateManager.getCurRecordingSessions().size(); j++){
+            for (int j = 0; j < RecordingAndAnnotateManager.getCurRecordingSessions().size(); j++) {
 
                 //get the id of all running sessions and check whether the record in the pool has marked the session id.
                 //if it is marked, the record has been saved in that session.
                 int runningSessionId = (int) RecordingAndAnnotateManager.getCurRecordingSessions().get(j).getId();
 
                 //check if the session is currently paused, if yes, we don't consider it (because records should not be saved by a paused session)
-                if (RecordingAndAnnotateManager.isSessionPaused(runningSessionId)){
+                if (RecordingAndAnnotateManager.isSessionPaused(runningSessionId)) {
 //                    Log.d(LOG_TAG, "[SaveRecordsToLocalDatabase] the session " + runningSessionId + " is paused, we do not consider it" );
                     continue;
                 }
@@ -237,11 +235,11 @@ public class DataHandler {
             }
 
             //if the record has been saved by all running sessions, remove the record
-            if (savedByAllSessions){
+            if (savedByAllSessions) {
 //                Log.d(LOG_TAG, "[SaveRecordsToLocalDatabase] record at " + i + " has been saved by all sessions " + recordpool.get(i).getSavedSessionIds() +  " we will remove the record ");
                 recordpool.remove(i);
                 //i substracts one becasue the index will shift left if we remove one element
-                i-=1;
+                i -= 1;
             }
         }
 
@@ -249,7 +247,7 @@ public class DataHandler {
     }
 
 	/*
-	public static void WriteRecordsToFile(ArrayList<Record> recordpool){		
+    public static void WriteRecordsToFile(ArrayList<Record> recordpool){
 		
 		//write each record to files based on their source; each source is written to a separate file
 	
@@ -305,11 +303,11 @@ public class DataHandler {
         ArrayList<String> resultList = new ArrayList<String>();
 
         //first know which table and column to query..
-        String tableName= getTableNameByContextSourceName(sourceName);
+        String tableName = getTableNameByContextSourceName(sourceName);
         Log.d(LOG_TAG, "[getDataBySession][testgetdata] getting data from  " + tableName);
 
         //get data from the table
-        if (tableName !=null) {
+        if (tableName != null) {
             resultList = LocalDBHelper.queryRecordsInSession(tableName, sessionId, startTime, endTime);
 //            Log.d(LOG_TAG, "[getDataBySession][testgetdata] the result from " + tableName + " is  " + resultList);
         }
@@ -317,7 +315,26 @@ public class DataHandler {
         return resultList;
     }
 
+    // Once the data has been upload successfully, they should be removed from local storage
+    public static ArrayList<String> removeDataBySession(int sessionId, String sourceName, long startTime, long endTime) {
 
+        //for each record type get data
+        Log.d(LOG_TAG, "[getDataBySession][testgetdata] getting data from  sessiom " + sessionId + " - " + sourceName);
+
+        ArrayList<String> resultList = new ArrayList<String>();
+
+        //first know which table and column to query..
+        String tableName = getTableNameByContextSourceName(sourceName);
+        Log.d(LOG_TAG, "[getDataBySession][testgetdata] getting data from  " + tableName);
+
+        //get data from the table
+        if (tableName != null) {
+            resultList = LocalDBHelper.queryRecordsInSession(tableName, sessionId, startTime, endTime);
+//            Log.d(LOG_TAG, "[getDataBySession][testgetdata] the result from " + tableName + " is  " + resultList);
+        }
+
+        return resultList;
+    }
 
 
     public static ArrayList<String> getDataBySession(int sessionId, String sourceName) {
@@ -358,7 +375,7 @@ public class DataHandler {
     }
 
 
-	public static ArrayList<String> getDataBySession(int sessionId, String sourceName, String annotationVizType) {
+    public static ArrayList<String> getDataBySession(int sessionId, String sourceName, String annotationVizType) {
 
         ArrayList<String> resultList = new ArrayList<String>();
 
@@ -374,13 +391,14 @@ public class DataHandler {
 
     /**
      * this function parse the activity data from DB and create activity Record
+     *
      * @param recordStr
      * @return
      */
     public static Record parseDBResultToActivityRecord(String recordStr) {
 
         ActivityRecognitionRecord activityRecord = new ActivityRecognitionRecord();
-        List<DetectedActivity> probableActivities= new ArrayList<DetectedActivity>();
+        List<DetectedActivity> probableActivities = new ArrayList<DetectedActivity>();
 
         String[] separated = recordStr.split(Constants.DELIMITER);
 
@@ -457,7 +475,7 @@ public class DataHandler {
         long latestTime = 0;
 
         /**we loop through the contextsources tables to find the latest time**/
-        for (int i=0; i<contextsources.size(); i++){
+        for (int i = 0; i < contextsources.size(); i++) {
 
             res = LocalDBHelper.queryLastRecord(
                     getTableNameByContextSourceName(contextsources.get(i)),
@@ -465,14 +483,14 @@ public class DataHandler {
 
             Log.d(LOG_TAG, "[test get session time] testgetdata the last record is " + res);
             //if there's a record
-            if (res!=null && res.size()>0){
+            if (res != null && res.size() > 0) {
 
                 String lastRecord = res.get(0);
-                long time = Long.parseLong(lastRecord.split(Constants.DELIMITER)[DatabaseNameManager.COL_INDEX_RECORD_TIMESTAMP_LONG] );
+                long time = Long.parseLong(lastRecord.split(Constants.DELIMITER)[DatabaseNameManager.COL_INDEX_RECORD_TIMESTAMP_LONG]);
                 Log.d(LOG_TAG, "[test get session time] testgetdata the last record time is " + ScheduleAndSampleManager.getTimeString(time));
 
                 //compare time
-                if (time>latestTime){
+                if (time > latestTime) {
                     latestTime = time;
                     Log.d(LOG_TAG, "[test get session time] update, latest time is changed to  " + ScheduleAndSampleManager.getTimeString(time));
 
@@ -488,11 +506,9 @@ public class DataHandler {
     }
 
 
-
-
-	/**
-	 * Based on the rules, decide which tables and columns the DB need to query 
-	 */
+    /**
+     * Based on the rules, decide which tables and columns the DB need to query
+     */
     /*
 	public static ArrayList<String> getDataByCondition(Condition condition) {
 		
@@ -634,11 +650,9 @@ public class DataHandler {
 		return newResultList ;
 		
 	}*/
-
-
     public static String getTableAndColumnByVizType(String annotationVizType) {
 
-        if (annotationVizType==RecordingAndAnnotateManager.ANNOTATION_VISUALIZATION_TYPE_LOCATION) {
+        if (annotationVizType == RecordingAndAnnotateManager.ANNOTATION_VISUALIZATION_TYPE_LOCATION) {
 
             return LocationManager.RECORD_TABLE_NAME_LOCATION;
 
@@ -649,64 +663,61 @@ public class DataHandler {
     }
 
 
-	
-	/***
-	 * 
-	 * 
-	 * @return
-	 */
-	private static String getLogFileTimeString(){		
-		//get timzone		 
-		TimeZone tz = TimeZone.getDefault();		
-		Calendar cal = Calendar.getInstance(tz);
-		
-		SimpleDateFormat sdf_now = new SimpleDateFormat(Constants.DATE_FORMAT_NOW_HOUR);
-		String s = sdf_now.format(cal.getTime());
-		
-		return s;
-	}
+    /***
+     *
+     *
+     * @return
+     */
+    private static String getLogFileTimeString() {
+        //get timzone
+        TimeZone tz = TimeZone.getDefault();
+        Calendar cal = Calendar.getInstance(tz);
 
-	
-	/***get the filename based on the sensor source**/
-	private static String getFileNameBySensorSourceNumber(int number){
-		
-		String filename = "undefined sensor type";
-		
-		if (number==Sensor.TYPE_ACCELEROMETER){
-			filename = "PHONE_ACCELEROMETER";
-		}else if (number==Sensor.TYPE_GRAVITY){
-			filename = "PHONE_GRAVITY";
-		}else if (number==Sensor.TYPE_GYROSCOPE){
-			filename = "PHONE_GYRSCOPE";
-		}else if (number==Sensor.TYPE_LINEAR_ACCELERATION){
-			filename = "LINEAR_ACCELERATION";
-		}else if (number==Sensor.TYPE_ROTATION_VECTOR){
-			filename = "ROTATION_VECTOR";
-		}else if (number==Sensor.TYPE_MAGNETIC_FIELD){
-			filename = "MAGNETIC_FIELD";
-		}else if (number==Sensor.TYPE_PROXIMITY){
-			filename = "PHONE_PROXIMITY";
-		}else if (number==Sensor.TYPE_AMBIENT_TEMPERATURE){
-			filename = "PHONE_AMBIENT_TEMPERATURE";
-		}else if (number==Sensor.TYPE_LIGHT){
-			filename = "PHONE_LIGHT";
-		}else if (number==Sensor.TYPE_PRESSURE){
-			filename = "PHONE_PRESSURE";
-		}else if (number==Sensor.TYPE_RELATIVE_HUMIDITY){
-			filename = "RELATIVE_HUMIDITY";
-        //TODO: add health relate sensor conditions, e.g. hear reate, step
-		}else if (number==Sensor.TYPE_HEART_RATE){
+        SimpleDateFormat sdf_now = new SimpleDateFormat(Constants.DATE_FORMAT_NOW_HOUR);
+        String s = sdf_now.format(cal.getTime());
+
+        return s;
+    }
+
+
+    /***get the filename based on the sensor source**/
+    private static String getFileNameBySensorSourceNumber(int number) {
+
+        String filename = "undefined sensor type";
+
+        if (number == Sensor.TYPE_ACCELEROMETER) {
+            filename = "PHONE_ACCELEROMETER";
+        } else if (number == Sensor.TYPE_GRAVITY) {
+            filename = "PHONE_GRAVITY";
+        } else if (number == Sensor.TYPE_GYROSCOPE) {
+            filename = "PHONE_GYRSCOPE";
+        } else if (number == Sensor.TYPE_LINEAR_ACCELERATION) {
+            filename = "LINEAR_ACCELERATION";
+        } else if (number == Sensor.TYPE_ROTATION_VECTOR) {
+            filename = "ROTATION_VECTOR";
+        } else if (number == Sensor.TYPE_MAGNETIC_FIELD) {
+            filename = "MAGNETIC_FIELD";
+        } else if (number == Sensor.TYPE_PROXIMITY) {
+            filename = "PHONE_PROXIMITY";
+        } else if (number == Sensor.TYPE_AMBIENT_TEMPERATURE) {
+            filename = "PHONE_AMBIENT_TEMPERATURE";
+        } else if (number == Sensor.TYPE_LIGHT) {
+            filename = "PHONE_LIGHT";
+        } else if (number == Sensor.TYPE_PRESSURE) {
+            filename = "PHONE_PRESSURE";
+        } else if (number == Sensor.TYPE_RELATIVE_HUMIDITY) {
+            filename = "RELATIVE_HUMIDITY";
+            //TODO: add health relate sensor conditions, e.g. hear reate, step
+        } else if (number == Sensor.TYPE_HEART_RATE) {
+            //tableName = DatabaseNameManager.RECORD_TABLE_NAME_HUMIDITY;
+        } else if (number == Sensor.TYPE_STEP_COUNTER) {
+            //tableName = DatabaseNameManager.RECORD_TABLE_NAME_HUMIDITY;
+        } else if (number == Sensor.TYPE_STEP_DETECTOR) {
             //tableName = DatabaseNameManager.RECORD_TABLE_NAME_HUMIDITY;
         }
-        else if (number==Sensor.TYPE_STEP_COUNTER){
-            //tableName = DatabaseNameManager.RECORD_TABLE_NAME_HUMIDITY;
-        }
-        else if (number==Sensor.TYPE_STEP_DETECTOR){
-            //tableName = DatabaseNameManager.RECORD_TABLE_NAME_HUMIDITY;
-        }
-		
-		return filename;
-	}
+
+        return filename;
+    }
 
     //TODO: complete the list
     public static String getTableNameByContextSourceName(String source) {
@@ -715,27 +726,20 @@ public class DataHandler {
 
         if (source.equals(ContextManager.CONTEXT_SOURCE_NAME_LOCATION)) {
             tableName = LocationManager.getDatabaseTableNameBySourceName(source);
-        }
-        else if (source.equals(ContextManager.CONTEXT_SOURCE_NAME_ACTIVITY_RECOGNITION)) {
+        } else if (source.equals(ContextManager.CONTEXT_SOURCE_NAME_ACTIVITY_RECOGNITION)) {
             tableName = ActivityRecognitionManager.getDatabaseTableNameBySourceName(source);
-        }
-        else if (source.equals(ContextManager.CONTEXT_SOURCE_NAME_TRANSPORTATION)) {
+        } else if (source.equals(ContextManager.CONTEXT_SOURCE_NAME_TRANSPORTATION)) {
             tableName = TransportationModeManager.getDatabaseTableNameBySourceName(source);
-        }
-        else if (source.contains(ContextManager.CONTEXT_SOURCE_NAME_SENSOR_PREFIX)) {
+        } else if (source.contains(ContextManager.CONTEXT_SOURCE_NAME_SENSOR_PREFIX)) {
             tableName = PhoneSensorManager.getDatabaseTableNameBySourceName(source);
-        }
-        else if (source.contains(ContextManager.CONTEXT_SOURCE_NAME_PHONE_STATUS_PREFIX)) {
+        } else if (source.contains(ContextManager.CONTEXT_SOURCE_NAME_PHONE_STATUS_PREFIX)) {
             tableName = PhoneStatusManager.getDatabaseTableNameBySourceName(source);
-        }
-        else if (source.contains(ContextManager.CONTEXT_SOURCE_NAME_USER_INTERACTION_PREFIX)) {
+        } else if (source.contains(ContextManager.CONTEXT_SOURCE_NAME_USER_INTERACTION_PREFIX)) {
             tableName = UserInteractionManager.getDatabaseTableNameBySourceName(source);
         }
 
         return tableName;
     }
-
-
 
 
 }

@@ -42,7 +42,7 @@ public class UserIcon extends View {
     }
 
     private void initVIew() {
-        selectedView = (View) view.findViewById(R.id.obj_user_icon_selectedView);
+        selectedView = view.findViewById(R.id.obj_user_icon_selectedView);
         tvName = (TextView) view.findViewById(R.id.obj_user_icon_tv);
         ibUser = (ImageButton) view.findViewById(R.id.obj_user_icon_ib);
     }
@@ -50,7 +50,7 @@ public class UserIcon extends View {
     private void setUserViews(User user) {
         tvName.setText(user.getUserName());
         ibUser.setImageDrawable(userIconReference.getIcon(user.getImgNumber()));
-        Log.d("asfasfasf", user.getIfSelected());
+
         if ("1".equalsIgnoreCase(user.getIfSelected())) {
             selectedView.setBackgroundColor(getResources().getColor(R.color.brightblue));
         } else {

@@ -36,6 +36,7 @@ import java.util.TreeMap;
 import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.R;
 import edu.umich.si.inteco.minuku.context.ContextManager;
+import edu.umich.si.inteco.minuku.data.UserSettingsDBHelper;
 import edu.umich.si.inteco.minuku.model.ContextSource;
 import edu.umich.si.inteco.minuku.model.Record.Record;
 import edu.umich.si.inteco.minuku.model.StateMappingRule;
@@ -131,6 +132,7 @@ public class PhoneStatusManager extends ContextStateManager {
     public static final String RECORD_DATA_PROPERTY_APPUSAGE_LATEST_FOREGROUND_ACTIVITY = "Latest_Foreground_Activity";
     public static final String RECORD_DATA_PROPERTY_APPUSAGE_USED_APPS_STATS_IN_RECENT_HOUR = "Recent_Apps";
     public static final String RECORD_DATA_PROPERTY_APPUSAGE_APP_USE_DURATION_IN_LAST_CERTAIN_TIME = "AppUseDurationInLastCertainTime";
+    public static final String RECORD_DATA_PROPERTY_APPUSAGE_USER_USING = "Users";
 
 
     /**ContextSourceType**/
@@ -264,6 +266,9 @@ public class PhoneStatusManager extends ContextStateManager {
 
     private static HashMap<String, String> mAppPackageNameHmap;
 
+    // Users that using the app
+    private UserSettingsDBHelper userSettingsDBHelper;
+
 
     public PhoneStatusManager(Context context){
         super();
@@ -292,6 +297,8 @@ public class PhoneStatusManager extends ContextStateManager {
         //audio manager
         mAudioManager = (AudioManager)mContext.getSystemService(mContext.AUDIO_SERVICE);
 
+        // init database
+        userSettingsDBHelper = new UserSettingsDBHelper(mContext);
 
         Log.d(LOG_TAG, "[testing app]: PhoneStatusManager");
 
@@ -398,11 +405,13 @@ public class PhoneStatusManager extends ContextStateManager {
                     data.put(RECORD_DATA_PROPERTY_APPUSAGE_LATEST_USED_APP, mLastestForegroundPackage);
                     data.put(RECORD_DATA_PROPERTY_APPUSAGE_LATEST_USED_APP_TIME, mLastestForegroundPackageTime);
                     data.put(RECORD_DATA_PROPERTY_APPUSAGE_USED_APPS_STATS_IN_RECENT_HOUR, mRecentUsedAppsInLastHour);
+                    data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_USING, userSettingsDBHelper.getSelectedUserNames());
 
                 }
                 else {
                     data.put(RECORD_DATA_PROPERTY_APPUSAGE_LATEST_USED_APP, mLastestForegroundPackage);
                     data.put(RECORD_DATA_PROPERTY_APPUSAGE_LATEST_FOREGROUND_ACTIVITY, mLastestForegroundActivity);
+                    data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_USING, userSettingsDBHelper.getSelectedUserNames());
                 }
 
 

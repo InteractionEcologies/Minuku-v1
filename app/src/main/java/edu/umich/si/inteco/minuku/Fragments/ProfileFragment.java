@@ -27,6 +27,9 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -34,6 +37,7 @@ import java.util.ArrayList;
 import edu.umich.si.inteco.minuku.MainActivity;
 import edu.umich.si.inteco.minuku.R;
 import edu.umich.si.inteco.minuku.constants.UserIconReference;
+import edu.umich.si.inteco.minuku.data.FirebaseManager;
 import edu.umich.si.inteco.minuku.data.MongoDBHelper;
 import edu.umich.si.inteco.minuku.data.RemoteDBHelper;
 import edu.umich.si.inteco.minuku.data.UserSettingsDBHelper;
@@ -48,19 +52,24 @@ public class ProfileFragment extends Fragment {
 
     private static Context context;
     private View rootView;
+
     //UI Widgets
     private Spinner spNumOfPeople;
     private Button btnSave;
     private GridLayout gridLayout;
+    private TextView tvNumOfUsers;
+
     //functions
     private ProfileButtonListener profileButtonListener;
     private UserSettingsDBHelper userSettingsDBHelper;
     private UserIconReference userIconReference;
+    private FirebaseManager firebaseMgr;
+    private DatabaseReference databaseReference;
     private ArrayList<String> arraySpinner;
     private ArrayList<User> userList;
     private ArrayList<Integer> userIdList;
-    private int numOfPeopleUsing = 1;
-    private int currentSelected = 1;
+    private int numOfPeopleUsing = 100;
+    private int currentSelected = 0;
     public static int OVERLAY_PERMISSION_REQ_CODE_CHATHEAD = 1234;
     public static int OVERLAY_PERMISSION_REQ_CODE_CHATHEAD_MSG = 5678;
 
@@ -84,9 +93,16 @@ public class ProfileFragment extends Fragment {
     private void init() {
         profileButtonListener = new ProfileButtonListener();
         userSettingsDBHelper = new UserSettingsDBHelper(context);
-        spNumOfPeople = (Spinner) rootView.findViewById(R.id.fragment_profile_spinner);
-        gridLayout = (GridLayout) rootView.findViewById(R.id.fragment_profile_gridLayout);
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        firebaseMgr = new FirebaseManager(databaseReference);
 
+        // find views
+        gridLayout = (GridLayout) rootView.findViewById(R.id.fragment_profile_gridLayout);
+        tvNumOfUsers = (TextView) rootView.findViewById(R.id.fragment_profile_tv_num_users);
+        tvNumOfUsers.setText(getString(R.string.num_of_users) + " " + userSettingsDBHelper.getCurrentNumOfUser());
+
+        // Spinner is not used for current version, will be removed in release version
+        spNumOfPeople = (Spinner) rootView.findViewById(R.id.fragment_profile_spinner);
         this.arraySpinner = new ArrayList<String>();
         for (int i = 1; i <= userSettingsDBHelper.getTotalNumOfUser(); i++) {
             arraySpinner.add(String.valueOf(i));
@@ -113,14 +129,18 @@ public class ProfileFragment extends Fragment {
                 spNumOfPeople.setSelection(numOfPeopleUsing - 1);
             }
         });
+        // Spinner is not used for current version, will be removed in release version
+        spNumOfPeople.setVisibility(View.GONE);
 
+        // Will be removed in release version, the system is auto saved
         btnSave = (Button) rootView.findViewById(R.id.fragment_profile_btnSave);
         btnSave.setOnClickListener(profileButtonListener);
+        btnSave.setVisibility(View.GONE);
 
         tv1 = (TextView) rootView.findViewById(R.id.fragment_profile_wifimac);
         tv2 = (TextView) rootView.findViewById(R.id.fragment_profile_btmac);
 
-
+        // Button for testing backend
         btnStart = (Button) rootView.findViewById(R.id.fragment_profile_btnStart);
 //        btnStart.setVisibility(View.GONE);
         btnStart.setOnClickListener(profileButtonListener);
@@ -133,8 +153,9 @@ public class ProfileFragment extends Fragment {
             userIconReference = new UserIconReference(context);
         if (null == userSettingsDBHelper)
             userSettingsDBHelper = new UserSettingsDBHelper(context);
-        userList = userSettingsDBHelper.getAllUserList();
-        userIdList = userSettingsDBHelper.getAllIdList();
+
+        userList = userSettingsDBHelper.getAllUserListSortByAge();
+        userIdList = userSettingsDBHelper.getAllIdListSortByAge();
         gridLayout.removeAllViews();
         for (int i = 0; i < userList.size(); i++) {
             final String id = userIdList.get(i).toString();
@@ -177,16 +198,26 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setSelectedTabColor(String id, User user) {
+        // Work with spinner, can be removed with spinner
         if (currentSelected >= numOfPeopleUsing) {
             userSettingsDBHelper.setAllUserUnSelected();
             currentSelected = 1;
         } else {
             currentSelected++;
         }
-        user.setIfSelected(true);
+
+        if (null == userSettingsDBHelper)
+            userSettingsDBHelper = new UserSettingsDBHelper(context);
+
+        if ("1".equalsIgnoreCase(user.getIfSelected())) {
+            user.setIfSelected(false);
+        } else {
+            user.setIfSelected(true);
+        }
+
         userSettingsDBHelper.updateDB(id, user);
+        tvNumOfUsers.setText(getString(R.string.num_of_users) + " " + userSettingsDBHelper.getCurrentNumOfUser());
         setUserIconView();
-        btnSave.setEnabled(true);
     }
 
     public class ProfileButtonListener implements View.OnClickListener {
@@ -228,17 +259,19 @@ public class ProfileFragment extends Fragment {
 //                        }
 //                    }).start();
 
-                    Log.d("asdasd", documents.get(documents.size()-1).toString());
+                    Log.d("asdasd", documents.get(documents.size() - 1).toString());
 
+                    try {
+                        Log.d("asdasd", documents.get(documents.size() - 1).getString("_id") + "");
+                        firebaseMgr.uploadDocument(documents.get(documents.size() - 1));
+                    } catch (Exception e) {
 
+                    }
 
                     break;
             }
         }
     }
-
-    public static final String DATA_TYPE_BACKGROUND_LOGGING = "background_recording";
-    public static String ProjectDatabaseName = DatabaseNameManager.DATABASE_NAME_MINUKU;
 
     private void startHomeScreenIcon() {
         requestPermission(OVERLAY_PERMISSION_REQ_CODE_CHATHEAD);

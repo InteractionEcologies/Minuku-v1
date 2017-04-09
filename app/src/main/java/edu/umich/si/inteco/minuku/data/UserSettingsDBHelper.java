@@ -157,6 +157,28 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         return usertList;
     }
 
+    public ArrayList<User> getAllUserListSortByAge() {
+        ArrayList<User> sortedUserList = sortUserList(getAllUserList());
+        return sortedUserList;
+    }
+
+    private ArrayList<User> sortUserList(ArrayList<User> sortedUsertList) {
+        User temp;
+
+        for (int i = 0; i < sortedUsertList.size(); i++) {
+            for (int j = 1; j < (sortedUsertList.size() - i); j++) {
+                if (Integer.parseInt(sortedUsertList.get(j - 1).getUserAge()) > Integer.parseInt(sortedUsertList.get(j).getUserAge())) {
+                    temp = sortedUsertList.get(j - 1);
+                    sortedUsertList.set(j - 1, sortedUsertList.get(j));
+                    sortedUsertList.set(j, temp);
+                }
+
+            }
+        }
+
+        return sortedUsertList;
+    }
+
     public ArrayList<Integer> getAllIdList() {
         SQLiteDatabase db = getReadableDatabase();
         ArrayList<Integer> idList = new ArrayList<Integer>();
@@ -171,13 +193,51 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         return idList;
     }
 
+    public ArrayList<Integer> getAllIdListSortByAge() {
+        ArrayList<Integer> sortedIdList = sortIdList(getAllUserList(), getAllIdList());
+        return sortedIdList;
+    }
+
+    private ArrayList<Integer> sortIdList(ArrayList<User> usertList, ArrayList<Integer> sortedIdtList) {
+        int temp;
+
+        for (int i = 0; i < usertList.size(); i++) {
+            for (int j = 1; j < (usertList.size() - i); j++) {
+                if (Integer.parseInt(usertList.get(j - 1).getUserAge()) > Integer.parseInt(usertList.get(j).getUserAge())) {
+                    temp = sortedIdtList.get(j - 1);
+                    sortedIdtList.set(j - 1, sortedIdtList.get(j));
+                    sortedIdtList.set(j, temp);
+                }
+            }
+        }
+
+        return sortedIdtList;
+    }
+
+    public String getSelectedUserNames() {
+        String userNames = "";
+        SQLiteDatabase db = getReadableDatabase();
+        String sql = "SELECT * FROM " + TABLENAME;
+        Cursor cursor = db.rawQuery(sql, null);
+
+        while (cursor.moveToNext()) {
+            if ("1".equalsIgnoreCase(cursor.getString(4))) {
+                userNames += cursor.getString(1) + ",";
+            }
+        }
+        cursor.close();
+        db.close();
+        return userNames;
+    }
+
     public int getCurrentNumOfUser() {
         int userCount = 0;
         SQLiteDatabase db = getReadableDatabase();
         String sql = "SELECT * FROM " + TABLENAME;
         Cursor cursor = db.rawQuery(sql, null);
+
         while (cursor.moveToNext()) {
-            if ("1".equalsIgnoreCase(cursor.getString(3))) {
+            if ("1".equalsIgnoreCase(cursor.getString(4))) {
                 userCount++;
             }
         }

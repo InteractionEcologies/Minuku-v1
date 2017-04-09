@@ -23,13 +23,12 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     <TextView
-        android:id="@+id/fragment_login_tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/view_space"
         android:gravity="center"
         android:padding="@dimen/view_space"
-        android:text="Choose an icon for the child enrolled in this study"
+        android:text="Choose an icon for the child enrolled in this study. \n Now choose an icon for yourself."
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     <LinearLayout
@@ -44,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="@dimen/view_space"
-            android:text="Add an user" />
+            android:text="Add a user" />
 
         <Button
             android:id="@+id/fragment_login_btnFinish"

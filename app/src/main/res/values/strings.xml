@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-
-
     <string name="app_name">Minuku</string>
     <string name="welcome">Welcom to Minuku</string>
     <string name="action_settings">Settings</string>
@@ -11,11 +9,13 @@
     <string name="stop_recording">Hit STOP to stop recording</string>
     <string name="recording_task">Task\ </string>
 
-
     <string name="add_details_recording_btn">ADD DETAILS</string>
     <string name="checkin_btn">CHECKPOINT</string>
     <string name="stop_btn">STOP</string>
     <string name="start_btn">START</string>
+
+    <!--ProfileFragment-->
+    <string name="num_of_users">Number of people using: </string>
 
     <!--annotation interface -->
     <string name="annotate_label_text">Activity type</string>

@@ -38,7 +38,6 @@ public class LoginFragment extends Fragment {
 
     // UI widgets
     private Button btnFinish, btnAddUser;
-    private TextView tvTitle;
     private ListView lvUsers;
     private UserIconAdapter userIconAdapter;
 
@@ -103,19 +102,7 @@ public class LoginFragment extends Fragment {
         });
 
         lvUsers = (ListView) view.findViewById(R.id.fragment_login_lv);
-        tvTitle = (TextView) view.findViewById(R.id.fragment_login_tv_title);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                setTitleText("Now choose an icon for yourself");
-            }
-        }, 5000);
         setListView();
-    }
-
-    public void setTitleText(String text) {
-        tvTitle.setText(text);
-        animUtilities.setTvAnimToVisible(tvTitle);
     }
 
     public void setListView() {
