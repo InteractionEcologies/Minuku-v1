@@ -142,7 +142,7 @@ public class ProfileFragment extends Fragment {
 
         // Button for testing backend
         btnStart = (Button) rootView.findViewById(R.id.fragment_profile_btnStart);
-//        btnStart.setVisibility(View.GONE);
+        btnStart.setVisibility(View.GONE);
         btnStart.setOnClickListener(profileButtonListener);
 
         setUserIconView();
