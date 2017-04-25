@@ -405,13 +405,13 @@ public class PhoneStatusManager extends ContextStateManager {
                     data.put(RECORD_DATA_PROPERTY_APPUSAGE_LATEST_USED_APP, mLastestForegroundPackage);
                     data.put(RECORD_DATA_PROPERTY_APPUSAGE_LATEST_USED_APP_TIME, mLastestForegroundPackageTime);
                     data.put(RECORD_DATA_PROPERTY_APPUSAGE_USED_APPS_STATS_IN_RECENT_HOUR, mRecentUsedAppsInLastHour);
-                    data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_USING, userSettingsDBHelper.getSelectedUserNames());
+                    data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_USING, userSettingsDBHelper.getSelectedUserNumbers());
 
                 }
                 else {
                     data.put(RECORD_DATA_PROPERTY_APPUSAGE_LATEST_USED_APP, mLastestForegroundPackage);
                     data.put(RECORD_DATA_PROPERTY_APPUSAGE_LATEST_FOREGROUND_ACTIVITY, mLastestForegroundActivity);
-                    data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_USING, userSettingsDBHelper.getSelectedUserNames());
+                    data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_USING, userSettingsDBHelper.getSelectedUserNumbers());
                 }
 
 

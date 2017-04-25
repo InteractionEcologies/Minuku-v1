@@ -1,6 +1,7 @@
 package edu.umich.si.inteco.minuku;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.TabLayout;
@@ -14,8 +15,11 @@ import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.List;
 
+import edu.umich.si.inteco.minuku.fragments.AdultEnterIdFragment;
 import edu.umich.si.inteco.minuku.fragments.EnterIdFragment;
 import edu.umich.si.inteco.minuku.fragments.LoginFragment;
+import edu.umich.si.inteco.minuku.fragments.OpenpageFragment;
+import edu.umich.si.inteco.minuku.util.PreferenceHelper;
 
 /**
  * Created by tsung on 2017/2/6.
@@ -26,10 +30,14 @@ public class LoginActivity extends AppCompatActivity {
     public static Context context;
 
     // Function
-    private String defaultFragment = LOGIN_FRAGMENT;
+    private String defaultFragment = OPENPAGE_FRAGMENT;
     private FragmentManager fragmentManager;
+
+    // Fragments in LoginActivity
     public static final String LOGIN_FRAGMENT = "LoginFragment";
     public static final String ENTERID_FRAGMENT = "EnterIdFragment";
+    public static final String ADENTERID_FRAGMENT = "AdultEnterIdFragment";
+    public static final String OPENPAGE_FRAGMENT = "OpenpageFragment";
 
     // Unique id setup
     public static String wifiMacAddr;
@@ -46,9 +54,18 @@ public class LoginActivity extends AppCompatActivity {
 
     private void init() {
         getMacAddress();
+        checkIfCompleteSetup();
 
         fragmentManager = getSupportFragmentManager();
         setFragment(defaultFragment);
+    }
+
+    private void checkIfCompleteSetup() {
+        if (PreferenceHelper.getPreferenceBoolean(PreferenceHelper.USER_SETUP_COMPLETED, false)) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            this.finish();
+        }
     }
 
     public void setFragment(String fragmentTag) {
@@ -66,6 +83,20 @@ public class LoginActivity extends AppCompatActivity {
                     fragment = fragmentManager.findFragmentByTag(ENTERID_FRAGMENT);
                 } else {
                     fragment = new EnterIdFragment();
+                }
+                break;
+            case OPENPAGE_FRAGMENT:
+                if (null != fragmentManager.findFragmentByTag(OPENPAGE_FRAGMENT)) {
+                    fragment = fragmentManager.findFragmentByTag(OPENPAGE_FRAGMENT);
+                } else {
+                    fragment = new OpenpageFragment();
+                }
+                break;
+            case ADENTERID_FRAGMENT:
+                if (null != fragmentManager.findFragmentByTag(ADENTERID_FRAGMENT)) {
+                    fragment = fragmentManager.findFragmentByTag(ADENTERID_FRAGMENT);
+                } else {
+                    fragment = new AdultEnterIdFragment();
                 }
                 break;
         }

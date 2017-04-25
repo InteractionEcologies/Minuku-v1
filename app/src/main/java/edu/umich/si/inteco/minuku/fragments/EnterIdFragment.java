@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import edu.umich.si.inteco.minuku.constants.UserIconReference;
 import edu.umich.si.inteco.minuku.data.UserSettingsDBHelper;
 import edu.umich.si.inteco.minuku.model.User;
 import edu.umich.si.inteco.minuku.model.Views.UserIcon;
+import edu.umich.si.inteco.minuku.util.PreferenceHelper;
 
 /**
  * Created by tsung on 2017/3/8.
@@ -74,10 +76,10 @@ public class EnterIdFragment extends Fragment {
             @Override
             public void onClick(View view) {
 //                .withMailto("parentingtech@umich.edu")
-                if (!edStudyId.getText().toString().equalsIgnoreCase("")){
+                if (!edStudyId.getText().toString().equalsIgnoreCase("")) {
                     BackgroundMail.newBuilder(context)
-                            .withUsername("tsungwei50521@gmail.com")
-                            .withPassword("A8016168a")
+                            .withUsername("minukudata@gmail.com")
+                            .withPassword("Ilove2sleep")
                             .withMailto("parentingtech@umich.edu")
                             .withType(BackgroundMail.TYPE_PLAIN)
                             .withMailto("twho@umich.edu")
@@ -88,6 +90,9 @@ public class EnterIdFragment extends Fragment {
                             .withOnSuccessCallback(new BackgroundMail.OnSuccessCallback() {
                                 @Override
                                 public void onSuccess() {
+                                    PreferenceHelper.setPreferenceStringValue(PreferenceHelper.DEVICE_ID, LoginActivity.wifiMacAddr + LoginActivity.btMacAddr);
+                                    PreferenceHelper.setPreferenceStringValue(PreferenceHelper.USER_ID, edStudyId.getText().toString());
+                                    PreferenceHelper.setPreferenceBooleanValue(PreferenceHelper.USER_SETUP_COMPLETED, true);
                                     Intent intent = new Intent(getActivity(), MainActivity.class);
                                     startActivity(intent);
                                     getActivity().finish();

@@ -27,6 +27,7 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -45,7 +46,9 @@ import edu.umich.si.inteco.minuku.model.User;
 import edu.umich.si.inteco.minuku.model.Views.UserIcon;
 import edu.umich.si.inteco.minuku.services.HomeScreenIconService;
 import edu.umich.si.inteco.minuku.util.DatabaseNameManager;
+import edu.umich.si.inteco.minuku.util.PreferenceHelper;
 import edu.umich.si.inteco.minuku.util.RecordingAndAnnotateManager;
+import edu.umich.si.inteco.minuku.util.ScheduleAndSampleManager;
 
 public class ProfileFragment extends Fragment {
     private static String LOG_TAG = "ProfileFragment";
@@ -64,7 +67,6 @@ public class ProfileFragment extends Fragment {
     private UserSettingsDBHelper userSettingsDBHelper;
     private UserIconReference userIconReference;
     private FirebaseManager firebaseMgr;
-    private DatabaseReference databaseReference;
     private ArrayList<String> arraySpinner;
     private ArrayList<User> userList;
     private ArrayList<Integer> userIdList;
@@ -93,8 +95,7 @@ public class ProfileFragment extends Fragment {
     private void init() {
         profileButtonListener = new ProfileButtonListener();
         userSettingsDBHelper = new UserSettingsDBHelper(context);
-        databaseReference = FirebaseDatabase.getInstance().getReference();
-        firebaseMgr = new FirebaseManager(databaseReference);
+        firebaseMgr = new FirebaseManager(context);
 
         // find views
         gridLayout = (GridLayout) rootView.findViewById(R.id.fragment_profile_gridLayout);
@@ -241,36 +242,26 @@ public class ProfileFragment extends Fragment {
                     }
                     break;
                 case R.id.fragment_profile_btnStart:
+
                     ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(0);
-//                    startHomeScreenIcon();
-//                    if (showMessage) {
-//                        showHomeIconMsg();
-//                        showMessage = false;
-//                    } else {
-//                        showMessage = true;
-//                    }
-
-//                    new Thread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            String queryLastSynHourURL = MongoDBHelper.getQueryOfSynLatestDocumentURL(ProjectDatabaseName, DatabaseNameManager.MONGODB_COLLECTION_BACKGROUNDLOGGING);
-//                            Log.d(LOG_TAG, "syncWithRemoteDatabase going to query background recording on MogoLab ON URL: " + queryLastSynHourURL);
-//                            RemoteDBHelper.queryLastBackgroundLoggingSyncHourUsingGET(queryLastSynHourURL);
-//                        }
-//                    }).start();
-
-                    Log.d("asdasd", documents.get(documents.size() - 1).toString());
 
                     try {
-                        Log.d("asdasd", documents.get(documents.size() - 1).getString("_id") + "");
-                        firebaseMgr.uploadDocument(documents.get(documents.size() - 1));
+                        for (int i = 0; i < documents.size(); i++) {
+                            firebaseMgr.uploadDocument(documents.get(i));
+                        }
                     } catch (Exception e) {
-
+                        Log.d(LOG_TAG, e.getMessage());
                     }
+
+                    setLastSeverSyncTime(ScheduleAndSampleManager.getCurrentTimeInMillis());
 
                     break;
             }
         }
+    }
+
+    public static void setLastSeverSyncTime(long lastSessionUpdateTime) {
+        PreferenceHelper.setPreferenceLongValue(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, lastSessionUpdateTime);
     }
 
     private void startHomeScreenIcon() {

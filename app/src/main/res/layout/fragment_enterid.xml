@@ -16,10 +16,10 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/view_space"
+        android:layout_margin="@dimen/activity_horizontal_margin"
         android:gravity="center"
         android:padding="@dimen/view_space"
-        android:text="Please confirm these users are using the tablet before logging in."
+        android:text="Please confirm these users are using the tablet before completing your setup."
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     <ScrollView
@@ -66,6 +66,16 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
             </LinearLayout>
 
+            <TextView
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/activity_horizontal_margin"
+                android:gravity="center"
+                android:padding="@dimen/view_space"
+                android:text="Please enter the study id sent to you by email."
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
             <Button
                 android:id="@+id/fragment_enterid_btnLogin"
                 android:layout_width="260dp"
@@ -73,7 +83,17 @@
                 android:layout_gravity="center"
                 android:layout_margin="@dimen/view_space"
                 android:padding="@dimen/view_space"
-                android:text="Login" />
+                android:text="Complete setup" />
+
+            <TextView
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/activity_horizontal_margin"
+                android:gravity="center"
+                android:padding="@dimen/view_space"
+                android:text="Thanks. After clicking this you will not be able to change your icons and will user them throughout the study."
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
             <Button
                 android:id="@+id/fragment_enterid_btnBack"

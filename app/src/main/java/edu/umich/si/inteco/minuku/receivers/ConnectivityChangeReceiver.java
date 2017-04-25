@@ -21,17 +21,21 @@ import java.util.TreeMap;
 
 import edu.umich.si.inteco.minuku.context.ContextManager;
 import edu.umich.si.inteco.minuku.data.DataHandler;
+import edu.umich.si.inteco.minuku.data.FirebaseManager;
 import edu.umich.si.inteco.minuku.data.RemoteDBHelper;
 import edu.umich.si.inteco.minuku.model.Schedule;
+import edu.umich.si.inteco.minuku.util.PreferenceHelper;
 import edu.umich.si.inteco.minuku.util.RecordingAndAnnotateManager;
 import edu.umich.si.inteco.minuku.util.ScheduleAndSampleManager;
 
 /**
  * Created by Armuro on 7/11/14.
  */
-public class ConnectivityChangeReceiver extends BroadcastReceiver{
+public class ConnectivityChangeReceiver extends BroadcastReceiver {
 
-    /** Tag for logging. */
+    /**
+     * Tag for logging.
+     */
     private static final String LOG_TAG = "ConnectivityChange";
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -40,7 +44,7 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
 
         Log.d(LOG_TAG, "[ConnectivityChangeReceiver]syncWithRemoteDatabase connectivity change");
 
-        ConnectivityManager conMngr = (ConnectivityManager)context.getSystemService(context.CONNECTIVITY_SERVICE);
+        ConnectivityManager conMngr = (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
@@ -53,29 +57,44 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
             for (Network network : networks) {
                 activeNetwork = conMngr.getNetworkInfo(network);
 
-                if (activeNetwork.getType()==ConnectivityManager.TYPE_WIFI){
+                if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
                     isWifi = activeNetwork.isConnected();
 
-                    if (isWifi){
+                    if (isWifi) {
 
                         Log.d(LOG_TAG, "[ConnectivityChangeReceiver]syncWithRemoteDatabase connect to wifi");
 
                         //if we only submit the data over wifh. this should be configurable
-                        if (RemoteDBHelper.getSubmitDataOnlyOverWifi()){
-                            Log.d(LOG_TAG, "[ConnectivityChangeReceiver]syncWithRemoteDatabase only submit over wifi");
-                            RemoteDBHelper.syncWithRemoteDatabase();
+//                        if (RemoteDBHelper.getSubmitDataOnlyOverWifi()) {
+//                            Log.d(LOG_TAG, "[ConnectivityChangeReceiver]syncWithRemoteDatabase only submit over wifi");
+//                            RemoteDBHelper.syncWithRemoteDatabase();
+//
+//                        }
 
+                        final FirebaseManager firebaseMgr = new FirebaseManager(context);
+
+//                        ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, 0));
+                        ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(0);
+
+                        try {
+                            for (int i = 0; i < documents.size(); i++) {
+                                firebaseMgr.uploadDocument(documents.get(i));
+                            }
+
+                            setLastSeverSyncTime(ScheduleAndSampleManager.getCurrentTimeInMillis());
+                        } catch (Exception e) {
+                            Log.d(LOG_TAG, e.getMessage());
                         }
+
+
                     }
                 }
             }
 
 
-        }
+        } else {
 
-        else{
-
-            if (conMngr!=null) {
+            if (conMngr != null) {
 
                 NetworkInfo[] info = conMngr.getAllNetworkInfo();
                 NetworkInfo activeNetworkWifi = conMngr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
@@ -96,7 +115,7 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
                     }
                 }
 
-                if(activeNetworkWifi !=null) {
+                if (activeNetworkWifi != null) {
 
                     boolean isConnectedtoWifi = activeNetworkWifi != null &&
                             activeNetworkWifi.isConnected();
@@ -112,7 +131,7 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
                         Log.d(LOG_TAG, "[ConnectivityChangeReceiver]syncWithRemoteDatabase connect to wifi");
 
                         //if we only submit the data over wifh. this should be configurable
-                        if (RemoteDBHelper.getSubmitDataOnlyOverWifi()){
+                        if (RemoteDBHelper.getSubmitDataOnlyOverWifi()) {
                             Log.d(LOG_TAG, "[ConnectivityChangeReceiver]syncWithRemoteDatabase only submit over wifi");
                             RemoteDBHelper.syncWithRemoteDatabase();
 
@@ -120,21 +139,15 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
 
 
                     }
-
-                    else if (isMobile) {
-
-//                        Log.d(LOG_TAG, "[ConnectivityChangeReceiver] connect to mobile");
-                    }
-
-
-//                    Log.d(LOG_TAG, "[ConnectivityChangeReceiver] connectivity change available? WIFI: available " + isWifiAvailable  +
-//                            "  isConnected: " + isConnectedtoWifi + " Mobile: available: " + isMobileAvailable + " is connected: " + isConnectedtoMobile);
-
                 }
             }
 
         }
 
+    }
+
+    public static void setLastSeverSyncTime(long lastSessionUpdateTime) {
+        PreferenceHelper.setPreferenceLongValue(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, lastSessionUpdateTime);
     }
 
 

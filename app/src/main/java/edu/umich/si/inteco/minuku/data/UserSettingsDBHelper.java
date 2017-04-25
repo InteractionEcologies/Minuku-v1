@@ -214,7 +214,7 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         return sortedIdtList;
     }
 
-    public String getSelectedUserNames() {
+    public String getSelectedUserNumbers() {
         String userNames = "";
         SQLiteDatabase db = getReadableDatabase();
         String sql = "SELECT * FROM " + TABLENAME;
@@ -222,7 +222,7 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
 
         while (cursor.moveToNext()) {
             if ("1".equalsIgnoreCase(cursor.getString(4))) {
-                userNames += cursor.getString(1) + ",";
+                userNames += cursor.getString(3) + ",";
             }
         }
         cursor.close();

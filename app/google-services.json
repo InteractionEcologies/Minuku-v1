@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "226121850392",
-    "firebase_url": "https://minuku-pilot.firebaseio.com",
-    "project_id": "minuku-pilot",
-    "storage_bucket": "minuku-pilot.appspot.com"
+    "project_number": "220928289020",
+    "firebase_url": "https://minuku-data-logging.firebaseio.com",
+    "project_id": "minuku-data-logging",
+    "storage_bucket": "minuku-data-logging.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:226121850392:android:cf80a3fcbd3e521b",
+        "mobilesdk_app_id": "1:220928289020:android:cf80a3fcbd3e521b",
         "android_client_info": {
           "package_name": "edu.umich.si.inteco.minuku"
         }
       },
       "oauth_client": [
         {
-          "client_id": "226121850392-e9ufsgko2cetk0n13b5fklk2pffkcej8.apps.googleusercontent.com",
+          "client_id": "220928289020-7npnn0rs12nstckq5sn06m4v71d7sjt5.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDig1AL7SQPUc22uLNFzfrAnLKPhQqoKeM"
+          "current_key": "AIzaSyBcVZN6oo5Cg62Q6cIAAMBI__NKJIzUdYs"
         }
       ],
       "services": {

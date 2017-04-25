@@ -9,6 +9,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
@@ -20,7 +24,11 @@ import android.util.Log;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import edu.umich.si.inteco.minuku.AnalyticsMinuku;
 import edu.umich.si.inteco.minuku.MainActivity;
@@ -29,6 +37,7 @@ import edu.umich.si.inteco.minuku.constants.*;
 import edu.umich.si.inteco.minuku.context.ContextManager;
 import edu.umich.si.inteco.minuku.context.EventManager;
 import edu.umich.si.inteco.minuku.data.DataHandler;
+import edu.umich.si.inteco.minuku.data.FirebaseManager;
 import edu.umich.si.inteco.minuku.data.LocalDBHelper;
 import edu.umich.si.inteco.minuku.data.RemoteDBHelper;
 import edu.umich.si.inteco.minuku.model.Checkpoint;
@@ -166,6 +175,12 @@ public class MinukuMainService extends Service {
     //for testing checkpoint. this variable remember information of last checkpoint.
     public static Checkpoint mPreviousCheckpoint;
 
+    //Timer
+    private Timer mTimer = null;
+    private TimerTask mTimerTask = null;
+    private static int delay = 5000;   // 5s
+    private static int period = 30 * 60 * 1000;  // 30 minutes
+    public static int delayPeriod = 1000;
 
     public static boolean isServiceRunning() {
         return serviceInstance != null;
@@ -181,13 +196,11 @@ public class MinukuMainService extends Service {
     @Override
     public void onCreate() {
 
-
         LogManager.log(LogManager.LOG_TYPE_SYSTEM_LOG,
                 LogManager.LOG_TAG_SERVICE,
                 "Service onCreate");
 
         super.onCreate();
-
 
         //this is for checking if the service instance is running
         serviceInstance = this;
@@ -326,6 +339,8 @@ public class MinukuMainService extends Service {
             showNotification();
         }
 
+        startTimer();
+
 //        FileHelper.readTestFile();
 
         sendNotification();
@@ -383,6 +398,127 @@ public class MinukuMainService extends Service {
 
     }
 
+    private void startTimer() {
+        if (mTimer == null) {
+            mTimer = new Timer();
+        }
+        if (mTimerTask == null) {
+            mTimerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        Log.d("asdasd", "Run Timer");
+                        checkWifiStatus();
+                        Thread.sleep(delayPeriod);
+                    } catch (InterruptedException e) {
+                        Log.e("CarFamilyLocationTimer", e.getMessage());
+                    }
+                }
+            };
+        }
+        if (mTimer != null && mTimerTask != null)
+            mTimer.schedule(mTimerTask, delay, period);
+    }
+
+    private void stopTimer() {
+        if (mTimer != null) {
+            mTimer.cancel();
+            mTimer = null;
+        }
+        if (mTimerTask != null) {
+            mTimerTask.cancel();
+            mTimerTask = null;
+        }
+    }
+
+    private void checkWifiStatus() {
+        ConnectivityManager conMngr = (ConnectivityManager) this.getSystemService(this.CONNECTIVITY_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+            Network[] networks = conMngr.getAllNetworks();
+
+            NetworkInfo activeNetwork;
+
+            boolean isWifi = false;
+
+            for (Network network : networks) {
+                activeNetwork = conMngr.getNetworkInfo(network);
+
+                if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                    isWifi = activeNetwork.isConnected();
+
+                    if (isWifi) {
+
+                        Log.d("asdasd", "[ConnectivityChangeReceiver]syncWithRemoteDatabase connect to wifi");
+                        Log.d(LOG_TAG, "[ConnectivityChangeReceiver]syncWithRemoteDatabase connect to wifi");
+
+                        uploadDataToFIB();
+
+                    }
+                }
+            }
+
+
+        } else {
+
+            if (conMngr != null) {
+
+                NetworkInfo[] info = conMngr.getAllNetworkInfo();
+                NetworkInfo activeNetworkWifi = conMngr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+                NetworkInfo activeNetworkMobile = conMngr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+                boolean isWiFi = activeNetworkWifi.getType() == ConnectivityManager.TYPE_WIFI;
+
+
+                if (activeNetworkWifi != null) {
+
+                    boolean isConnectedtoWifi = activeNetworkWifi != null &&
+                            activeNetworkWifi.isConnected();
+
+                    boolean isWifiAvailable = activeNetworkWifi.isAvailable();
+
+                    if (isWiFi) {
+
+                        Log.d(LOG_TAG, "[ConnectivityChangeReceiver]syncWithRemoteDatabase connect to wifi");
+
+                        //if we only submit the data over wifh. this should be configurable
+                        if (RemoteDBHelper.getSubmitDataOnlyOverWifi()) {
+                            Log.d(LOG_TAG, "[ConnectivityChangeReceiver]syncWithRemoteDatabase only submit over wifi");
+                            RemoteDBHelper.syncWithRemoteDatabase();
+
+                        }
+
+                        uploadDataToFIB();
+
+                    }
+                }
+            }
+
+        }
+    }
+
+    private void uploadDataToFIB() {
+        final FirebaseManager firebaseMgr = new FirebaseManager(this);
+
+        ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, 0));
+//        ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(0);
+        Log.d("asdasd", "Time last sync " + PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, 0));
+
+        try {
+            for (int i = 0; i < documents.size(); i++) {
+                firebaseMgr.uploadDocument(documents.get(i));
+            }
+
+            setLastSeverSyncTime(ScheduleAndSampleManager.getCurrentTimeInMillis());
+        } catch (Exception e) {
+            Log.d(LOG_TAG, e.getMessage());
+        }
+    }
+
+    public static void setLastSeverSyncTime(long lastSessionUpdateTime) {
+        PreferenceHelper.setPreferenceLongValue(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, lastSessionUpdateTime);
+    }
+
     @Override
     public void onDestroy() {
         // The service is no longer used and is being destroyed
@@ -407,6 +543,9 @@ public class MinukuMainService extends Service {
 
         //stop background recording
         mContextManager.stopContextManagerMainThread();
+
+        // Stop all tasks in Timer
+        stopTimer();
 
         super.onDestroy();
     }
