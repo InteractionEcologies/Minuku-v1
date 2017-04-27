@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,6 +64,23 @@ public class EnterIdFragment extends Fragment {
 
         // Find views
         edStudyId = (EditText) view.findViewById(R.id.fragment_enterid_edStudy);
+        edStudyId.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                PreferenceHelper.setPreferenceStringValue(PreferenceHelper.LOGIN_STUDYID, edStudyId.getText().toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
         gridLayout = (GridLayout) view.findViewById(R.id.fragment_enterid_gridLayout);
         btnBack = (Button) view.findViewById(R.id.fragment_enterid_btnBack);
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -151,6 +170,13 @@ public class EnterIdFragment extends Fragment {
         }
 
         return userDataList;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        edStudyId.setText(PreferenceHelper.getPreferenceString(PreferenceHelper.LOGIN_STUDYID, ""));
     }
 
 }
