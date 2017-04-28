@@ -7,7 +7,7 @@ import android.support.multidex.MultiDex;
 /**
  * Created by Armuro on 2/6/16.
  */
-public class AnalyticsMinuku extends Application{
+public class AnalyticsMinuku extends Application {
 
     @Override
     protected void attachBaseContext(Context base) {
