@@ -99,9 +99,9 @@ public class EnterIdFragment extends Fragment {
                     BackgroundMail.newBuilder(context)
                             .withUsername("minukudata@gmail.com")
                             .withPassword("Ilove2sleep")
-                            .withMailto("parentingtech@umich.edu")
-                            .withType(BackgroundMail.TYPE_PLAIN)
                             .withMailto("twho@umich.edu")
+                            .withType(BackgroundMail.TYPE_PLAIN)
+                            .withMailto("minukudata@gmail.com")
                             .withSubject("Minuku")
                             .withBody("Minuku service started.\n \n" + "UniqueId: " + LoginActivity.wifiMacAddr + LoginActivity.btMacAddr
                                     + "\n \n" + "StudyId: " + edStudyId.getText().toString() + "\n \n"

@@ -10,7 +10,7 @@
         android:background="@color/dark_gray"
         android:gravity="center"
         android:padding="@dimen/activity_vertical_margin"
-        android:text="Minuku Setup"
+        android:text="Family App Logger Setup"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <TextView
@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="@dimen/activity_vertical_margin"
-        android:text="Is the primary user of this device an adult or child?"
+        android:text="Is this your mobile device or your family's tablet?"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <Button
@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="@dimen/view_space"
-        android:text="Adult" />
+        android:text="My mobile device" />
 
     <Button
         android:id="@+id/fragment_openpage_btnChild"
@@ -35,5 +35,5 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="@dimen/view_space"
-        android:text="Child" />
+        android:text="family tablet" />
 </LinearLayout>

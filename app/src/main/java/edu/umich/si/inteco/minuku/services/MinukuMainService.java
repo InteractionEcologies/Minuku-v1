@@ -411,7 +411,7 @@ public class MinukuMainService extends Service {
                         checkWifiStatus();
                         Thread.sleep(delayPeriod);
                     } catch (InterruptedException e) {
-                        Log.e("CarFamilyLocationTimer", e.getMessage());
+                        Log.e(LOG_TAG, e.getMessage());
                     }
                 }
             };
@@ -500,8 +500,8 @@ public class MinukuMainService extends Service {
     private void uploadDataToFIB() {
         final FirebaseManager firebaseMgr = new FirebaseManager(this);
 
-        ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, 0));
-//        ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(0);
+//        ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, 0));
+        ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(0);
         Log.d("asdasd", "Time last sync " + PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, 0));
 
         try {
