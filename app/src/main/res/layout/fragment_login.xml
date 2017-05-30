@@ -10,7 +10,7 @@
         android:background="@color/dark_gray"
         android:gravity="center"
         android:padding="@dimen/activity_vertical_margin"
-        android:text="Family App Logger Setup"
+        android:text="Minuku Setup"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <TextView
@@ -20,7 +20,9 @@
         android:gravity="center"
         android:padding="@dimen/view_space"
         android:text="please tell us who uses this tablet!"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/yellow"
+        android:textStyle="bold" />
 
     <TextView
         android:layout_width="match_parent"
@@ -30,6 +32,78 @@
         android:padding="@dimen/view_space"
         android:text="First add your child enrolled in the study as a user, and choose an icon for them. Then add yourself as a user. Last, add any other family members who use the tablet then click finish."
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="right"
+            android:padding="@dimen/view_space"
+            android:text="STEP 1:"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:padding="@dimen/view_space"
+            android:text="Type in name/person (e.g., study child, mom, dad, sibling)"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="right"
+            android:padding="@dimen/view_space"
+            android:text="STEP 2:"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:padding="@dimen/view_space"
+            android:text="Enter that person's age"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="right"
+            android:padding="@dimen/view_space"
+            android:text="STEP 3:"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:padding="@dimen/view_space"
+            android:text="Choose an icon by tapping the white circle"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

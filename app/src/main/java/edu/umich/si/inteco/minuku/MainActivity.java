@@ -74,6 +74,7 @@ public class MainActivity extends FragmentActivity {
             Intent intent = new Intent();
             intent.setClass(MainActivity.this, MinukuMainService.class);
             intent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+
             //start the Minuku service
             startService(intent);
         }

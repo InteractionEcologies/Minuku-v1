@@ -407,11 +407,10 @@ public class MinukuMainService extends Service {
                 @Override
                 public void run() {
                     try {
-                        Log.d("asdasd", "Run Timer");
                         checkWifiStatus();
                         Thread.sleep(delayPeriod);
                     } catch (InterruptedException e) {
-                        Log.e(LOG_TAG, e.getMessage());
+                        Log.e("CarFamilyLocationTimer", e.getMessage());
                     }
                 }
             };
@@ -449,7 +448,6 @@ public class MinukuMainService extends Service {
 
                     if (isWifi) {
 
-                        Log.d("asdasd", "[ConnectivityChangeReceiver]syncWithRemoteDatabase connect to wifi");
                         Log.d(LOG_TAG, "[ConnectivityChangeReceiver]syncWithRemoteDatabase connect to wifi");
 
                         uploadDataToFIB();
@@ -500,9 +498,8 @@ public class MinukuMainService extends Service {
     private void uploadDataToFIB() {
         final FirebaseManager firebaseMgr = new FirebaseManager(this);
 
-//        ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, 0));
-        ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(0);
-        Log.d("asdasd", "Time last sync " + PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, 0));
+        ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, 0));
+//        ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(0);
 
         try {
             for (int i = 0; i < documents.size(); i++) {

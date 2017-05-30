@@ -65,17 +65,13 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (userSettingsDBHelper.getTotalNumOfUser() > 0 && !userSettingsDBHelper.getIfColumnContainNull()) {
-                    ((LoginActivity) LoginActivity.getContext()).setFragment(LoginActivity.ENTERID_FRAGMENT);
+                    if (userSettingsDBHelper.checkIfUserSelectIcon()) {
+                        ((LoginActivity) LoginActivity.getContext()).setFragment(LoginActivity.ENTERID_FRAGMENT);
+                    } else {
+                        showDialog("Please select icon for each user", "Please make sure that you select icon for each user.", false);
+                    }
                 } else {
-                    new AlertDialog.Builder(getContext())
-                            .setTitle("Column contains Empty value")
-                            .setMessage("Please check you have at least one user and no column contains empty value.")
-                            .setCancelable(false)
-                            .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            }).show();
+                    showDialog("Column contains Empty value", "Please check you have at least one user and no column contains empty value.", false);
                 }
             }
         });
@@ -88,15 +84,7 @@ public class LoginFragment extends Fragment {
                     userSettingsDBHelper.insertDB(new User());
                     setListView();
                 } else {
-                    new AlertDialog.Builder(getContext())
-                            .setTitle("Reach the User Limit")
-                            .setMessage("The user limit for this device is " + limitOfUsers + ".")
-                            .setCancelable(false)
-                            .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            }).show();
+                    showDialog("Reach the User Limit", "The user limit for this device is " + limitOfUsers + ".", false);
                 }
             }
         });
@@ -108,5 +96,17 @@ public class LoginFragment extends Fragment {
     public void setListView() {
         userIconAdapter = new UserIconAdapter(context, userSettingsDBHelper.getAllUserList());
         lvUsers.setAdapter(userIconAdapter);
+    }
+
+    private void showDialog(String title, String message, boolean cancelable) {
+        new AlertDialog.Builder(getContext())
+                .setTitle(title)
+                .setMessage(message)
+                .setCancelable(cancelable)
+                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).show();
     }
 }

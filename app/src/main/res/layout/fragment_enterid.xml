@@ -10,7 +10,7 @@
         android:background="@color/dark_gray"
         android:gravity="center"
         android:padding="@dimen/activity_vertical_margin"
-        android:text="Family App Logger Setup"
+        android:text="Minuku Login"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <TextView

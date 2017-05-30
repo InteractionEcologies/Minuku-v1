@@ -26,11 +26,6 @@ public class PreferenceHelper {
     public static final String USER_INTERACTION_IN_APP_USE_REQUESTED = PACKAGE_NAME + ".USER_INTERACTION_IN_APP_USER";
     public static final String USER_SETUP_COMPLETED = PACKAGE_NAME + ".USER_SETUP_COMPLETED";
 
-    // LoginActivity
-    public static final String LOGIN_CURRENT_FRAGMENT = PACKAGE_NAME + ".LOGIN_CURRENT_FRAGMENT";
-    public static final String LOGIN_STUDYID = PACKAGE_NAME + ".LOGIN_STUDYID";
-
-
     /***
      * Shared preference for storing context related information
      */

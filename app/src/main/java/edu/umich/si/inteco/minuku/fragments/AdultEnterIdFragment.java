@@ -24,7 +24,7 @@ public class AdultEnterIdFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         context = LoginActivity.getContext();
-        view = inflater.inflate(R.layout.fragment_enterid, container, false);
+        view = inflater.inflate(R.layout.fragment_adultenterid, container, false);
 
         init();
         return view;

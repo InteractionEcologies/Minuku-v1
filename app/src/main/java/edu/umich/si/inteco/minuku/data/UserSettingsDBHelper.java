@@ -158,24 +158,25 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<User> getAllUserListSortByAge() {
-        return sortUserList(getAllUserList());
+        ArrayList<User> sortedUserList = sortUserList(getAllUserList());
+        return sortedUserList;
     }
 
-    private ArrayList<User> sortUserList(ArrayList<User> sortedUserList) {
+    private ArrayList<User> sortUserList(ArrayList<User> sortedUsertList) {
         User temp;
 
-        for (int i = 0; i < sortedUserList.size(); i++) {
-            for (int j = 1; j < (sortedUserList.size() - i); j++) {
-                if (Integer.parseInt(sortedUserList.get(j - 1).getUserAge()) > Integer.parseInt(sortedUserList.get(j).getUserAge())) {
-                    temp = sortedUserList.get(j - 1);
-                    sortedUserList.set(j - 1, sortedUserList.get(j));
-                    sortedUserList.set(j, temp);
+        for (int i = 0; i < sortedUsertList.size(); i++) {
+            for (int j = 1; j < (sortedUsertList.size() - i); j++) {
+                if (Integer.parseInt(sortedUsertList.get(j - 1).getUserAge()) > Integer.parseInt(sortedUsertList.get(j).getUserAge())) {
+                    temp = sortedUsertList.get(j - 1);
+                    sortedUsertList.set(j - 1, sortedUsertList.get(j));
+                    sortedUsertList.set(j, temp);
                 }
 
             }
         }
 
-        return sortedUserList;
+        return sortedUsertList;
     }
 
     public ArrayList<Integer> getAllIdList() {
@@ -193,28 +194,24 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<Integer> getAllIdListSortByAge() {
-        return sortIdList(getAllUserList(), getAllIdList());
+        ArrayList<Integer> sortedIdList = sortIdList(getAllUserList(), getAllIdList());
+        return sortedIdList;
     }
 
-    private ArrayList<Integer> sortIdList(ArrayList<User> userList, ArrayList<Integer> sortedIdList) {
+    private ArrayList<Integer> sortIdList(ArrayList<User> usertList, ArrayList<Integer> sortedIdtList) {
         int temp;
-        User tempUser;
 
-        for (int i = 0; i < userList.size(); i++) {
-            for (int j = 1; j < (userList.size() - i); j++) {
-                if (Integer.parseInt(userList.get(j - 1).getUserAge()) > Integer.parseInt(userList.get(j).getUserAge())) {
-                    tempUser = userList.get(j - 1);
-                    userList.set(j - 1, userList.get(j));
-                    userList.set(j, tempUser);
-
-                    temp = sortedIdList.get(j - 1);
-                    sortedIdList.set(j - 1, sortedIdList.get(j));
-                    sortedIdList.set(j, temp);
+        for (int i = 0; i < usertList.size(); i++) {
+            for (int j = 1; j < (usertList.size() - i); j++) {
+                if (Integer.parseInt(usertList.get(j - 1).getUserAge()) > Integer.parseInt(usertList.get(j).getUserAge())) {
+                    temp = sortedIdtList.get(j - 1);
+                    sortedIdtList.set(j - 1, sortedIdtList.get(j));
+                    sortedIdtList.set(j, temp);
                 }
             }
         }
 
-        return sortedIdList;
+        return sortedIdtList;
     }
 
     public String getSelectedUserNumbers() {
@@ -279,6 +276,24 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return containNull;
+    }
+
+    public boolean checkIfUserSelectIcon() {
+        boolean ifAllUsersSelectedIcon = true;
+        SQLiteDatabase db = getReadableDatabase();
+        String sql = "SELECT * FROM " + TABLENAME;
+        Cursor cursor = db.rawQuery(sql, null);
+
+        while (cursor.moveToNext()) {
+            if ("24".equalsIgnoreCase(cursor.getString(3))) {
+                ifAllUsersSelectedIcon = false;
+            }
+        }
+
+        cursor.close();
+        db.close();
+
+        return ifAllUsersSelectedIcon;
     }
 
     public boolean checkIfIconTaken(String imgNum) {

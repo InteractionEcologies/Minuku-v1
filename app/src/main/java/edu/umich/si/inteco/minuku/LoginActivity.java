@@ -57,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
         checkIfCompleteSetup();
 
         fragmentManager = getSupportFragmentManager();
+        setFragment(defaultFragment);
     }
 
     private void checkIfCompleteSetup() {
@@ -69,8 +70,6 @@ public class LoginActivity extends AppCompatActivity {
 
     public void setFragment(String fragmentTag) {
         Fragment fragment = null;
-        PreferenceHelper.setPreferenceStringValue(PreferenceHelper.LOGIN_CURRENT_FRAGMENT, fragmentTag);
-
         switch (fragmentTag) {
             case LOGIN_FRAGMENT:
                 if (null != fragmentManager.findFragmentByTag(LOGIN_FRAGMENT)) {
@@ -145,8 +144,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        setFragment(PreferenceHelper.getPreferenceString(PreferenceHelper.LOGIN_CURRENT_FRAGMENT, defaultFragment));
     }
 
     @Override

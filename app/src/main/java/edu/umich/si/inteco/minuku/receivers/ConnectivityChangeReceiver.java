@@ -71,20 +71,19 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver {
 //
 //                        }
 
-                        if (null != context) {
-                            final FirebaseManager firebaseMgr = new FirebaseManager(context);
+                        final FirebaseManager firebaseMgr = new FirebaseManager(context);
 
-                            ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, 0));
+//                        ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, 0));
+                        ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(0);
 
-                            try {
-                                for (int i = 0; i < documents.size(); i++) {
-                                    firebaseMgr.uploadDocument(documents.get(i));
-                                }
-
-                                setLastSeverSyncTime(ScheduleAndSampleManager.getCurrentTimeInMillis());
-                            } catch (Exception e) {
-                                Log.d(LOG_TAG, e.getMessage());
+                        try {
+                            for (int i = 0; i < documents.size(); i++) {
+                                firebaseMgr.uploadDocument(documents.get(i));
                             }
+
+                            setLastSeverSyncTime(ScheduleAndSampleManager.getCurrentTimeInMillis());
+                        } catch (Exception e) {
+                            Log.d(LOG_TAG, e.getMessage());
                         }
 
 
