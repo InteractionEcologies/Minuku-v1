@@ -60,7 +60,7 @@ public class ProfileFragment extends Fragment {
     private Spinner spNumOfPeople;
     private Button btnSave;
     private GridLayout gridLayout;
-    private TextView tvNumOfUsers;
+    public TextView tvNumOfUsers;
 
     //functions
     private ProfileButtonListener profileButtonListener;
@@ -100,7 +100,7 @@ public class ProfileFragment extends Fragment {
         // find views
         gridLayout = (GridLayout) rootView.findViewById(R.id.fragment_profile_gridLayout);
         tvNumOfUsers = (TextView) rootView.findViewById(R.id.fragment_profile_tv_num_users);
-        tvNumOfUsers.setText(getString(R.string.num_of_users) + " " + userSettingsDBHelper.getCurrentNumOfUser());
+//        tvNumOfUsers.setText(getString(R.string.num_of_users) + " " + userSettingsDBHelper.getCurrentNumOfUser());
 
         // Spinner is not used for current version, will be removed in release version
         spNumOfPeople = (Spinner) rootView.findViewById(R.id.fragment_profile_spinner);
@@ -217,7 +217,7 @@ public class ProfileFragment extends Fragment {
         }
 
         userSettingsDBHelper.updateDB(id, user);
-        tvNumOfUsers.setText(getString(R.string.num_of_users) + " " + userSettingsDBHelper.getCurrentNumOfUser());
+//        tvNumOfUsers.setText(getString(R.string.num_of_users) + " " + userSettingsDBHelper.getCurrentNumOfUser());
         setUserIconView();
     }
 
@@ -258,6 +258,10 @@ public class ProfileFragment extends Fragment {
                     break;
             }
         }
+    }
+
+    public void setAdultCaptions(){
+        tvNumOfUsers.setText("Please let the app run in the background.");
     }
 
     public static void setLastSeverSyncTime(long lastSessionUpdateTime) {

@@ -31,7 +31,7 @@ public class FirebaseManager {
     private DatabaseReference databaseReference;
     private Context context;
 
-    private String[] dataParams = {"_id", "others", "user_id", "data_type", "timestamp_hour", "records"};
+    private String[] dataParams = {"_id", "others", "user_id", "data_type", "timestamp_hour", "records", "device_id"};
     private String email = "minukudata@gmail.com";
     private String password = "minukudata";
 
@@ -42,7 +42,8 @@ public class FirebaseManager {
         this.context = context;
 
         // init remote database authentication
-        initFirebase();
+        if (null != MainActivity.getContext())
+            initFirebase();
     }
 
     private void initFirebase() {
@@ -101,6 +102,7 @@ public class FirebaseManager {
             databaseReference.child(document.getString(dataParams[0])).child(dataParams[3]).setValue(document.getString(dataParams[3]));
             databaseReference.child(document.getString(dataParams[0])).child(dataParams[4]).setValue(document.getString(dataParams[4]));
             databaseReference.child(document.getString(dataParams[0])).child(dataParams[5]).setValue(document.getString(dataParams[5]));
+            databaseReference.child(document.getString(dataParams[0])).child(dataParams[6]).setValue(MainActivity.wifiMacAddr + MainActivity.btMacAddr);
         } catch (Exception e) {
             Log.d(LOG_TAG, e.getMessage());
         }

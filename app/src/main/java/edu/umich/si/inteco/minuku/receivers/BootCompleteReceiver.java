@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import edu.umich.si.inteco.minuku.MainActivity;
+import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.services.MinukuMainService;
 import edu.umich.si.inteco.minuku.util.LogManager;
 
@@ -18,16 +20,29 @@ public class BootCompleteReceiver extends BroadcastReceiver {
 		
 		if(intent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED))
 		{
-			
-		     Log.d(LOG_TAG, "Successfully receive reboot request");
-		     //here we start the service             
-		     Intent sintent = new Intent(context, MinukuMainService.class);
-//		     sintent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		     context.startService(sintent);
 
-            LogManager.log(LogManager.LOG_TYPE_SYSTEM_LOG,
-                    LogManager.LOG_TAG_ALARM_RECEIVED,
-                    "Alarm Received:\t" + "BootComplete" + "\t" + "restart Service");
+			Log.d(LOG_TAG, "Successfully receive reboot request");
+
+			/**start the contextManager service**/
+			if (!MinukuMainService.isServiceRunning()) {
+				Log.d(LOG_TAG, "[test service running]  going start the probe service isServiceRunning:" + MinukuMainService.isServiceRunning());
+				Intent sintent = new Intent();
+				intent.setClass(context, MinukuMainService.class);
+				intent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+
+				//start the Minuku service
+				context.startService(intent);
+			}
+
+			if (null != MainActivity.getContext()) {
+				Intent intent1 = new Intent(context, MainActivity.class);
+				intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				context.startActivity(intent1);
+			}
+
+			LogManager.log(LogManager.LOG_TYPE_SYSTEM_LOG,
+					LogManager.LOG_TAG_ALARM_RECEIVED,
+					"Alarm Received:\t" + "BootComplete" + "\t" + "restart Service");
 		 }
 
 	}

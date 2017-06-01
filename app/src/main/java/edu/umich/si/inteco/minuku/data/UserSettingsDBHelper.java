@@ -144,6 +144,7 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         ArrayList<User> usertList = new ArrayList<User>();
         String sql = "SELECT * FROM " + TABLENAME;
         Cursor cursor = db.rawQuery(sql, null);
+
         while (cursor.moveToNext()) {
             String userName = cursor.getString(1);
             String useAge = cursor.getString(2);
@@ -152,8 +153,10 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
             User user = new User(userName, useAge, userImgNum, ifSelected);
             usertList.add(user);
         }
+
         cursor.close();
         db.close();
+
         return usertList;
     }
 

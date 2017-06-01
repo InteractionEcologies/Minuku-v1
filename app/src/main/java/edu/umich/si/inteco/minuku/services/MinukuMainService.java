@@ -385,8 +385,8 @@ public class MinukuMainService extends Service {
                 R.mipmap.app_launcher);
 
         android.app.Notification notification = new NotificationCompat.Builder(this)
-                .setContentTitle("Minuku Service")
-                .setTicker("Minuku Service")
+                .setContentTitle("Family App Logger Service")
+                .setTicker("Family App Logger Service")
                 .setContentText("Foreground Service Running")
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setLargeIcon(Bitmap.createScaledBitmap(icon, 128, 128, false))

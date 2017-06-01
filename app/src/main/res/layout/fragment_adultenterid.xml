@@ -10,7 +10,7 @@
         android:background="@color/dark_gray"
         android:gravity="center"
         android:padding="@dimen/activity_vertical_margin"
-        android:text="Minuku Setup"
+        android:text="Family App Logger Setup"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <LinearLayout
@@ -28,19 +28,19 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <EditText
-            android:id="@+id/fragment_enterid_edStudy"
+            android:id="@+id/fragment_adultenterid_edStudy"
             android:layout_width="260dp"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
     </LinearLayout>
 
     <Button
-        android:id="@+id/fragment_enterid_btnLogin"
+        android:id="@+id/fragment_adultenterid_btnLogin"
         android:layout_width="260dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="@dimen/view_space"
         android:padding="@dimen/view_space"
-        android:text="Finish setup" />
+        android:text="Complete setup" />
 
 </LinearLayout>

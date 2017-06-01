@@ -35,9 +35,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="Number of People Using:"
+                    android:text="Please select everyone who is using this tablet right now."
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:textStyle="bold"/>
 
                 <Spinner
                     android:id="@+id/fragment_profile_spinner"

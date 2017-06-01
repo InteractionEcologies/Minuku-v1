@@ -80,11 +80,11 @@ public class EnterIdFragment extends Fragment {
                     BackgroundMail.newBuilder(context)
                             .withUsername("minukudata@gmail.com")
                             .withPassword("Ilove2sleep")
-                            .withMailto("parentingtech@umich.edu")
                             .withType(BackgroundMail.TYPE_PLAIN)
-                            .withMailto("twho@umich.edu")
-                            .withSubject("Minuku")
-                            .withBody("Minuku service started.\n \n" + "UniqueId: " + LoginActivity.wifiMacAddr + LoginActivity.btMacAddr
+                            .withMailto("Minukudata@umich.edu")
+                            .withSubject("Family App Logger")
+                            .withBody("Family App Logger service started.\n \n" + "UniqueId: " + LoginActivity.wifiMacAddr + LoginActivity.btMacAddr
+                                    + "\n \n" + "Device: family tablet"
                                     + "\n \n" + "StudyId: " + edStudyId.getText().toString() + "\n \n"
                                     + getUserDataList(userSettingsDBHelper.getAllUserList()))
                             .withOnSuccessCallback(new BackgroundMail.OnSuccessCallback() {
@@ -145,7 +145,7 @@ public class EnterIdFragment extends Fragment {
         String userDataList = "";
 
         for (int i = 0; i < userArrayList.size(); i++) {
-            userDataList += userArrayList.get(i).getImgNumber() + "-";
+            userDataList += (i + 1) + "-";
             userDataList += userArrayList.get(i).getUserName() + "-";
             userDataList += "Age:" + userArrayList.get(i).getUserAge() + "\n";
         }
