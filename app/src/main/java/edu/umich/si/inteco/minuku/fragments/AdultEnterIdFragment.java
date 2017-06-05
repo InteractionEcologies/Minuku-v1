@@ -18,7 +18,6 @@ import java.util.ArrayList;
 
 import edu.umich.si.inteco.minuku.LoginActivity;
 import edu.umich.si.inteco.minuku.MainActivity;
-import edu.umich.si.inteco.minuku.MobileMainActivity;
 import edu.umich.si.inteco.minuku.R;
 import edu.umich.si.inteco.minuku.data.UserSettingsDBHelper;
 import edu.umich.si.inteco.minuku.model.User;
@@ -66,6 +65,7 @@ public class AdultEnterIdFragment extends Fragment {
                             .withPassword("Ilove2sleep")
                             .withType(BackgroundMail.TYPE_PLAIN)
                             .withMailto("Minukudata@umich.edu")
+//                            .withMailto("twho@umich.edu")
                             .withSubject("Family App Logger")
                             .withBody("Family App Logger service started.\n \n" + "UniqueId: " + LoginActivity.wifiMacAddr + LoginActivity.btMacAddr
                                     + "\n \n" + "Device: mobile device"
@@ -77,7 +77,7 @@ public class AdultEnterIdFragment extends Fragment {
                                     PreferenceHelper.setPreferenceStringValue(PreferenceHelper.DEVICE_ID, LoginActivity.wifiMacAddr + LoginActivity.btMacAddr);
                                     PreferenceHelper.setPreferenceStringValue(PreferenceHelper.USER_ID, edStudyId.getText().toString());
                                     PreferenceHelper.setPreferenceBooleanValue(PreferenceHelper.USER_SETUP_COMPLETED, true);
-                                    Intent intent = new Intent(getActivity(), MobileMainActivity.class);
+                                    Intent intent = new Intent(getActivity(), MainActivity.class);
                                     startActivity(intent);
                                     getActivity().finish();
                                 }

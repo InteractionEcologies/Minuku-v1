@@ -11,6 +11,7 @@ import android.widget.Button;
 
 import edu.umich.si.inteco.minuku.LoginActivity;
 import edu.umich.si.inteco.minuku.R;
+import edu.umich.si.inteco.minuku.util.PreferenceHelper;
 
 /**
  * Created by Michael Ho on 4/19/2017.
@@ -42,6 +43,9 @@ public class OpenpageFragment extends Fragment {
             public void onClick(View view) {
                 // Go to some other pages
                 ((LoginActivity) LoginActivity.getContext()).setFragment(LoginActivity.ADENTERID_FRAGMENT);
+
+                // Set false if user select mobile mode
+                PreferenceHelper.setPreferenceBooleanValue(PreferenceHelper.USER_MODE_SELECTION, false);
             }
         });
 
@@ -50,6 +54,9 @@ public class OpenpageFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 ((LoginActivity) LoginActivity.getContext()).setFragment(LoginActivity.LOGIN_FRAGMENT);
+
+                // Set true if user select family tablet mode
+                PreferenceHelper.setPreferenceBooleanValue(PreferenceHelper.USER_MODE_SELECTION, true);
             }
         });
     }

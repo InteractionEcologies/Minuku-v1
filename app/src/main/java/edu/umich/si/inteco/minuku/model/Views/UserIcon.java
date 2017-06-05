@@ -24,19 +24,32 @@ public class UserIcon extends View {
 
     private View view;
     private Context context;
+    private User user;
+    private String id;
+
     // View widgets
     private View selectedView;
     private TextView tvName;
     private ImageButton ibUser;
+
     // Function
     private UserIconReference userIconReference;
+    private UserSettingsDBHelper userSettingsDBHelper;
 
-    public UserIcon(Context context, User user) {
+    public UserIcon(Context context, String id, User user) {
         super(context);
+
         this.context = context;
+        this.user = user;
+        this.id = id;
+
         LayoutInflater li = LayoutInflater.from(context);
         view = li.inflate(R.layout.obj_user_icon, null);
+
+        // init functions
         userIconReference = new UserIconReference(context);
+        userSettingsDBHelper = new UserSettingsDBHelper(context);
+
         initVIew();
         setUserViews(user);
     }
@@ -45,6 +58,36 @@ public class UserIcon extends View {
         selectedView = view.findViewById(R.id.obj_user_icon_selectedView);
         tvName = (TextView) view.findViewById(R.id.obj_user_icon_tv);
         ibUser = (ImageButton) view.findViewById(R.id.obj_user_icon_ib);
+
+
+        if (Integer.parseInt(user.getUserAge()) > 18) {
+            ibUser.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    switchSelection();
+                    userSettingsDBHelper.updateDB(id, user);
+                    return false;
+                }
+            });
+        } else {
+            ibUser.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    switchSelection();
+                    userSettingsDBHelper.updateDB(id, user);
+                }
+            });
+        }
+    }
+
+    private void switchSelection() {
+        if ("1".equalsIgnoreCase(user.getIfSelected())) {
+            user.setIfSelected(false);
+        } else {
+            user.setIfSelected(true);
+        }
+
+        setUserViews(user);
     }
 
     private void setUserViews(User user) {

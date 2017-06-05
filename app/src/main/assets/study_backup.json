@@ -385,7 +385,7 @@
 						"Notification":
 						{
 							"Title": "What item are you carrying?",
-							"Message": "Please tab to report what items you are carrying."
+							"Message": "Please tap to report what items you are carrying."
 						}
 					}, 
 
@@ -412,7 +412,7 @@
 						"Notification":
 						{
 							"Title": "What is the last time you smoked?",
-							"Message": "Please tab to answer the questionnaire."
+							"Message": "Please tap to answer the questionnaire."
 						}
 					},
 

@@ -228,6 +228,7 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
                 userNames += cursor.getString(3) + ",";
             }
         }
+
         cursor.close();
         db.close();
         return userNames;

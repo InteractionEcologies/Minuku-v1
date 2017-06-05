@@ -46,6 +46,7 @@ public class EnterIdFragment extends Fragment {
     private UserSettingsDBHelper userSettingsDBHelper;
     private UserIconReference userIconReference;
     private ArrayList<User> userList;
+    private ArrayList<Integer> userIdList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,6 +83,7 @@ public class EnterIdFragment extends Fragment {
                             .withPassword("Ilove2sleep")
                             .withType(BackgroundMail.TYPE_PLAIN)
                             .withMailto("Minukudata@umich.edu")
+//                            .withMailto("twho@umich.edu")
                             .withSubject("Family App Logger")
                             .withBody("Family App Logger service started.\n \n" + "UniqueId: " + LoginActivity.wifiMacAddr + LoginActivity.btMacAddr
                                     + "\n \n" + "Device: family tablet"
@@ -131,10 +133,13 @@ public class EnterIdFragment extends Fragment {
 
         userSettingsDBHelper.setAllUserUnSelected();
         userList = userSettingsDBHelper.getAllUserList();
+        userIdList = userSettingsDBHelper.getAllIdListSortByAge();
         gridLayout.removeAllViews();
         for (int i = 0; i < userList.size(); i++) {
             final User user = userList.get(i);
-            UserIcon userIcon = new UserIcon(context, user);
+            final String id = userIdList.get(i).toString();
+
+            UserIcon userIcon = new UserIcon(context, id, user);
             ImageButton ib = userIcon.getIbUser();
             ib.setClickable(false);
             gridLayout.addView(userIcon.getView());

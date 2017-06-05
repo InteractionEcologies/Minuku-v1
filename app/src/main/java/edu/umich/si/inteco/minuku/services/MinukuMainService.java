@@ -410,7 +410,7 @@ public class MinukuMainService extends Service {
                         checkWifiStatus();
                         Thread.sleep(delayPeriod);
                     } catch (InterruptedException e) {
-                        Log.e("CarFamilyLocationTimer", e.getMessage());
+                        Log.e("Family App Logger Timer", e.getMessage());
                     }
                 }
             };

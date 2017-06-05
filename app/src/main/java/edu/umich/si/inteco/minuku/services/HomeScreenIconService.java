@@ -294,7 +294,7 @@ public class HomeScreenIconService extends Service {
         for (int i = 0; i < userList.size(); i++) {
             final User user = userList.get(i);
             final String id = userIdList.get(i).toString();
-            UserIcon userIcon = new UserIcon(getApplicationContext(), user);
+            UserIcon userIcon = new UserIcon(getApplicationContext(), id, user);
             ImageButton ib = userIcon.getIbUser();
             ib.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -60,7 +60,7 @@ public class ProfileFragment extends Fragment {
     private Spinner spNumOfPeople;
     private Button btnSave;
     private GridLayout gridLayout;
-    public TextView tvNumOfUsers;
+    private TextView tvTitle;
 
     //functions
     private ProfileButtonListener profileButtonListener;
@@ -99,8 +99,12 @@ public class ProfileFragment extends Fragment {
 
         // find views
         gridLayout = (GridLayout) rootView.findViewById(R.id.fragment_profile_gridLayout);
-        tvNumOfUsers = (TextView) rootView.findViewById(R.id.fragment_profile_tv_num_users);
-//        tvNumOfUsers.setText(getString(R.string.num_of_users) + " " + userSettingsDBHelper.getCurrentNumOfUser());
+
+        // Set title caption
+        tvTitle = (TextView) rootView.findViewById(R.id.fragment_profile_tv_title);
+        if (!PreferenceHelper.getPreferenceBoolean(PreferenceHelper.USER_MODE_SELECTION, true)){
+            tvTitle.setText("Please let this app run in the background. \n You are in mobile mode now.");
+        }
 
         // Spinner is not used for current version, will be removed in release version
         spNumOfPeople = (Spinner) rootView.findViewById(R.id.fragment_profile_spinner);
@@ -121,6 +125,7 @@ public class ProfileFragment extends Fragment {
                     userSettingsDBHelper.setAllUserSelected();
                     currentSelected = numOfPeopleUsing;
                 }
+
                 setUserIconView();
             }
 
@@ -130,6 +135,7 @@ public class ProfileFragment extends Fragment {
                 spNumOfPeople.setSelection(numOfPeopleUsing - 1);
             }
         });
+
         // Spinner is not used for current version, will be removed in release version
         spNumOfPeople.setVisibility(View.GONE);
 
@@ -161,26 +167,7 @@ public class ProfileFragment extends Fragment {
         for (int i = 0; i < userList.size(); i++) {
             final String id = userIdList.get(i).toString();
             final User user = userList.get(i);
-            UserIcon userIcon = new UserIcon(context, user);
-            ImageButton ib = userIcon.getIbUser();
-
-            if (Integer.parseInt(user.getUserAge()) > 18) {
-                ib.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View view) {
-                        setSelectedTabColor(id, user);
-                        return false;
-                    }
-                });
-            } else {
-                ib.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        setSelectedTabColor(id, user);
-                    }
-                });
-            }
-
+            UserIcon userIcon = new UserIcon(context, id, user);
             gridLayout.addView(userIcon.getView());
         }
     }
@@ -217,7 +204,6 @@ public class ProfileFragment extends Fragment {
         }
 
         userSettingsDBHelper.updateDB(id, user);
-//        tvNumOfUsers.setText(getString(R.string.num_of_users) + " " + userSettingsDBHelper.getCurrentNumOfUser());
         setUserIconView();
     }
 
@@ -258,10 +244,6 @@ public class ProfileFragment extends Fragment {
                     break;
             }
         }
-    }
-
-    public void setAdultCaptions(){
-        tvNumOfUsers.setText("Please let the app run in the background.");
     }
 
     public static void setLastSeverSyncTime(long lastSessionUpdateTime) {

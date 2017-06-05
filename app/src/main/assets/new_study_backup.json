@@ -164,7 +164,7 @@
 								"Launch":"when_start",	
 								"Type":"normal",
 								"Title": "What item are you carrying?",
-								"Message": "Please tab to report what items you are carrying."
+								"Message": "Please tap to report what items you are carrying."
 							}
 						]
 					},

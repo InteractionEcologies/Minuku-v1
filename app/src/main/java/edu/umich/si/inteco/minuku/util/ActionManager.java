@@ -370,12 +370,12 @@ public class ActionManager {
 
                             Notification noti = action.getNotifications().get(i);
 
-                            NotificationHelper.createQuestionnaireNotification(
-                                    noti.getTitle(),
-                                    noti.getMessage(),
-                                    noti.getType(),
-                                    questionnaire.getId()
-                            );
+//                            NotificationHelper.createQuestionnaireNotification(
+//                                    noti.getTitle(),
+//                                    noti.getMessage(),
+//                                    noti.getType(),
+//                                    questionnaire.getId()
+//                            );
                         }
                     }
 

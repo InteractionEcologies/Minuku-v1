@@ -226,7 +226,7 @@
 						"Launch":"when_start",
 						"Type":"normal",
 						"Title": "Questionnaire Available",
-						"Message": "Please tab to answer the questionnaire."
+						"Message": "Please tap to answer the questionnaire."
 					  }
 					]
 				  }
