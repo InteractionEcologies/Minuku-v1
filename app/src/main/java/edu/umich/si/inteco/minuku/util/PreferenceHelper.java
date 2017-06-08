@@ -24,8 +24,10 @@ public class PreferenceHelper {
     public static final String SCHEDULE_REQUEST_CODE = PACKAGE_NAME + ".REQUEST_CODE";
     public static final String DATABASE_LAST_SEVER_SYNC_TIME = PACKAGE_NAME + ".LAST_SERVER_SYNC_TIME";
     public static final String USER_INTERACTION_IN_APP_USE_REQUESTED = PACKAGE_NAME + ".USER_INTERACTION_IN_APP_USER";
+    public static final String USER_SETUP_PAGE = PACKAGE_NAME + ".USER_SETUP_PAGE";
     public static final String USER_SETUP_COMPLETED = PACKAGE_NAME + ".USER_SETUP_COMPLETED";
     public static final String USER_MODE_SELECTION = PACKAGE_NAME + ".USER_MODE_SELECTION";
+    public static final String USER_MAIN_PAGE = PACKAGE_NAME + ".USER_MAIN_PAGE";
 
     /***
      * Shared preference for storing context related information

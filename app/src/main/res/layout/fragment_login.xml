@@ -30,7 +30,7 @@
         android:layout_margin="@dimen/activity_horizontal_margin"
         android:gravity="center"
         android:padding="@dimen/view_space"
-        android:text="First add your child enrolled in the study as a user, and choose an icon for them. Then add yourself as a user. Last, add any other family members who use the tablet then click finish."
+        android:text="First add your child enrolled in the study as a user, and choose an icon for them. Then add yourself as a user. Last, add any other family members who use the tablet, then click Finish."
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     <LinearLayout

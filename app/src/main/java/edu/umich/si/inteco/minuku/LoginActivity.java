@@ -32,6 +32,8 @@ public class LoginActivity extends AppCompatActivity {
     // Function
     private String defaultFragment = OPENPAGE_FRAGMENT;
     private FragmentManager fragmentManager;
+    private PreferenceHelper preferenceHelper;
+    private String currentPage = OPENPAGE_FRAGMENT;
 
     // Fragments in LoginActivity
     public static final String LOGIN_FRAGMENT = "LoginFragment";
@@ -101,6 +103,8 @@ public class LoginActivity extends AppCompatActivity {
                 break;
         }
 
+        currentPage = fragmentTag;
+
         try {
             android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager()
                     .beginTransaction();
@@ -137,6 +141,7 @@ public class LoginActivity extends AppCompatActivity {
                 wifiMacAddr = res1.toString();
             }
         } catch (Exception ex) {
+            Log.e(TAG, ex.getMessage());
         }
         btMacAddr = android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");
     }
@@ -144,10 +149,14 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        setFragment(preferenceHelper.getPreferenceString(PreferenceHelper.USER_SETUP_PAGE, OPENPAGE_FRAGMENT));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+
+        preferenceHelper.setPreferenceStringValue(PreferenceHelper.USER_SETUP_PAGE, currentPage);
     }
 }

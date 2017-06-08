@@ -29,6 +29,7 @@ import java.util.Map;
 import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.fragments.ProfileFragment;
 import edu.umich.si.inteco.minuku.services.MinukuMainService;
+import edu.umich.si.inteco.minuku.util.PreferenceHelper;
 import io.fabric.sdk.android.Fabric;
 
 /**
@@ -46,6 +47,7 @@ public class MainActivity extends FragmentActivity {
     private static String PROFILE_FRAGMENT;
     private FragmentManager fragmentManager;
     public static Context context;
+    private String currentPage;
 
     // Device info
     public static String wifiMacAddr;
@@ -94,6 +96,8 @@ public class MainActivity extends FragmentActivity {
         } else {
             fragment = new ProfileFragment();
         }
+
+        currentPage = PROFILE_FRAGMENT;
 
         try {
             android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager()
@@ -244,6 +248,15 @@ public class MainActivity extends FragmentActivity {
     public void onResume() {
         super.onResume();
         getMacAddress();
+
+        setFragment();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+
+        PreferenceHelper.setPreferenceStringValue(PreferenceHelper.USER_MAIN_PAGE, currentPage);
     }
 
     @Override

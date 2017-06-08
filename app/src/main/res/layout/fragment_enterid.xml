@@ -73,7 +73,7 @@
                 android:layout_margin="@dimen/activity_horizontal_margin"
                 android:gravity="center"
                 android:padding="@dimen/view_space"
-                android:text="Please enter the study id sent to you by email."
+                android:text="You can find this study id sent to you in an email from the research team."
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
             <Button

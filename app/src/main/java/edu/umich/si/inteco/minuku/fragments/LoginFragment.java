@@ -44,7 +44,6 @@ public class LoginFragment extends Fragment {
     // Functions
     private UserSettingsDBHelper userSettingsDBHelper;
     private int limitOfUsers = 8;
-    private AnimUtilities animUtilities;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,7 +56,6 @@ public class LoginFragment extends Fragment {
     }
 
     private void init() {
-        animUtilities = new AnimUtilities(context);
         userSettingsDBHelper = new UserSettingsDBHelper(context);
 
         btnFinish = (Button) view.findViewById(R.id.fragment_login_btnFinish);

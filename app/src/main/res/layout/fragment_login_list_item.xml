@@ -44,9 +44,11 @@
                 android:layout_height="match_parent"
                 android:layout_margin="@dimen/view_space"
                 android:layout_weight="1"
+                android:ellipsize="end"
                 android:gravity="center_vertical"
-                android:hint="Enter user name"
+                android:hint="Enter user (for example, study child, mom, dad, sibling)."
                 android:inputType="text"
+                android:maxLines="2"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
             <EditText
