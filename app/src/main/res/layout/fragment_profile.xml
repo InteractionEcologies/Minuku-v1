@@ -38,7 +38,7 @@
                     android:text="Please select everyone who is using this tablet right now."
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
                     android:textColor="@color/white"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
 
                 <Spinner
                     android:id="@+id/fragment_profile_spinner"
@@ -61,6 +61,15 @@
                     android:columnCount="2"
                     android:padding="@dimen/view_space"></GridLayout>
             </HorizontalScrollView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/activity_vertical_margin"
+                android:gravity="center"
+                android:padding="@dimen/activity_vertical_margin"
+                android:text="version 1.0.0"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small" />
 
             <Button
                 android:id="@+id/fragment_profile_btnSave"
