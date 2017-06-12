@@ -62,6 +62,23 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver {
 
                     if (isWifi) {
 
+                        final FirebaseManager firebaseMgr = new FirebaseManager(context);
+                        PreferenceHelper preferenceHelper = new PreferenceHelper(context);
+
+                        if (!preferenceHelper.getPreferenceBoolean(PreferenceHelper.IF_SHUT_DOWN_UPLOADED, true)){
+                            try {
+                                JSONObject jsonData = new JSONObject(preferenceHelper.getPreferenceString(preferenceHelper.USER_SHUT_DOWN_LOG, "NA"));
+                                firebaseMgr.uploadDocument(jsonData);
+                                PreferenceHelper.setPreferenceBooleanValue(preferenceHelper.IF_SHUT_DOWN_UPLOADED, true);
+
+                                Log.d(LOG_TAG, "[ConnectivityChangeReceiver] device shut down action uploaded");
+                            } catch (Exception e) {
+                                Log.d(LOG_TAG, e.getMessage());
+                            }
+
+                        }
+
+
                         Log.d(LOG_TAG, "[ConnectivityChangeReceiver]syncWithRemoteDatabase connect to wifi");
 
                         //if we only submit the data over wifh. this should be configurable
@@ -71,20 +88,22 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver {
 //
 //                        }
 
-                        final FirebaseManager firebaseMgr = new FirebaseManager(context);
+                        new Thread(new Runnable() {
+                            public void run() {
+                                //ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, 0));
+                                ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(0);
 
-//                        ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, 0));
-                        ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(0);
+                                try {
+                                    for (int i = 0; i < documents.size(); i++) {
+                                        firebaseMgr.uploadDocument(documents.get(i));
+                                    }
 
-                        try {
-                            for (int i = 0; i < documents.size(); i++) {
-                                firebaseMgr.uploadDocument(documents.get(i));
+                                    setLastSeverSyncTime(ScheduleAndSampleManager.getCurrentTimeInMillis());
+                                } catch (Exception e) {
+                                    Log.d(LOG_TAG, e.getMessage());
+                                }
                             }
-
-                            setLastSeverSyncTime(ScheduleAndSampleManager.getCurrentTimeInMillis());
-                        } catch (Exception e) {
-                            Log.d(LOG_TAG, e.getMessage());
-                        }
+                        }).start();
 
 
                     }

@@ -28,6 +28,8 @@ public class PreferenceHelper {
     public static final String USER_SETUP_COMPLETED = PACKAGE_NAME + ".USER_SETUP_COMPLETED";
     public static final String USER_MODE_SELECTION = PACKAGE_NAME + ".USER_MODE_SELECTION";
     public static final String USER_MAIN_PAGE = PACKAGE_NAME + ".USER_MAIN_PAGE";
+    public static final String IF_SHUT_DOWN_UPLOADED = PACKAGE_NAME + ".IF_SHUT_DOWN_UPLOADED";
+    public static final String USER_SHUT_DOWN_LOG = PACKAGE_NAME + ".USER_SHUT_DOWN_LOG";
 
     /***
      * Shared preference for storing context related information

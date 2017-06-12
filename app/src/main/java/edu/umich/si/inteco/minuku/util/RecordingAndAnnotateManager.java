@@ -25,6 +25,7 @@ import edu.umich.si.inteco.minuku.data.LocalDBHelper;
 import edu.umich.si.inteco.minuku.data.RemoteDBHelper;
 import edu.umich.si.inteco.minuku.model.Annotation;
 import edu.umich.si.inteco.minuku.model.AnnotationSet;
+import edu.umich.si.inteco.minuku.model.Record.Record;
 import edu.umich.si.inteco.minuku.model.Session;
 import edu.umich.si.inteco.minuku.model.SessionDocument;
 import edu.umich.si.inteco.minuku.model.Task;
@@ -955,7 +956,6 @@ public class RecordingAndAnnotateManager {
             document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_ID, Constants.USER_ID + "-" + ScheduleAndSampleManager.getTimeString(startTime, sdf_id));
             //TODO: study condition should not be hardcoded
             document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_OTHERS, Constants.CURRENT_STUDY_CONDITION);
-//            document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_USERS, "13212312313");
             document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_DEVICE_ID, Constants.DEVICE_ID);
             document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_USER_ID, Constants.USER_ID);
             document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_DATA_TYPE, DatabaseNameManager.MONGODB_COLLECTION_BACKGROUNDLOGGING);
@@ -1071,6 +1071,26 @@ public class RecordingAndAnnotateManager {
         }
 
         Log.d(LOG_TAG, "getBackgroundRecordingDocument [testbackend] document " + document);
+        return document;
+    }
+
+    public static JSONObject generateShutDownActionDocument(Record record) {
+        JSONObject document = new JSONObject();
+
+        try {
+            long currentTime = ScheduleAndSampleManager.getCurrentTimeInMillis();
+            SimpleDateFormat sdf_id = new SimpleDateFormat(Constants.DATE_FORMAT_FOR_ID);
+            document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_ID, Constants.USER_ID + "-" + ScheduleAndSampleManager.getTimeString(currentTime, sdf_id));
+            document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_OTHERS, Constants.CURRENT_STUDY_CONDITION);
+            document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_RECORDS, record.getData());
+            document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_DEVICE_ID, Constants.DEVICE_ID);
+            document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_USER_ID, Constants.USER_ID);
+            document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_DATA_TYPE, DatabaseNameManager.MONGODB_COLLECTION_BACKGROUNDLOGGING);
+            document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_TIMESTAMP_HOUR, ScheduleAndSampleManager.getTimeString(currentTime));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         return document;
     }
 
