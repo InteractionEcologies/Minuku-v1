@@ -74,6 +74,11 @@ public class UserIconAdapter extends BaseAdapter {
         LayoutInflater li = LayoutInflater.from(context);
         userIconReference = new UserIconReference(context);
 
+        // assign user number by order
+        User user = allUserList.get(getCount() - position - 1);
+        user.setUserNumber((position + 1) + "");
+        userSettingsDBHelper.updateDB(userSettingsDBHelper.getAllIdList().get(getCount() - position - 1).toString(), user);
+
         if (convertView == null) {
             convertView = li.inflate(R.layout.fragment_login_list_item, null);
 

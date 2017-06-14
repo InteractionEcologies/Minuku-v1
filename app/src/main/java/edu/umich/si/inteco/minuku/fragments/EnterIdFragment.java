@@ -149,8 +149,8 @@ public class EnterIdFragment extends Fragment {
     private String getUserDataList(ArrayList<User> userArrayList) {
         String userDataList = "";
 
-        for (int i = 0; i < userArrayList.size(); i++) {
-            userDataList += (i + 1) + "-";
+        for (int i = userArrayList.size() - 1; i >= 0; i--) {
+            userDataList += userArrayList.get(i).getUserNumber() + "-";
             userDataList += userArrayList.get(i).getUserName() + "-";
             userDataList += "Age:" + userArrayList.get(i).getUserAge() + "\n";
         }

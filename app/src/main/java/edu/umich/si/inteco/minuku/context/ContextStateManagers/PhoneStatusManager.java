@@ -265,7 +265,7 @@ public class PhoneStatusManager extends ContextStateManager {
     private static String mRecentUsedAppsInLastHour = ContextManager.CONTEXT_SOURCE_INVALID_VALUE_STRING;
 
     //User shut down action
-    private static String mShutDownAction = "system.message.device.shut.down";
+    private static String mShutDownAction = "device_shutdown";
 
     private Context mContext;
     private static ActivityManager mActivityManager;

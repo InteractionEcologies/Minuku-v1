@@ -28,6 +28,7 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
     private String USER_AGE = "USER_AGE";
     private String USER_IMGNUM = "USER_IMGNUM";
     private String IF_SELECTED = "IF_SELECTED";
+    private String USER_NUMBER = "USER_NUMBER";
 
     public UserSettingsDBHelper(Context context) {
         super(context, DBNAME, null, VERSION);
@@ -43,8 +44,9 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
                 ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                 USER_NAME + " VARCHAR(30)," +
                 USER_AGE + " VARCHAR(30)," +
-                USER_IMGNUM + " VARCHAR(30)," +
-                IF_SELECTED + " VARCHAR(15)" + ");");
+                USER_IMGNUM + " VARCHAR(10)," +
+                IF_SELECTED + " VARCHAR(15)," +
+                USER_NUMBER + " VARCHAR(10)" +");");
     }
 
     @Override
@@ -60,6 +62,7 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         values.put(USER_AGE, user.getUserAge());
         values.put(USER_IMGNUM, user.getImgNumber());
         values.put(IF_SELECTED, user.getIfSelected());
+        values.put(USER_NUMBER, user.getUserNumber());
         long rowId = db.insert(TABLENAME, null, values);
         db.close();
         return rowId;
@@ -72,6 +75,7 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         values.put(USER_AGE, user.getUserAge());
         values.put(USER_IMGNUM, user.getImgNumber());
         values.put(IF_SELECTED, user.getIfSelected());
+        values.put(USER_NUMBER, user.getUserNumber());
         String whereClause = ID + "='" + id + "'";
         int count = db.update(TABLENAME, values, whereClause, null);
         db.close();
@@ -92,24 +96,30 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
 
         cursor.close();
         db.close();
+
         return select;
     }
 
     public int setAllUserSelected() {
+        SQLiteDatabase db = getWritableDatabase();
         ArrayList<User> userList = getAllUserList();
         ArrayList<Integer> idList = getAllIdList();
-        SQLiteDatabase db = getWritableDatabase();
+
         int count = 0;
+
         for (int i = 0; i < userList.size(); i++) {
             ContentValues values = new ContentValues();
             values.put(USER_NAME, userList.get(i).getUserName());
             values.put(USER_AGE, userList.get(i).getUserAge());
             values.put(USER_IMGNUM, userList.get(i).getImgNumber());
             values.put(IF_SELECTED, "1");
+            values.put(USER_NUMBER, userList.get(i).getUserNumber());
             String whereClause = ID + "='" + idList.get(i) + "'";
             count += db.update(TABLENAME, values, whereClause, null);
         }
+
         db.close();
+
         return count;
     }
 
@@ -124,10 +134,13 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
             values.put(USER_AGE, userList.get(i).getUserAge());
             values.put(USER_IMGNUM, userList.get(i).getImgNumber());
             values.put(IF_SELECTED, "0");
+            values.put(USER_NUMBER, userList.get(i).getUserNumber());
             String whereClause = ID + "='" + idList.get(i) + "'";
             count += db.update(TABLENAME, values, whereClause, null);
         }
+
         db.close();
+
         return count;
     }
 
@@ -150,7 +163,8 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
             String useAge = cursor.getString(2);
             String userImgNum = cursor.getString(3);
             String ifSelected = cursor.getString(4);
-            User user = new User(userName, useAge, userImgNum, ifSelected);
+            String userNumber = cursor.getString(5);
+            User user = new User(userName, useAge, userImgNum, ifSelected, userNumber);
             usertList.add(user);
         }
 
@@ -185,14 +199,17 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
     public ArrayList<Integer> getAllIdList() {
         SQLiteDatabase db = getReadableDatabase();
         ArrayList<Integer> idList = new ArrayList<Integer>();
+
         String sql = "SELECT * FROM " + TABLENAME;
         Cursor cursor = db.rawQuery(sql, null);
         while (cursor.moveToNext()) {
             int databaseId = cursor.getInt(0);
             idList.add(databaseId);
         }
+
         cursor.close();
         db.close();
+
         return idList;
     }
 
@@ -218,20 +235,21 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
     }
 
     public String getSelectedUserNumbers() {
-        String userNames = "";
+        String userNumbers = "";
         SQLiteDatabase db = getReadableDatabase();
+
         String sql = "SELECT * FROM " + TABLENAME;
         Cursor cursor = db.rawQuery(sql, null);
 
         while (cursor.moveToNext()) {
             if ("1".equalsIgnoreCase(cursor.getString(4))) {
-                userNames += cursor.getString(3) + ",";
+                userNumbers += cursor.getString(5) + ",";
             }
         }
 
         cursor.close();
         db.close();
-        return userNames;
+        return userNumbers;
     }
 
     public int getCurrentNumOfUser() {

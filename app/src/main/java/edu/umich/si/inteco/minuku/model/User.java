@@ -11,17 +11,20 @@ public class User {
     private String imgNumber;
     private String ifSelected;
     private String userAge;
+    private String userNumber;
 
     public User() {
         imgNumber = "24";
         ifSelected = "0";
+        userNumber = "0";
     }
 
-    public User(String userName, String userAge, String imgNumber, String ifSelected) {
+    public User(String userName, String userAge, String imgNumber, String ifSelected, String userNumber) {
         this.userName = userName;
         this.imgNumber = imgNumber;
         this.ifSelected = ifSelected;
         this.userAge = userAge;
+        this.userNumber = userNumber;
     }
 
     public String getUserName() {
@@ -58,5 +61,13 @@ public class User {
         } else {
             this.ifSelected = "0";
         }
+    }
+
+    public String getUserNumber() {
+        return this.userNumber;
+    }
+
+    public void setUserNumber(String userNumber) {
+        this.userNumber = userNumber;
     }
 }

@@ -22,6 +22,7 @@ import edu.umich.si.inteco.minuku.model.User;
 
 public class UserIcon extends View {
 
+    private String LOG_TAG = "UserIcon";
     private View view;
     private Context context;
     private User user;
@@ -66,6 +67,7 @@ public class UserIcon extends View {
                 public boolean onLongClick(View view) {
                     switchSelection();
                     userSettingsDBHelper.updateDB(id, user);
+                    Log.d(LOG_TAG, "Selected users: " + userSettingsDBHelper.getSelectedUserNumbers());
                     return false;
                 }
             });
@@ -75,6 +77,7 @@ public class UserIcon extends View {
                 public void onClick(View v) {
                     switchSelection();
                     userSettingsDBHelper.updateDB(id, user);
+                    Log.d(LOG_TAG, "Selected users: " + userSettingsDBHelper.getSelectedUserNumbers());
                 }
             });
         }
