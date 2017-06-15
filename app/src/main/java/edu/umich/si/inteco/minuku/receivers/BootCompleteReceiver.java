@@ -7,44 +7,44 @@ import android.util.Log;
 
 import edu.umich.si.inteco.minuku.MainActivity;
 import edu.umich.si.inteco.minuku.constants.Constants;
+import edu.umich.si.inteco.minuku.data.UserSettingsDBHelper;
 import edu.umich.si.inteco.minuku.services.MinukuMainService;
 import edu.umich.si.inteco.minuku.util.LogManager;
 
 public class BootCompleteReceiver extends BroadcastReceiver {
 
-	private static final String LOG_TAG = "BootCompleteReceiver";
-	
-	
-	@Override
-	public void onReceive(Context context, Intent intent) {
-		
-		if(intent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED))
-		{
+    private static final String LOG_TAG = "BootCompleteReceiver";
 
-			Log.d(LOG_TAG, "Successfully receive reboot request");
 
-			/**start the contextManager service**/
-			if (!MinukuMainService.isServiceRunning()) {
-				Log.d(LOG_TAG, "[test service running]  going start the probe service isServiceRunning:" + MinukuMainService.isServiceRunning());
-				Intent sintent = new Intent();
-				intent.setClass(context, MinukuMainService.class);
-				intent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+    @Override
+    public void onReceive(Context context, Intent intent) {
 
-				//start the Minuku service
-				context.startService(intent);
-			}
+        if (intent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)) {
 
-			if (null != MainActivity.getContext()) {
-				Intent intent1 = new Intent(context, MainActivity.class);
-				intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				context.startActivity(intent1);
-			}
+            Log.d(LOG_TAG, "Successfully receive reboot request");
 
-			LogManager.log(LogManager.LOG_TYPE_SYSTEM_LOG,
-					LogManager.LOG_TAG_ALARM_RECEIVED,
-					"Alarm Received:\t" + "BootComplete" + "\t" + "restart Service");
-		 }
+            /**start the contextManager service**/
+            if (!MinukuMainService.isServiceRunning()) {
+                Log.d(LOG_TAG, "[test service running]  going start the probe service isServiceRunning:" + MinukuMainService.isServiceRunning());
+                Intent sintent = new Intent();
+                sintent.setClass(context, MinukuMainService.class);
+                sintent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
 
-	}
+                //start the Minuku service
+                context.startService(intent);
+            }
+
+            Intent intent1 = new Intent(context, MainActivity.class);
+            intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            UserSettingsDBHelper userSettingsDBHelper = new UserSettingsDBHelper(context);
+            userSettingsDBHelper.setAllUserUnSelected();
+            context.startActivity(intent1);
+
+            LogManager.log(LogManager.LOG_TYPE_SYSTEM_LOG,
+                    LogManager.LOG_TAG_ALARM_RECEIVED,
+                    "Alarm Received:\t" + "BootComplete" + "\t" + "restart Service");
+        }
+
+    }
 
 }

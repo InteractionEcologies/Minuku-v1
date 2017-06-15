@@ -34,16 +34,14 @@ public class UserPresentBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
-            if (null != MainActivity.getContext()) {
 
-                // App shows up only when it's in family mode
-                if (PreferenceHelper.getPreferenceBoolean(PreferenceHelper.USER_MODE_SELECTION, true)) {
-                    UserSettingsDBHelper userSettingsDBHelper = new UserSettingsDBHelper(context);
-                    userSettingsDBHelper.setAllUserUnSelected();
-                    Intent intent1 = new Intent(context, MainActivity.class);
-                    intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    context.startActivity(intent1);
-                }
+            // App shows up only when it's in family mode
+            if (PreferenceHelper.getPreferenceBoolean(PreferenceHelper.USER_MODE_SELECTION, true)) {
+                Intent intent1 = new Intent(context, MainActivity.class);
+                intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                UserSettingsDBHelper userSettingsDBHelper = new UserSettingsDBHelper(context);
+                userSettingsDBHelper.setAllUserUnSelected();
+                context.startActivity(intent1);
             }
         }
 

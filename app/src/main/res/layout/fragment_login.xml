@@ -136,12 +136,12 @@
                     android:layout_margin="@dimen/view_space"
                     android:text="Finish" />
             </LinearLayout>
+
+            <ListView
+                android:id="@+id/fragment_login_lv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/view_space"></ListView>
         </LinearLayout>
     </ScrollView>
-
-    <ListView
-        android:id="@+id/fragment_login_lv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="@dimen/view_space"></ListView>
 </LinearLayout>
