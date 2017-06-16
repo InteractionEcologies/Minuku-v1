@@ -178,8 +178,8 @@ public class MinukuMainService extends Service {
     //Timer
     private Timer mTimer = null;
     private TimerTask mTimerTask = null;
-    private static int delay = 5000;   // 5s
-    private static int period = 30 * 60 * 1000;  // 30 minutes
+    private static int delay = 10000;   // 10s
+    private static int period = 3 * 60 * 60 * 1000;  // 3 hours
     public static int delayPeriod = 1000;
 
     public static boolean isServiceRunning() {
@@ -402,6 +402,7 @@ public class MinukuMainService extends Service {
         if (mTimer == null) {
             mTimer = new Timer();
         }
+
         if (mTimerTask == null) {
             mTimerTask = new TimerTask() {
                 @Override
@@ -415,6 +416,7 @@ public class MinukuMainService extends Service {
                 }
             };
         }
+
         if (mTimer != null && mTimerTask != null)
             mTimer.schedule(mTimerTask, delay, period);
     }
@@ -448,10 +450,25 @@ public class MinukuMainService extends Service {
 
                     if (isWifi) {
 
-                        Log.d(LOG_TAG, "[ConnectivityChangeReceiver]syncWithRemoteDatabase connect to wifi");
+                        final FirebaseManager firebaseMgr = new FirebaseManager(this);
+                        PreferenceHelper preferenceHelper = new PreferenceHelper(this);
+
+                        if (!preferenceHelper.getPreferenceBoolean(PreferenceHelper.IF_SHUT_DOWN_UPLOADED, true)) {
+                            try {
+                                JSONObject jsonData = new JSONObject(preferenceHelper.getPreferenceString(preferenceHelper.USER_SHUT_DOWN_LOG, "NA"));
+                                firebaseMgr.uploadDocument(jsonData);
+                                PreferenceHelper.setPreferenceBooleanValue(preferenceHelper.IF_SHUT_DOWN_UPLOADED, true);
+
+                                Log.d(LOG_TAG, "[MinukuMainService] device shut down action uploaded");
+                            } catch (Exception e) {
+                                Log.d(LOG_TAG, e.getMessage());
+                            }
+
+                        }
+
+                        Log.d(LOG_TAG, "[MinukuMainService]syncWithRemoteDatabase connect to wifi");
 
                         uploadDataToFIB();
-
                     }
                 }
             }
@@ -470,21 +487,9 @@ public class MinukuMainService extends Service {
 
                 if (activeNetworkWifi != null) {
 
-                    boolean isConnectedtoWifi = activeNetworkWifi != null &&
-                            activeNetworkWifi.isConnected();
-
-                    boolean isWifiAvailable = activeNetworkWifi.isAvailable();
-
                     if (isWiFi) {
 
                         Log.d(LOG_TAG, "[ConnectivityChangeReceiver]syncWithRemoteDatabase connect to wifi");
-
-                        //if we only submit the data over wifh. this should be configurable
-                        if (RemoteDBHelper.getSubmitDataOnlyOverWifi()) {
-                            Log.d(LOG_TAG, "[ConnectivityChangeReceiver]syncWithRemoteDatabase only submit over wifi");
-                            RemoteDBHelper.syncWithRemoteDatabase();
-
-                        }
 
                         uploadDataToFIB();
 
@@ -498,18 +503,22 @@ public class MinukuMainService extends Service {
     private void uploadDataToFIB() {
         final FirebaseManager firebaseMgr = new FirebaseManager(this);
 
-        ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, 0));
-//        ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(0);
+        new Thread(new Runnable() {
+            public void run() {
+                //ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, 0));
+                ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(0);
 
-        try {
-            for (int i = 0; i < documents.size(); i++) {
-                firebaseMgr.uploadDocument(documents.get(i));
+                try {
+                    for (int i = 0; i < documents.size(); i++) {
+                        firebaseMgr.uploadDocument(documents.get(i));
+                    }
+
+                    setLastSeverSyncTime(ScheduleAndSampleManager.getCurrentTimeInMillis());
+                } catch (Exception e) {
+                    Log.d(LOG_TAG, e.getMessage());
+                }
             }
-
-            setLastSeverSyncTime(ScheduleAndSampleManager.getCurrentTimeInMillis());
-        } catch (Exception e) {
-            Log.d(LOG_TAG, e.getMessage());
-        }
+        }).start();
     }
 
     public static void setLastSeverSyncTime(long lastSessionUpdateTime) {

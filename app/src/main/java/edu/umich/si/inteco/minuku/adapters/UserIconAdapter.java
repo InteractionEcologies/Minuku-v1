@@ -76,7 +76,7 @@ public class UserIconAdapter extends BaseAdapter {
 
         // assign user number by order
         User user = allUserList.get(getCount() - position - 1);
-        user.setUserNumber((position + 1) + "");
+        user.setUserNumber(getCount() - position + "");
         userSettingsDBHelper.updateDB(userSettingsDBHelper.getAllIdList().get(getCount() - position - 1).toString(), user);
 
         if (convertView == null) {
