@@ -6,6 +6,7 @@ import android.util.Log;
 
 import edu.umich.si.inteco.minuku.LoginActivity;
 import edu.umich.si.inteco.minuku.MainActivity;
+import edu.umich.si.inteco.minuku.services.MinukuMainService;
 
 /**
  * Created by Armuro on 7/16/14.
@@ -119,9 +120,16 @@ public class PreferenceHelper {
                 mContext = MainActivity.getContext();
             } else if (null != LoginActivity.getContext()) {
                 mContext = LoginActivity.getContext();
+            } else if (null != MinukuMainService.getContext()) {
+                mContext = MinukuMainService.getContext();
             }
 
-            return mContext.getSharedPreferences(SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
+            if (mContext != null) {
+                return mContext.getSharedPreferences(SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
+            } else {
+                return null;
+            }
+
         }
 
     }

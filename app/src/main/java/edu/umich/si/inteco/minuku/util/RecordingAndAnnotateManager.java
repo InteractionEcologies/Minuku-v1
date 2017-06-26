@@ -911,7 +911,7 @@ public class RecordingAndAnnotateManager {
             //there are specific lastSynchourTime
             else {
                 //if the last sync hour in the database is 9, we start from 10, because 9 indicates that 9:00-10:00 has been stored. So we start from 10-11
-                startTime = lastSyncHourTime + Constants.MILLISECONDS_PER_HOUR;
+                startTime = lastSyncHourTime;
                 endTime = startTime + Constants.MILLISECONDS_PER_HOUR;
 //            Log.d (LOG_TAG, "[getBackgroundRecordingDocuments] [testgetdata] get lastSynchour, startTime " + ScheduleAndSampleManager.getTimeString(startTime) + " - " + ScheduleAndSampleManager.getTimeString(endTime) );
             }

@@ -115,6 +115,8 @@ public class MinukuMainService extends Service {
 
     private static NotificationHelper mNotificationHelper;
 
+    public static Context context;
+
     /**
      * Data Handler
      **/
@@ -179,7 +181,7 @@ public class MinukuMainService extends Service {
     private Timer mTimer = null;
     private TimerTask mTimerTask = null;
     private static int delay = 10000;   // 10s
-    private static int period = 3 * 60 * 60 * 1000;  // 3 hours
+    private static int period = 2 * 60 * 60 * 1000;  // 2 hours
     public static int delayPeriod = 1000;
 
     public static boolean isServiceRunning() {
@@ -277,6 +279,9 @@ public class MinukuMainService extends Service {
 
     }
 
+    public static Context getContext() {
+        return context;
+    }
 
     /**
      * after level 23 we need to request permission at run time. So Minuku currently doesn't support Android 6!
@@ -334,14 +339,18 @@ public class MinukuMainService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
 
+        if (null == intent || null == intent.getAction ()) {
+            String source = null == intent ? "intent" : "action";
+            Log.e (LOG_TAG, source + " was null, flags=" + flags + " bits=" + Integer.toBinaryString (flags));
+            return START_STICKY;
+        }
+
         if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
             Log.i(LOG_TAG, "Received Start Foreground Intent ");
             showNotification();
         }
 
         startTimer();
-
-//        FileHelper.readTestFile();
 
         sendNotification();
 
@@ -451,13 +460,12 @@ public class MinukuMainService extends Service {
                     if (isWifi) {
 
                         final FirebaseManager firebaseMgr = new FirebaseManager(this);
-                        PreferenceHelper preferenceHelper = new PreferenceHelper(this);
 
-                        if (!preferenceHelper.getPreferenceBoolean(PreferenceHelper.IF_SHUT_DOWN_UPLOADED, true)) {
+                        if (!PreferenceHelper.getPreferenceBoolean(PreferenceHelper.IF_SHUT_DOWN_UPLOADED, true)) {
                             try {
-                                JSONObject jsonData = new JSONObject(preferenceHelper.getPreferenceString(preferenceHelper.USER_SHUT_DOWN_LOG, "NA"));
+                                JSONObject jsonData = new JSONObject(PreferenceHelper.getPreferenceString(PreferenceHelper.USER_SHUT_DOWN_LOG, "NA"));
                                 firebaseMgr.uploadDocument(jsonData);
-                                PreferenceHelper.setPreferenceBooleanValue(preferenceHelper.IF_SHUT_DOWN_UPLOADED, true);
+                                PreferenceHelper.setPreferenceBooleanValue(PreferenceHelper.IF_SHUT_DOWN_UPLOADED, true);
 
                                 Log.d(LOG_TAG, "[MinukuMainService] device shut down action uploaded");
                             } catch (Exception e) {
@@ -489,7 +497,7 @@ public class MinukuMainService extends Service {
 
                     if (isWiFi) {
 
-                        Log.d(LOG_TAG, "[ConnectivityChangeReceiver]syncWithRemoteDatabase connect to wifi");
+                        Log.d(LOG_TAG, "[" + LOG_TAG + "]syncWithRemoteDatabase connect to wifi");
 
                         uploadDataToFIB();
 
@@ -505,24 +513,17 @@ public class MinukuMainService extends Service {
 
         new Thread(new Runnable() {
             public void run() {
-                //ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, 0));
-                ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(0);
+                ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, 0));
 
                 try {
                     for (int i = 0; i < documents.size(); i++) {
                         firebaseMgr.uploadDocument(documents.get(i));
                     }
-
-                    setLastSeverSyncTime(ScheduleAndSampleManager.getCurrentTimeInMillis());
                 } catch (Exception e) {
                     Log.d(LOG_TAG, e.getMessage());
                 }
             }
         }).start();
-    }
-
-    public static void setLastSeverSyncTime(long lastSessionUpdateTime) {
-        PreferenceHelper.setPreferenceLongValue(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, lastSessionUpdateTime);
     }
 
     @Override

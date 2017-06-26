@@ -8,9 +8,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -23,29 +21,24 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridLayout;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import edu.umich.si.inteco.minuku.MainActivity;
 import edu.umich.si.inteco.minuku.R;
+import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.constants.UserIconReference;
 import edu.umich.si.inteco.minuku.data.FirebaseManager;
-import edu.umich.si.inteco.minuku.data.MongoDBHelper;
-import edu.umich.si.inteco.minuku.data.RemoteDBHelper;
 import edu.umich.si.inteco.minuku.data.UserSettingsDBHelper;
 import edu.umich.si.inteco.minuku.model.User;
 import edu.umich.si.inteco.minuku.model.Views.UserIcon;
 import edu.umich.si.inteco.minuku.services.HomeScreenIconService;
-import edu.umich.si.inteco.minuku.util.DatabaseNameManager;
 import edu.umich.si.inteco.minuku.util.PreferenceHelper;
 import edu.umich.si.inteco.minuku.util.RecordingAndAnnotateManager;
 import edu.umich.si.inteco.minuku.util.ScheduleAndSampleManager;
@@ -95,14 +88,13 @@ public class ProfileFragment extends Fragment {
     private void init() {
         profileButtonListener = new ProfileButtonListener();
         userSettingsDBHelper = new UserSettingsDBHelper(context);
-        firebaseMgr = new FirebaseManager(context);
 
         // find views
         gridLayout = (GridLayout) rootView.findViewById(R.id.fragment_profile_gridLayout);
 
         // Set title caption
         tvTitle = (TextView) rootView.findViewById(R.id.fragment_profile_tv_title);
-        if (!PreferenceHelper.getPreferenceBoolean(PreferenceHelper.USER_MODE_SELECTION, true)){
+        if (!PreferenceHelper.getPreferenceBoolean(PreferenceHelper.USER_MODE_SELECTION, true)) {
             tvTitle.setText("Please let this app run in the background. \n You are in mobile mode now.");
         }
 
@@ -178,6 +170,15 @@ public class ProfileFragment extends Fragment {
 
         tv1.setText("WiFi MAC Address: " + MainActivity.wifiMacAddr);
         tv2.setText("Bluetooth MAC Address: " + MainActivity.btMacAddr);
+
+        Log.d("adasdas", ScheduleAndSampleManager.getCurrentTimeHourString() + "");
+        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_NOW);
+        try {
+            Date lastSynhHour = sdf.parse(ScheduleAndSampleManager.getCurrentTimeHourString());
+            Log.d("adasdas", lastSynhHour.getTime() + "");
+        } catch (Exception e) {
+            Log.d("adasdas", e.getMessage());
+        }
     }
 
     @Override
@@ -232,8 +233,10 @@ public class ProfileFragment extends Fragment {
                     ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(0);
 
                     try {
+                        if (null == firebaseMgr)
+                            firebaseMgr = new FirebaseManager(context);
                         for (int i = 0; i < documents.size(); i++) {
-                            firebaseMgr.uploadDocument(documents.get(i));
+//                            firebaseMgr.uploadDocument(documents.get(i));
                         }
                     } catch (Exception e) {
                         Log.d(LOG_TAG, e.getMessage());

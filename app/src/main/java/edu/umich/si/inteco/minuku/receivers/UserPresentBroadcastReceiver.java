@@ -11,15 +11,12 @@ import android.util.Log;
 
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 import edu.umich.si.inteco.minuku.MainActivity;
 import edu.umich.si.inteco.minuku.context.ContextStateManagers.PhoneStatusManager;
 import edu.umich.si.inteco.minuku.data.FirebaseManager;
 import edu.umich.si.inteco.minuku.data.UserSettingsDBHelper;
 import edu.umich.si.inteco.minuku.util.PreferenceHelper;
 import edu.umich.si.inteco.minuku.util.RecordingAndAnnotateManager;
-import edu.umich.si.inteco.minuku.util.ScheduleAndSampleManager;
 
 /**
  * Created by Tsung Wei Ho on 2017/3/11.
@@ -70,14 +67,14 @@ public class UserPresentBroadcastReceiver extends BroadcastReceiver {
 
                         if (isWifi) {
                             firebaseMgr = new FirebaseManager(context);
-                            firebaseMgr.uploadDocument(shutDownDoc);
+                            firebaseMgr.uploadShutdownDocument(shutDownDoc);
 
                             Log.d(LOG_TAG, "[UserPresentBroadcastReceiver] device shut down action uploaded");
-                            PreferenceHelper.setPreferenceBooleanValue(PreferenceHelper.IF_SHUT_DOWN_UPLOADED, true);
                         }
                     }
                 }
             }
+
             Log.d(LOG_TAG, "[UserPresentBroadcastReceiver] device shut down");
         }
     }

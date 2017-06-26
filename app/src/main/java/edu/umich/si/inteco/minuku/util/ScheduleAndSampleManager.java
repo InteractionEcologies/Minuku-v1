@@ -904,6 +904,13 @@ public class ScheduleAndSampleManager {
 		return currentTimeString;
 	}
 
+	public static String getCurrentTimeHourString() {
+		String currentTimeString = getCurrentTimeString();
+		String timeHourString = currentTimeString.substring(0, 14) + "00:00 " + currentTimeString.substring(20);
+
+		return timeHourString;
+	}
+
 	public static String getCurrentTimeString() {
 
 		return getTimeString(getCurrentTimeInMillis());

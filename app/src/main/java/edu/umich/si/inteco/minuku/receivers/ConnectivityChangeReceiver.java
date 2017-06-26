@@ -57,19 +57,20 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver {
             for (Network network : networks) {
                 activeNetwork = conMngr.getNetworkInfo(network);
 
+                if (null == activeNetwork)
+                    return;
+
                 if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
                     isWifi = activeNetwork.isConnected();
 
                     if (isWifi) {
 
                         final FirebaseManager firebaseMgr = new FirebaseManager(context);
-                        PreferenceHelper preferenceHelper = new PreferenceHelper(context);
 
-                        if (!preferenceHelper.getPreferenceBoolean(PreferenceHelper.IF_SHUT_DOWN_UPLOADED, true)){
+                        if (!PreferenceHelper.getPreferenceBoolean(PreferenceHelper.IF_SHUT_DOWN_UPLOADED, true)){
                             try {
-                                JSONObject jsonData = new JSONObject(preferenceHelper.getPreferenceString(preferenceHelper.USER_SHUT_DOWN_LOG, "NA"));
-                                firebaseMgr.uploadDocument(jsonData);
-                                PreferenceHelper.setPreferenceBooleanValue(preferenceHelper.IF_SHUT_DOWN_UPLOADED, true);
+                                JSONObject jsonData = new JSONObject(PreferenceHelper.getPreferenceString(PreferenceHelper.USER_SHUT_DOWN_LOG, "NA"));
+                                firebaseMgr.uploadShutdownDocument(jsonData);
 
                                 Log.d(LOG_TAG, "[ConnectivityChangeReceiver] device shut down action uploaded");
                             } catch (Exception e) {
@@ -90,15 +91,12 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver {
 
                         new Thread(new Runnable() {
                             public void run() {
-                                //ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, 0));
-                                ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(0);
+                                ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, 0));
 
                                 try {
                                     for (int i = 0; i < documents.size(); i++) {
                                         firebaseMgr.uploadDocument(documents.get(i));
                                     }
-
-                                    setLastSeverSyncTime(ScheduleAndSampleManager.getCurrentTimeInMillis());
                                 } catch (Exception e) {
                                     Log.d(LOG_TAG, e.getMessage());
                                 }
@@ -119,8 +117,12 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver {
                 NetworkInfo activeNetworkWifi = conMngr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
                 NetworkInfo activeNetworkMobile = conMngr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
+
+                if (null == activeNetworkWifi)
+                    return;
+
                 boolean isWiFi = activeNetworkWifi.getType() == ConnectivityManager.TYPE_WIFI;
-                boolean isMobile = activeNetworkWifi.getType() == ConnectivityManager.TYPE_MOBILE;
+                boolean isMobile = activeNetworkMobile.getType() == ConnectivityManager.TYPE_MOBILE;
 
 
                 if (info != null) {
@@ -150,11 +152,11 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver {
                         Log.d(LOG_TAG, "[ConnectivityChangeReceiver]syncWithRemoteDatabase connect to wifi");
 
                         //if we only submit the data over wifh. this should be configurable
-                        if (RemoteDBHelper.getSubmitDataOnlyOverWifi()) {
-                            Log.d(LOG_TAG, "[ConnectivityChangeReceiver]syncWithRemoteDatabase only submit over wifi");
-                            RemoteDBHelper.syncWithRemoteDatabase();
-
-                        }
+//                        if (RemoteDBHelper.getSubmitDataOnlyOverWifi()) {
+//                            Log.d(LOG_TAG, "[ConnectivityChangeReceiver]syncWithRemoteDatabase only submit over wifi");
+//                            RemoteDBHelper.syncWithRemoteDatabase();
+//
+//                        }
 
 
                     }
@@ -163,10 +165,6 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver {
 
         }
 
-    }
-
-    public static void setLastSeverSyncTime(long lastSessionUpdateTime) {
-        PreferenceHelper.setPreferenceLongValue(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, lastSessionUpdateTime);
     }
 
 
