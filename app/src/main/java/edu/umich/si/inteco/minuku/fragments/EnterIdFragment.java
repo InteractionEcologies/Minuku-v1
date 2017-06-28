@@ -17,22 +17,29 @@ import android.widget.ImageButton;
 
 import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import edu.umich.si.inteco.minuku.LoginActivity;
 import edu.umich.si.inteco.minuku.MainActivity;
 import edu.umich.si.inteco.minuku.R;
+import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.constants.UserIconReference;
 import edu.umich.si.inteco.minuku.data.UserSettingsDBHelper;
 import edu.umich.si.inteco.minuku.model.User;
 import edu.umich.si.inteco.minuku.model.Views.UserIcon;
 import edu.umich.si.inteco.minuku.util.PreferenceHelper;
+import edu.umich.si.inteco.minuku.util.ScheduleAndSampleManager;
 
 /**
  * Created by tsung on 2017/3/8.
  */
 
 public class EnterIdFragment extends Fragment {
+
+    private String LOG_TAG = "EnterIdFragment";
+
     // Main context and view
     private Context context;
     private View view;
@@ -95,6 +102,7 @@ public class EnterIdFragment extends Fragment {
                                     PreferenceHelper.setPreferenceStringValue(PreferenceHelper.DEVICE_ID, LoginActivity.wifiMacAddr + LoginActivity.btMacAddr);
                                     PreferenceHelper.setPreferenceStringValue(PreferenceHelper.USER_ID, edStudyId.getText().toString());
                                     PreferenceHelper.setPreferenceBooleanValue(PreferenceHelper.USER_SETUP_COMPLETED, true);
+                                    setLastSeverSyncTime();
                                     Intent intent = new Intent(getActivity(), MainActivity.class);
                                     startActivity(intent);
                                     getActivity().finish();
@@ -124,6 +132,18 @@ public class EnterIdFragment extends Fragment {
         setUserIconView();
     }
 
+    private void setLastSeverSyncTime() {
+        // In format: 2016-09-27 12:00:00 -0400
+        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_NOW);
+        try {
+            Date lastSynhHour = sdf.parse(ScheduleAndSampleManager.getCurrentTimeHourString());
+            PreferenceHelper.setPreferenceLongValue(PreferenceHelper.DATABASE_LAST_FIB_SYNC_TIME, lastSynhHour.getTime());
+        } catch (Exception e) {
+            Log.d(LOG_TAG, e.getMessage());
+        }
+
+    }
+
     private void setUserIconView() {
         if (null == userIconReference)
             userIconReference = new UserIconReference(context);
@@ -131,9 +151,10 @@ public class EnterIdFragment extends Fragment {
         if (null == userSettingsDBHelper)
             userSettingsDBHelper = new UserSettingsDBHelper(context);
 
-        userSettingsDBHelper.setAllUserUnSelected();
         userList = userSettingsDBHelper.getAllUserList();
         userIdList = userSettingsDBHelper.getAllIdListSortByAge();
+        userSettingsDBHelper.setAllUserUnSelected();
+
         gridLayout.removeAllViews();
         for (int i = 0; i < userList.size(); i++) {
             final User user = userList.get(i);

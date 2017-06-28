@@ -13,24 +13,17 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 import edu.umich.si.inteco.minuku.MainActivity;
 import edu.umich.si.inteco.minuku.constants.Constants;
-import edu.umich.si.inteco.minuku.util.DatabaseNameManager;
 import edu.umich.si.inteco.minuku.util.PreferenceHelper;
-import edu.umich.si.inteco.minuku.util.RecordingAndAnnotateManager;
 import edu.umich.si.inteco.minuku.util.ScheduleAndSampleManager;
 
 /**
@@ -181,7 +174,7 @@ public class FirebaseManager {
         SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_NOW);
         try {
             Date lastSynhHour = sdf.parse(ScheduleAndSampleManager.getCurrentTimeHourString());
-            PreferenceHelper.setPreferenceLongValue(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, lastSynhHour.getTime());
+            PreferenceHelper.setPreferenceLongValue(PreferenceHelper.DATABASE_LAST_FIB_SYNC_TIME, lastSynhHour.getTime());
         } catch (Exception e) {
             Log.d(LOG_TAG, e.getMessage());
         }

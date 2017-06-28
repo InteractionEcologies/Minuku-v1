@@ -39,9 +39,7 @@ import edu.umich.si.inteco.minuku.context.EventManager;
 import edu.umich.si.inteco.minuku.data.DataHandler;
 import edu.umich.si.inteco.minuku.data.FirebaseManager;
 import edu.umich.si.inteco.minuku.data.LocalDBHelper;
-import edu.umich.si.inteco.minuku.data.RemoteDBHelper;
 import edu.umich.si.inteco.minuku.model.Checkpoint;
-import edu.umich.si.inteco.minuku.model.Notification;
 import edu.umich.si.inteco.minuku.model.actions.Action;
 import edu.umich.si.inteco.minuku.util.ActionManager;
 import edu.umich.si.inteco.minuku.util.ConfigurationManager;
@@ -513,7 +511,7 @@ public class MinukuMainService extends Service {
 
         new Thread(new Runnable() {
             public void run() {
-                ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, 0));
+                ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_FIB_SYNC_TIME, 0));
 
                 try {
                     for (int i = 0; i < documents.size(); i++) {
@@ -667,9 +665,9 @@ public class MinukuMainService extends Service {
                     if (mDeviceCheckingTimeCountDown == 0) {
 
                         //if we want to use remote MongoDB to check alive status
-                        if (ConfigurationManager.MINUKU_SERVICE_CHECKIN_MONGODB_ENABLED) {
-                            RemoteDBHelper.MinukuServiceCheckIn();
-                        }
+//                        if (ConfigurationManager.MINUKU_SERVICE_CHECKIN_MONGODB_ENABLED) {
+//                            RemoteDBHelper.MinukuServiceCheckIn();
+//                        }
 
                         //reset
                         mDeviceCheckingTimeCountDown = DEFAULT_DEVICE_CHECKING_COUNT;

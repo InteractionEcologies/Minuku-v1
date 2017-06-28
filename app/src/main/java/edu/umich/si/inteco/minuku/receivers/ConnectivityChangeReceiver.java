@@ -91,7 +91,7 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver {
 
                         new Thread(new Runnable() {
                             public void run() {
-                                ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, 0));
+                                ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(PreferenceHelper.getPreferenceLong(PreferenceHelper.DATABASE_LAST_FIB_SYNC_TIME, 0));
 
                                 try {
                                     for (int i = 0; i < documents.size(); i++) {

@@ -61,7 +61,7 @@ public class LoginFragment extends Fragment {
                         showDialog("Please select icon for each user", "Please make sure that you select icon for each user.", false);
                     }
                 } else {
-                    showDialog("Column contains Empty value", "Please check you have at least one user and no column contains empty value.", false);
+                    showDialog("Column contains Empty value", "Please check you have at least one user and no column contains empty or zero value.", false);
                 }
             }
         });

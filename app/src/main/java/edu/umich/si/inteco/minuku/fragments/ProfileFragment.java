@@ -5,10 +5,13 @@ package edu.umich.si.inteco.minuku.fragments;
  */
 
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -118,7 +121,7 @@ public class ProfileFragment extends Fragment {
                     currentSelected = numOfPeopleUsing;
                 }
 
-                setUserIconView();
+                new TaskSetUserIconView().execute();
             }
 
             @Override
@@ -144,23 +147,38 @@ public class ProfileFragment extends Fragment {
         btnStart.setVisibility(View.GONE);
         btnStart.setOnClickListener(profileButtonListener);
 
-        setUserIconView();
+        new TaskSetUserIconView().execute();
     }
 
-    public void setUserIconView() {
-        if (null == userIconReference)
-            userIconReference = new UserIconReference(context);
-        if (null == userSettingsDBHelper)
-            userSettingsDBHelper = new UserSettingsDBHelper(context);
+    private class TaskSetUserIconView extends AsyncTask<Void, Void, Boolean> {
 
-        userList = userSettingsDBHelper.getAllUserListSortByAge();
-        userIdList = userSettingsDBHelper.getAllIdListSortByAge();
-        gridLayout.removeAllViews();
-        for (int i = 0; i < userList.size(); i++) {
-            final String id = userIdList.get(i).toString();
-            final User user = userList.get(i);
-            UserIcon userIcon = new UserIcon(context, id, user);
-            gridLayout.addView(userIcon.getView());
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            if (null == userIconReference)
+                userIconReference = new UserIconReference(context);
+            if (null == userSettingsDBHelper)
+                userSettingsDBHelper = new UserSettingsDBHelper(context);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... v) {
+            userList = userSettingsDBHelper.getAllUserListSortByAge();
+            userIdList = userSettingsDBHelper.getAllIdListSortByAge();
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean bool) {
+            gridLayout.removeAllViews();
+            for (int i = 0; i < userList.size(); i++) {
+                final String id = userIdList.get(i).toString();
+                final User user = userList.get(i);
+                UserIcon userIcon = new UserIcon(context, id, user);
+                gridLayout.addView(userIcon.getView());
+            }
         }
     }
 
@@ -170,15 +188,6 @@ public class ProfileFragment extends Fragment {
 
         tv1.setText("WiFi MAC Address: " + MainActivity.wifiMacAddr);
         tv2.setText("Bluetooth MAC Address: " + MainActivity.btMacAddr);
-
-        Log.d("adasdas", ScheduleAndSampleManager.getCurrentTimeHourString() + "");
-        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_NOW);
-        try {
-            Date lastSynhHour = sdf.parse(ScheduleAndSampleManager.getCurrentTimeHourString());
-            Log.d("adasdas", lastSynhHour.getTime() + "");
-        } catch (Exception e) {
-            Log.d("adasdas", e.getMessage());
-        }
     }
 
     @Override
@@ -205,7 +214,7 @@ public class ProfileFragment extends Fragment {
         }
 
         userSettingsDBHelper.updateDB(id, user);
-        setUserIconView();
+        new TaskSetUserIconView().execute();
     }
 
     public class ProfileButtonListener implements View.OnClickListener {
@@ -242,15 +251,9 @@ public class ProfileFragment extends Fragment {
                         Log.d(LOG_TAG, e.getMessage());
                     }
 
-                    setLastSeverSyncTime(ScheduleAndSampleManager.getCurrentTimeInMillis());
-
                     break;
             }
         }
-    }
-
-    public static void setLastSeverSyncTime(long lastSessionUpdateTime) {
-        PreferenceHelper.setPreferenceLongValue(PreferenceHelper.DATABASE_LAST_SEVER_SYNC_TIME, lastSessionUpdateTime);
     }
 
     private void startHomeScreenIcon() {

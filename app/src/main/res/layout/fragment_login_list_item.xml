@@ -59,7 +59,7 @@
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:hint="Enter user's age"
-                android:inputType="text"
+                android:inputType="number"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
         </LinearLayout>
     </LinearLayout>

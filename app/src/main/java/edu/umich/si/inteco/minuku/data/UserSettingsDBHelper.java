@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import org.json.JSONObject;
@@ -20,7 +21,7 @@ import edu.umich.si.inteco.minuku.model.User;
 public class UserSettingsDBHelper extends SQLiteOpenHelper {
 
     static final String DBNAME = "usersettings.sqlite";
-    static final int VERSION = 3;
+    static final int VERSION = 5;
     static final String TABLENAME = "usersettings_list";
     // DB params
     private String ID = "Id";
@@ -43,10 +44,10 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + TABLENAME + "(" +
                 ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                 USER_NAME + " VARCHAR(30)," +
-                USER_AGE + " VARCHAR(30)," +
+                USER_AGE + " INTEGER," +
                 USER_IMGNUM + " VARCHAR(10)," +
                 IF_SELECTED + " VARCHAR(15)," +
-                USER_NUMBER + " VARCHAR(10)" +");");
+                USER_NUMBER + " VARCHAR(10)" + ");");
     }
 
     @Override
@@ -57,19 +58,23 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
 
     public long insertDB(User user) {
         SQLiteDatabase db = getWritableDatabase();
+
         ContentValues values = new ContentValues();
         values.put(USER_NAME, user.getUserName());
         values.put(USER_AGE, user.getUserAge());
         values.put(USER_IMGNUM, user.getImgNumber());
         values.put(IF_SELECTED, user.getIfSelected());
         values.put(USER_NUMBER, user.getUserNumber());
+
         long rowId = db.insert(TABLENAME, null, values);
         db.close();
+
         return rowId;
     }
 
     public int updateDB(String id, User user) {
         SQLiteDatabase db = getWritableDatabase();
+
         ContentValues values = new ContentValues();
         values.put(USER_NAME, user.getUserName());
         values.put(USER_AGE, user.getUserAge());
@@ -77,8 +82,10 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         values.put(IF_SELECTED, user.getIfSelected());
         values.put(USER_NUMBER, user.getUserNumber());
         String whereClause = ID + "='" + id + "'";
+
         int count = db.update(TABLENAME, values, whereClause, null);
         db.close();
+
         return count;
     }
 
@@ -100,48 +107,68 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         return select;
     }
 
-    public int setAllUserSelected() {
-        SQLiteDatabase db = getWritableDatabase();
-        ArrayList<User> userList = getAllUserList();
-        ArrayList<Integer> idList = getAllIdList();
-
-        int count = 0;
-
-        for (int i = 0; i < userList.size(); i++) {
-            ContentValues values = new ContentValues();
-            values.put(USER_NAME, userList.get(i).getUserName());
-            values.put(USER_AGE, userList.get(i).getUserAge());
-            values.put(USER_IMGNUM, userList.get(i).getImgNumber());
-            values.put(IF_SELECTED, "1");
-            values.put(USER_NUMBER, userList.get(i).getUserNumber());
-            String whereClause = ID + "='" + idList.get(i) + "'";
-            count += db.update(TABLENAME, values, whereClause, null);
-        }
-
-        db.close();
-
-        return count;
+    public void setAllUserSelected() {
+        new TaskSetAllUserSelected().execute();
     }
 
-    public int setAllUserUnSelected() {
-        ArrayList<User> userList = getAllUserList();
-        ArrayList<Integer> idList = getAllIdList();
-        SQLiteDatabase db = getWritableDatabase();
-        int count = 0;
-        for (int i = 0; i < userList.size(); i++) {
-            ContentValues values = new ContentValues();
-            values.put(USER_NAME, userList.get(i).getUserName());
-            values.put(USER_AGE, userList.get(i).getUserAge());
-            values.put(USER_IMGNUM, userList.get(i).getImgNumber());
-            values.put(IF_SELECTED, "0");
-            values.put(USER_NUMBER, userList.get(i).getUserNumber());
-            String whereClause = ID + "='" + idList.get(i) + "'";
-            count += db.update(TABLENAME, values, whereClause, null);
+    private class TaskSetAllUserSelected extends AsyncTask<Void, Void, ArrayList<Integer>> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
         }
 
-        db.close();
+        @Override
+        protected ArrayList<Integer> doInBackground(Void... v) {
+            return getAllIdList();
 
-        return count;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList idList) {
+            SQLiteDatabase db = getWritableDatabase();
+
+            for (int i = 0; i < idList.size(); i++) {
+                ContentValues values = new ContentValues();
+                values.put(IF_SELECTED, "1");
+                String whereClause = ID + " = '" + idList.get(i) + "'";
+                db.update(TABLENAME, values, whereClause, null);
+            }
+
+            db.close();
+        }
+    }
+
+    public void setAllUserUnSelected() {
+        new TaskSetAllUserUnselected().execute();
+    }
+
+    private class TaskSetAllUserUnselected extends AsyncTask<Void, Void, ArrayList<Integer>> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected ArrayList<Integer> doInBackground(Void... v) {
+            return getAllIdList();
+
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList idList) {
+            SQLiteDatabase db = getWritableDatabase();
+
+            for (int i = 0; i < idList.size(); i++) {
+                ContentValues values = new ContentValues();
+                values.put(IF_SELECTED, "0");
+                String whereClause = ID + " = '" + idList.get(i) + "'";
+                db.update(TABLENAME, values, whereClause, null);
+            }
+
+            db.close();
+        }
     }
 
     public int deleteUserById(int id) {
@@ -149,6 +176,7 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         String whereClause = ID + "='" + id + "'";
         int count = db.delete(TABLENAME, whereClause, null);
         db.close();
+
         return count;
     }
 
@@ -175,25 +203,25 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<User> getAllUserListSortByAge() {
-        ArrayList<User> sortedUserList = sortUserList(getAllUserList());
-        return sortedUserList;
-    }
+        SQLiteDatabase db = getReadableDatabase();
+        ArrayList<User> sortedUserList = new ArrayList<User>();
+        String sql = "SELECT * FROM " + TABLENAME + " ORDER BY " + USER_AGE + " ASC";
+        Cursor cursor = db.rawQuery(sql, null);
 
-    private ArrayList<User> sortUserList(ArrayList<User> sortedUsertList) {
-        User temp;
-
-        for (int i = 0; i < sortedUsertList.size(); i++) {
-            for (int j = 1; j < (sortedUsertList.size() - i); j++) {
-                if (Integer.parseInt(sortedUsertList.get(j - 1).getUserAge()) > Integer.parseInt(sortedUsertList.get(j).getUserAge())) {
-                    temp = sortedUsertList.get(j - 1);
-                    sortedUsertList.set(j - 1, sortedUsertList.get(j));
-                    sortedUsertList.set(j, temp);
-                }
-
-            }
+        while (cursor.moveToNext()) {
+            String userName = cursor.getString(1);
+            String userAge = cursor.getString(2);
+            String userImgNum = cursor.getString(3);
+            String ifSelected = cursor.getString(4);
+            String userNumber = cursor.getString(5);
+            User user = new User(userName, userAge, userImgNum, ifSelected, userNumber);
+            sortedUserList.add(user);
         }
 
-        return sortedUsertList;
+        cursor.close();
+        db.close();
+
+        return sortedUserList;
     }
 
     public ArrayList<Integer> getAllIdList() {
@@ -214,24 +242,20 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<Integer> getAllIdListSortByAge() {
-        ArrayList<Integer> sortedIdList = sortIdList(getAllUserList(), getAllIdList());
-        return sortedIdList;
-    }
+        SQLiteDatabase db = getReadableDatabase();
+        ArrayList<Integer> sortedIdList = new ArrayList<Integer>();
 
-    private ArrayList<Integer> sortIdList(ArrayList<User> usertList, ArrayList<Integer> sortedIdtList) {
-        int temp;
-
-        for (int i = 0; i < usertList.size(); i++) {
-            for (int j = 1; j < (usertList.size() - i); j++) {
-                if (Integer.parseInt(usertList.get(j - 1).getUserAge()) > Integer.parseInt(usertList.get(j).getUserAge())) {
-                    temp = sortedIdtList.get(j - 1);
-                    sortedIdtList.set(j - 1, sortedIdtList.get(j));
-                    sortedIdtList.set(j, temp);
-                }
-            }
+        String sql = "SELECT * FROM " + TABLENAME + " ORDER BY " + USER_AGE + " ASC";
+        Cursor cursor = db.rawQuery(sql, null);
+        while (cursor.moveToNext()) {
+            int databaseId = cursor.getInt(0);
+            sortedIdList.add(databaseId);
         }
 
-        return sortedIdtList;
+        cursor.close();
+        db.close();
+
+        return sortedIdList;
     }
 
     public String getSelectedUserNumbers() {
@@ -249,6 +273,7 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
 
         cursor.close();
         db.close();
+
         return userNumbers;
     }
 
@@ -265,6 +290,7 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         db.close();
+
         return userCount;
     }
 
@@ -273,11 +299,13 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         String sql = "SELECT * FROM " + TABLENAME;
         Cursor cursor = db.rawQuery(sql, null);
+
         while (cursor.moveToNext()) {
             userCount++;
         }
         cursor.close();
         db.close();
+
         return userCount;
     }
 
@@ -288,7 +316,7 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(TABLENAME, columns, null, null, null, null, null);
 
         while (cursor.moveToNext()) {
-            if ("".equalsIgnoreCase(cursor.getString(0)) || "".equalsIgnoreCase(cursor.getString(1)))
+            if ("".equalsIgnoreCase(cursor.getString(0)) || "".equalsIgnoreCase(cursor.getString(1)) || "0".equalsIgnoreCase(cursor.getString(1)))
                 containNull = true;
 
             if (null == cursor.getString(0) || null == cursor.getString(1))
@@ -297,6 +325,7 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
 
         cursor.close();
         db.close();
+
         return containNull;
     }
 

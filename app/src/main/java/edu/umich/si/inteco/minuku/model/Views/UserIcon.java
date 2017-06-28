@@ -61,7 +61,7 @@ public class UserIcon extends View {
         ibUser = (ImageButton) view.findViewById(R.id.obj_user_icon_ib);
 
 
-        if (Integer.parseInt(user.getUserAge()) > 18) {
+        if (Integer.valueOf(user.getUserAge()) > 18) {
             ibUser.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
