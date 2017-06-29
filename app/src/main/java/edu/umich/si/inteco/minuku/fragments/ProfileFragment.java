@@ -146,8 +146,6 @@ public class ProfileFragment extends Fragment {
         btnStart = (Button) rootView.findViewById(R.id.fragment_profile_btnStart);
         btnStart.setVisibility(View.GONE);
         btnStart.setOnClickListener(profileButtonListener);
-
-        new TaskSetUserIconView().execute();
     }
 
     private class TaskSetUserIconView extends AsyncTask<Void, Void, Boolean> {
@@ -185,6 +183,8 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        new TaskSetUserIconView().execute();
 
         tv1.setText("WiFi MAC Address: " + MainActivity.wifiMacAddr);
         tv2.setText("Bluetooth MAC Address: " + MainActivity.btMacAddr);

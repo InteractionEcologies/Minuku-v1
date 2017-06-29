@@ -1,20 +1,25 @@
 package edu.umich.si.inteco.minuku.receivers;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
 
 import org.json.JSONObject;
 
 import edu.umich.si.inteco.minuku.MainActivity;
+import edu.umich.si.inteco.minuku.constants.UserIconReference;
 import edu.umich.si.inteco.minuku.context.ContextStateManagers.PhoneStatusManager;
 import edu.umich.si.inteco.minuku.data.FirebaseManager;
 import edu.umich.si.inteco.minuku.data.UserSettingsDBHelper;
+import edu.umich.si.inteco.minuku.model.User;
+import edu.umich.si.inteco.minuku.model.Views.UserIcon;
 import edu.umich.si.inteco.minuku.util.PreferenceHelper;
 import edu.umich.si.inteco.minuku.util.RecordingAndAnnotateManager;
 
@@ -25,20 +30,20 @@ import edu.umich.si.inteco.minuku.util.RecordingAndAnnotateManager;
 public class UserPresentBroadcastReceiver extends BroadcastReceiver {
 
     private String LOG_TAG = "UsrPresentBR";
+    private Context context;
+
+    // Functions
     private FirebaseManager firebaseMgr;
+    private UserSettingsDBHelper userSettingsDBHelper;
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
         if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
-
             // App shows up only when it's in family mode
             if (PreferenceHelper.getPreferenceBoolean(PreferenceHelper.USER_MODE_SELECTION, true)) {
-                Intent intent1 = new Intent(context, MainActivity.class);
-                intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                UserSettingsDBHelper userSettingsDBHelper = new UserSettingsDBHelper(context);
-                userSettingsDBHelper.setAllUserUnSelected();
-                context.startActivity(intent1);
+                this.context = context;
+                new TaskSetAllUserUnselected().execute();
             }
         }
 
@@ -76,6 +81,29 @@ public class UserPresentBroadcastReceiver extends BroadcastReceiver {
             }
 
             Log.d(LOG_TAG, "[UserPresentBroadcastReceiver] device shut down");
+        }
+    }
+
+    private class TaskSetAllUserUnselected extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            userSettingsDBHelper = new UserSettingsDBHelper(context);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... v) {
+            userSettingsDBHelper.setAllUserUnSelected();
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean bool) {
+            Intent intent1 = new Intent(context, MainActivity.class);
+            intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent1);
         }
     }
 }
