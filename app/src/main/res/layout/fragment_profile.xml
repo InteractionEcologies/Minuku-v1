@@ -63,12 +63,24 @@
             </HorizontalScrollView>
 
             <TextView
+                android:id="@+id/fragment_profile_tvRunBack"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/activity_vertical_margin"
                 android:gravity="center"
                 android:padding="@dimen/activity_vertical_margin"
-                android:text="version 1.0.6"
+                android:text="Prepare to run in the background..."
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                android:textStyle="italic"
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/activity_vertical_margin"
+                android:gravity="center"
+                android:padding="@dimen/activity_vertical_margin"
+                android:text="version 1.0.7"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small" />
 
             <Button

@@ -20,6 +20,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -56,7 +58,7 @@ public class ProfileFragment extends Fragment {
     private Spinner spNumOfPeople;
     private Button btnSave;
     private GridLayout gridLayout;
-    private TextView tvTitle;
+    private TextView tvTitle, tvRunBack;
 
     //functions
     private ProfileButtonListener profileButtonListener;
@@ -100,6 +102,7 @@ public class ProfileFragment extends Fragment {
         if (!PreferenceHelper.getPreferenceBoolean(PreferenceHelper.USER_MODE_SELECTION, true)) {
             tvTitle.setText("Please let this app run in the background. \n You are in mobile mode now.");
         }
+        tvRunBack = (TextView) rootView.findViewById(R.id.fragment_profile_tvRunBack);
 
         // Spinner is not used for current version, will be removed in release version
         spNumOfPeople = (Spinner) rootView.findViewById(R.id.fragment_profile_spinner);
@@ -148,6 +151,18 @@ public class ProfileFragment extends Fragment {
         btnStart.setOnClickListener(profileButtonListener);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        tvRunBack.setText("Loading...");
+        tvRunBack.setVisibility(View.GONE);
+        new TaskSetUserIconView().execute();
+
+        tv1.setText("WiFi MAC Address: " + MainActivity.wifiMacAddr);
+        tv2.setText("Bluetooth MAC Address: " + MainActivity.btMacAddr);
+    }
+
     private class TaskSetUserIconView extends AsyncTask<Void, Void, Boolean> {
 
 
@@ -159,6 +174,8 @@ public class ProfileFragment extends Fragment {
                 userIconReference = new UserIconReference(context);
             if (null == userSettingsDBHelper)
                 userSettingsDBHelper = new UserSettingsDBHelper(context);
+
+            gridLayout.setVisibility(View.GONE);
         }
 
         @Override
@@ -177,22 +194,26 @@ public class ProfileFragment extends Fragment {
                 UserIcon userIcon = new UserIcon(context, id, user);
                 gridLayout.addView(userIcon.getView());
             }
+
+            setglAnimToVisible(gridLayout);
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        new TaskSetUserIconView().execute();
-
-        tv1.setText("WiFi MAC Address: " + MainActivity.wifiMacAddr);
-        tv2.setText("Bluetooth MAC Address: " + MainActivity.btMacAddr);
+    public void setglAnimToVisible(final GridLayout gridLayout) {
+        gridLayout.setVisibility(View.VISIBLE);
+        Animation am = AnimationUtils.loadAnimation(context, R.anim.fade_in);
+        am.setDuration(500);
+        gridLayout.setAnimation(am);
+        am.startNow();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+
+        tvRunBack.setText("Prepare to run in the background...");
+        gridLayout.setVisibility(View.GONE);
+        tvRunBack.setVisibility(View.VISIBLE);
     }
 
     private void setSelectedTabColor(String id, User user) {

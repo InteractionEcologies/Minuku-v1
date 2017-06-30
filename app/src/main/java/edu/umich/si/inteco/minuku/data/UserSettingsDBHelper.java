@@ -108,67 +108,21 @@ public class UserSettingsDBHelper extends SQLiteOpenHelper {
     }
 
     public void setAllUserSelected() {
-        new TaskSetAllUserSelected().execute();
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = "UPDATE " + TABLENAME + " SET " + IF_SELECTED + " = \"1\";";
+        db.execSQL(sql);
+
+        db.close();
     }
 
-    private class TaskSetAllUserSelected extends AsyncTask<Void, Void, ArrayList<Integer>> {
+    public boolean setAllUserUnSelected() {
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = "UPDATE " + TABLENAME + " SET " + IF_SELECTED + " = \"0\";";
+        db.execSQL(sql);
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
+        db.close();
 
-        @Override
-        protected ArrayList<Integer> doInBackground(Void... v) {
-            return getAllIdList();
-
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList idList) {
-            SQLiteDatabase db = getWritableDatabase();
-
-            for (int i = 0; i < idList.size(); i++) {
-                ContentValues values = new ContentValues();
-                values.put(IF_SELECTED, "1");
-                String whereClause = ID + " = '" + idList.get(i) + "'";
-                db.update(TABLENAME, values, whereClause, null);
-            }
-
-            db.close();
-        }
-    }
-
-    public void setAllUserUnSelected() {
-        new TaskSetAllUserUnselected().execute();
-    }
-
-    private class TaskSetAllUserUnselected extends AsyncTask<Void, Void, ArrayList<Integer>> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected ArrayList<Integer> doInBackground(Void... v) {
-            return getAllIdList();
-
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList idList) {
-            SQLiteDatabase db = getWritableDatabase();
-
-            for (int i = 0; i < idList.size(); i++) {
-                ContentValues values = new ContentValues();
-                values.put(IF_SELECTED, "0");
-                String whereClause = ID + " = '" + idList.get(i) + "'";
-                db.update(TABLENAME, values, whereClause, null);
-            }
-
-            db.close();
-        }
+        return true;
     }
 
     public int deleteUserById(int id) {

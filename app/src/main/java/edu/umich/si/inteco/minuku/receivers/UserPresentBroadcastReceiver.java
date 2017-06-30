@@ -43,7 +43,7 @@ public class UserPresentBroadcastReceiver extends BroadcastReceiver {
             // App shows up only when it's in family mode
             if (PreferenceHelper.getPreferenceBoolean(PreferenceHelper.USER_MODE_SELECTION, true)) {
                 this.context = context;
-                new TaskSetAllUserUnselected().execute();
+                new TaskStartApp().execute();
             }
         }
 
@@ -84,7 +84,7 @@ public class UserPresentBroadcastReceiver extends BroadcastReceiver {
         }
     }
 
-    private class TaskSetAllUserUnselected extends AsyncTask<Void, Void, Boolean> {
+    private class TaskStartApp extends AsyncTask<Void, Void, Boolean> {
 
         @Override
         protected void onPreExecute() {
@@ -95,8 +95,7 @@ public class UserPresentBroadcastReceiver extends BroadcastReceiver {
 
         @Override
         protected Boolean doInBackground(Void... v) {
-            userSettingsDBHelper.setAllUserUnSelected();
-            return true;
+            return userSettingsDBHelper.setAllUserUnSelected();
         }
 
         @Override
