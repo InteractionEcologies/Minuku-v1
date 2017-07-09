@@ -22,6 +22,7 @@ import edu.umich.si.inteco.minuku.R;
 import edu.umich.si.inteco.minuku.data.UserSettingsDBHelper;
 import edu.umich.si.inteco.minuku.model.User;
 import edu.umich.si.inteco.minuku.util.PreferenceHelper;
+import edu.umich.si.inteco.minuku.util.UserAccountManager;
 
 /**
  * Created by tsung on 2017/4/23.
@@ -37,8 +38,9 @@ public class AdultEnterIdFragment extends Fragment {
     private Button btnLogin;
     private EditText edStudyId;
 
-    // Database
+    // Functions
     private UserSettingsDBHelper userSettingsDBHelper;
+    private UserAccountManager userAccountManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,6 +54,7 @@ public class AdultEnterIdFragment extends Fragment {
 
     private void init() {
         userSettingsDBHelper = new UserSettingsDBHelper(context);
+        userAccountManager = new UserAccountManager(context);
 
         edStudyId = (EditText) view.findViewById(R.id.fragment_adultenterid_edStudy);
 
@@ -69,7 +72,8 @@ public class AdultEnterIdFragment extends Fragment {
                             .withSubject("Family App Logger")
                             .withBody("Family App Logger service started.\n \n" + "UniqueId: " + LoginActivity.wifiMacAddr + LoginActivity.btMacAddr
                                     + "\n \n" + "Device: mobile device"
-                                    + "\n \n" + "StudyId: " + edStudyId.getText().toString() + "\n \n"
+                                    + "\n \n" + "StudyId: " + edStudyId.getText().toString()
+                                    + "\n \n" + "User Account Mapping: " + userAccountManager.getCurrentUserNumber() + "-" + userAccountManager.getCurrentAccount() + "\n \n"
                                     + getUserDataList(userSettingsDBHelper.getAllUserList()))
                             .withOnSuccessCallback(new BackgroundMail.OnSuccessCallback() {
                                 @Override

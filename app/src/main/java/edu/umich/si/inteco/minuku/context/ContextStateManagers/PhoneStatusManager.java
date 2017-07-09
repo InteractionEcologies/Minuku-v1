@@ -43,6 +43,7 @@ import edu.umich.si.inteco.minuku.model.StateMappingRule;
 import edu.umich.si.inteco.minuku.context.TelephonyStateListenner;
 import edu.umich.si.inteco.minuku.receivers.BatteryStatusReceiver;
 import edu.umich.si.inteco.minuku.util.ScheduleAndSampleManager;
+import edu.umich.si.inteco.minuku.util.UserAccountManager;
 
 /**
  * Created by Armuro on 10/4/15.
@@ -140,6 +141,7 @@ public class PhoneStatusManager extends ContextStateManager {
     public static final String RECORD_DATA_PROPERTY_APPUSAGE_USED_APPS_STATS_IN_RECENT_HOUR = "Recent_Apps";
     public static final String RECORD_DATA_PROPERTY_APPUSAGE_APP_USE_DURATION_IN_LAST_CERTAIN_TIME = "AppUseDurationInLastCertainTime";
     public static final String RECORD_DATA_PROPERTY_APPUSAGE_USER_USING = "Users";
+    public static final String RECORD_DATA_PROPERTY_APPUSAGE_USER_ACCOUNT_USING = "Tablet_User";
 
 
     /**
@@ -283,6 +285,7 @@ public class PhoneStatusManager extends ContextStateManager {
 
     // Users that using the app
     private UserSettingsDBHelper userSettingsDBHelper;
+    private UserAccountManager userAccountManager;
 
 
     public PhoneStatusManager(Context context) {
@@ -309,11 +312,14 @@ public class PhoneStatusManager extends ContextStateManager {
         mTelephonyStateListener = new TelephonyStateListenner(mContext);
 
 
-        //audio manager
+        // audio manager
         mAudioManager = (AudioManager) mContext.getSystemService(mContext.AUDIO_SERVICE);
 
         // init database
         userSettingsDBHelper = new UserSettingsDBHelper(mContext);
+
+        // init account manager
+        userAccountManager = new UserAccountManager(mContext);
 
         Log.d(LOG_TAG, "[testing app]: PhoneStatusManager");
 
@@ -425,11 +431,11 @@ public class PhoneStatusManager extends ContextStateManager {
                     data.put(RECORD_DATA_PROPERTY_APPUSAGE_LATEST_USED_APP, mLastestForegroundPackage);
                     data.put(RECORD_DATA_PROPERTY_APPUSAGE_LATEST_USED_APP_TIME, mLastestForegroundPackageTime);
                     data.put(RECORD_DATA_PROPERTY_APPUSAGE_USED_APPS_STATS_IN_RECENT_HOUR, mRecentUsedAppsInLastHour);
-                    data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_USING, userSettingsDBHelper.getSelectedUserNumbers());
+                    data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_USING, userAccountManager.getCurrentUserNumber());
                 } else {
                     data.put(RECORD_DATA_PROPERTY_APPUSAGE_LATEST_USED_APP, mLastestForegroundPackage);
                     data.put(RECORD_DATA_PROPERTY_APPUSAGE_LATEST_FOREGROUND_ACTIVITY, mLastestForegroundActivity);
-                    data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_USING, userSettingsDBHelper.getSelectedUserNumbers());
+                    data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_USING, userAccountManager.getCurrentUserNumber());
                 }
 
 
@@ -534,10 +540,12 @@ public class PhoneStatusManager extends ContextStateManager {
                 data.put(RECORD_DATA_PROPERTY_APPUSAGE_LATEST_USED_APP_TIME, mLastestForegroundPackageTime);
                 data.put(RECORD_DATA_PROPERTY_APPUSAGE_USED_APPS_STATS_IN_RECENT_HOUR, mRecentUsedAppsInLastHour);
                 data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_USING, userSettingsDBHelper.getSelectedUserNumbers());
+                data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_ACCOUNT_USING, userSettingsDBHelper.getSelectedUserNumbers());
             } else {
                 data.put(RECORD_DATA_PROPERTY_APPUSAGE_LATEST_USED_APP, mShutDownAction);
                 data.put(RECORD_DATA_PROPERTY_APPUSAGE_LATEST_FOREGROUND_ACTIVITY, mLastestForegroundActivity);
                 data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_USING, userSettingsDBHelper.getSelectedUserNumbers());
+                data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_ACCOUNT_USING, userSettingsDBHelper.getSelectedUserNumbers());
             }
 
         } catch (JSONException e) {
