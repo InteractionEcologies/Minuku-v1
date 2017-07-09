@@ -15,7 +15,6 @@ public class BootCompleteReceiver extends BroadcastReceiver {
 
     private static final String LOG_TAG = "BootCompleteReceiver";
 
-
     @Override
     public void onReceive(Context context, Intent intent) {
 

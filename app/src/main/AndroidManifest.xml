@@ -19,6 +19,7 @@
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.BODY_SENSORS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
@@ -107,7 +108,6 @@
 
 
         <!-- Boot Complete Receiver -->
-
         <receiver
             android:name=".receivers.BootCompleteReceiver"
             android:enabled="true"
@@ -119,6 +119,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
+
         <receiver
             android:name=".receivers.ConnectivityChangeReceiver"
             android:enabled="true">
@@ -128,6 +129,7 @@
                 <action android:name="android.net.wifi.STATE_CHANGE" />
             </intent-filter>
         </receiver>
+
         <receiver
             android:name=".receivers.RefreshServiceReceiver"
             android:enabled="true">

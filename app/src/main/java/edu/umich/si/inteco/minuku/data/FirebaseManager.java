@@ -47,8 +47,9 @@ public class FirebaseManager {
         this.context = context;
 
         // init remote database authentication
-        if (null != MainActivity.getContext())
+        if (null != MainActivity.getContext()){
             initFirebase();
+        }
     }
 
     private void initFirebase() {

@@ -337,9 +337,9 @@ public class MinukuMainService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
 
-        if (null == intent || null == intent.getAction ()) {
+        if (null == intent || null == intent.getAction()) {
             String source = null == intent ? "intent" : "action";
-            Log.e (LOG_TAG, source + " was null, flags=" + flags + " bits=" + Integer.toBinaryString (flags));
+            Log.e(LOG_TAG, source + " was null, flags=" + flags + " bits=" + Integer.toBinaryString(flags));
             return START_STICKY;
         }
 
@@ -440,6 +440,9 @@ public class MinukuMainService extends Service {
     }
 
     private void checkWifiStatus() {
+        if (null == MainActivity.getContext())
+            return;
+
         ConnectivityManager conMngr = (ConnectivityManager) this.getSystemService(this.CONNECTIVITY_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 

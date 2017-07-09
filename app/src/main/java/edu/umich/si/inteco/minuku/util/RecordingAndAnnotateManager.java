@@ -953,7 +953,7 @@ public class RecordingAndAnnotateManager {
 
         try {
             SimpleDateFormat sdf_id = new SimpleDateFormat(Constants.DATE_FORMAT_FOR_ID);
-            document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_ID, Constants.USER_ID + "-" + ScheduleAndSampleManager.getTimeString(startTime, sdf_id));
+            document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_ID, Constants.USER_ID + "-" + Constants.DEVICE_ID + "-" + ScheduleAndSampleManager.getTimeString(startTime, sdf_id));
             //TODO: study condition should not be hardcoded
             document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_OTHERS, Constants.CURRENT_STUDY_CONDITION);
             document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_DEVICE_ID, Constants.DEVICE_ID);
@@ -1080,7 +1080,7 @@ public class RecordingAndAnnotateManager {
         try {
             long currentTime = ScheduleAndSampleManager.getCurrentTimeInMillis();
             SimpleDateFormat sdf_id = new SimpleDateFormat(Constants.DATE_FORMAT_FOR_ID);
-            document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_ID, Constants.USER_ID + "-" + ScheduleAndSampleManager.getTimeString(currentTime, sdf_id));
+            document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_ID, Constants.USER_ID + "-" + Constants.DEVICE_ID + "-" + ScheduleAndSampleManager.getTimeString(currentTime, sdf_id));
             document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_OTHERS, Constants.CURRENT_STUDY_CONDITION);
             document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_RECORDS, record.getData());
             document.put(DatabaseNameManager.MONGO_DB_DOCUMENT_PROPERTIES_DEVICE_ID, Constants.DEVICE_ID);

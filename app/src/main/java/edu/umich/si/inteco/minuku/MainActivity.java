@@ -59,6 +59,7 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
+
         setContentView(R.layout.activity_main);
         context = MainActivity.this;
 
@@ -253,10 +254,16 @@ public class MainActivity extends FragmentActivity {
     }
 
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
 
         PreferenceHelper.setPreferenceStringValue(PreferenceHelper.USER_MAIN_PAGE, currentPage);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
     }
 
     @Override

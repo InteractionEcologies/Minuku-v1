@@ -1,6 +1,5 @@
 package edu.umich.si.inteco.minuku.receivers;
 
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,12 +13,9 @@ import android.util.Log;
 import org.json.JSONObject;
 
 import edu.umich.si.inteco.minuku.MainActivity;
-import edu.umich.si.inteco.minuku.constants.UserIconReference;
 import edu.umich.si.inteco.minuku.context.ContextStateManagers.PhoneStatusManager;
 import edu.umich.si.inteco.minuku.data.FirebaseManager;
 import edu.umich.si.inteco.minuku.data.UserSettingsDBHelper;
-import edu.umich.si.inteco.minuku.model.User;
-import edu.umich.si.inteco.minuku.model.Views.UserIcon;
 import edu.umich.si.inteco.minuku.util.PreferenceHelper;
 import edu.umich.si.inteco.minuku.util.RecordingAndAnnotateManager;
 

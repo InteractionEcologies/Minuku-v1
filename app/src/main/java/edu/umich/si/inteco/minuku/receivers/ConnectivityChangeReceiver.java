@@ -15,18 +15,11 @@ import android.util.Log;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
-import edu.umich.si.inteco.minuku.context.ContextManager;
-import edu.umich.si.inteco.minuku.data.DataHandler;
+import edu.umich.si.inteco.minuku.MainActivity;
 import edu.umich.si.inteco.minuku.data.FirebaseManager;
-import edu.umich.si.inteco.minuku.data.RemoteDBHelper;
-import edu.umich.si.inteco.minuku.model.Schedule;
 import edu.umich.si.inteco.minuku.util.PreferenceHelper;
 import edu.umich.si.inteco.minuku.util.RecordingAndAnnotateManager;
-import edu.umich.si.inteco.minuku.util.ScheduleAndSampleManager;
 
 /**
  * Created by Armuro on 7/11/14.
@@ -44,9 +37,13 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver {
 
         Log.d(LOG_TAG, "[ConnectivityChangeReceiver]syncWithRemoteDatabase connectivity change");
 
+        if (null == MainActivity.getContext()) {
+            return;
+        }
+
         ConnectivityManager conMngr = (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
 
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
             Network[] networks = conMngr.getAllNetworks();
 
@@ -67,7 +64,7 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver {
 
                         final FirebaseManager firebaseMgr = new FirebaseManager(context);
 
-                        if (!PreferenceHelper.getPreferenceBoolean(PreferenceHelper.IF_SHUT_DOWN_UPLOADED, true)){
+                        if (!PreferenceHelper.getPreferenceBoolean(PreferenceHelper.IF_SHUT_DOWN_UPLOADED, true)) {
                             try {
                                 JSONObject jsonData = new JSONObject(PreferenceHelper.getPreferenceString(PreferenceHelper.USER_SHUT_DOWN_LOG, "NA"));
                                 firebaseMgr.uploadShutdownDocument(jsonData);
