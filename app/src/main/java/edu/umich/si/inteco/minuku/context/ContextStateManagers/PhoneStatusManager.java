@@ -23,6 +23,11 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,6 +47,7 @@ import edu.umich.si.inteco.minuku.model.Record.Record;
 import edu.umich.si.inteco.minuku.model.StateMappingRule;
 import edu.umich.si.inteco.minuku.context.TelephonyStateListenner;
 import edu.umich.si.inteco.minuku.receivers.BatteryStatusReceiver;
+import edu.umich.si.inteco.minuku.util.PreferenceHelper;
 import edu.umich.si.inteco.minuku.util.ScheduleAndSampleManager;
 import edu.umich.si.inteco.minuku.util.UserAccountManager;
 
@@ -418,12 +424,16 @@ public class PhoneStatusManager extends ContextStateManager {
         record.setSource(sourceName);
 
         /** create data in a JSON Object. Each CotnextSource will have different formats.
-         * So we need each ContextSourceMAnager to implement this part**/
+         * So we need each ContextSourceManager to implement this part**/
         JSONObject data = new JSONObject();
 
         if (sourceName.equals(STRING_CONTEXT_SOURCE_PHONE_STATUS_APPUSAGE)) {
 
             try {
+
+                if (!PreferenceHelper.getPreferenceBoolean(PreferenceHelper.IF_USER_FOREGROUND, true)) {
+                    return;
+                }
 
                 data.put(RECORD_DATA_PROPERTY_APPUSAGE_SCREEN_STATUS, mScreenStatus);
 
@@ -431,11 +441,13 @@ public class PhoneStatusManager extends ContextStateManager {
                     data.put(RECORD_DATA_PROPERTY_APPUSAGE_LATEST_USED_APP, mLastestForegroundPackage);
                     data.put(RECORD_DATA_PROPERTY_APPUSAGE_LATEST_USED_APP_TIME, mLastestForegroundPackageTime);
                     data.put(RECORD_DATA_PROPERTY_APPUSAGE_USED_APPS_STATS_IN_RECENT_HOUR, mRecentUsedAppsInLastHour);
-                    data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_USING, userAccountManager.getCurrentUserNumber());
+                    data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_USING, userSettingsDBHelper.getSelectedUserNumbers());
+                    data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_ACCOUNT_USING, userAccountManager.getCurrentUserNumber());
                 } else {
                     data.put(RECORD_DATA_PROPERTY_APPUSAGE_LATEST_USED_APP, mLastestForegroundPackage);
                     data.put(RECORD_DATA_PROPERTY_APPUSAGE_LATEST_FOREGROUND_ACTIVITY, mLastestForegroundActivity);
-                    data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_USING, userAccountManager.getCurrentUserNumber());
+                    data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_USING, userSettingsDBHelper.getSelectedUserNumbers());
+                    data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_ACCOUNT_USING, userAccountManager.getCurrentUserNumber());
                 }
 
 
@@ -540,12 +552,12 @@ public class PhoneStatusManager extends ContextStateManager {
                 data.put(RECORD_DATA_PROPERTY_APPUSAGE_LATEST_USED_APP_TIME, mLastestForegroundPackageTime);
                 data.put(RECORD_DATA_PROPERTY_APPUSAGE_USED_APPS_STATS_IN_RECENT_HOUR, mRecentUsedAppsInLastHour);
                 data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_USING, userSettingsDBHelper.getSelectedUserNumbers());
-                data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_ACCOUNT_USING, userSettingsDBHelper.getSelectedUserNumbers());
+                data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_ACCOUNT_USING, userAccountManager.getCurrentUserNumber());
             } else {
                 data.put(RECORD_DATA_PROPERTY_APPUSAGE_LATEST_USED_APP, mShutDownAction);
                 data.put(RECORD_DATA_PROPERTY_APPUSAGE_LATEST_FOREGROUND_ACTIVITY, mLastestForegroundActivity);
                 data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_USING, userSettingsDBHelper.getSelectedUserNumbers());
-                data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_ACCOUNT_USING, userSettingsDBHelper.getSelectedUserNumbers());
+                data.put(RECORD_DATA_PROPERTY_APPUSAGE_USER_ACCOUNT_USING, userAccountManager.getCurrentUserNumber());
             }
 
         } catch (JSONException e) {

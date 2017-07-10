@@ -2,11 +2,14 @@ package edu.umich.si.inteco.minuku;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -64,7 +67,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void init() {
-        getMacAddress();
         checkIfCompleteSetup();
 
         if (checkAndRequestPermissions()) {
@@ -86,11 +88,19 @@ public class LoginActivity extends AppCompatActivity {
     private boolean checkAndRequestPermissions() {
 
         int permissionAccounts = ContextCompat.checkSelfPermission(this, android.Manifest.permission.GET_ACCOUNTS);
+        int permissionBluetooth = ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH);
+        int permissionBluetoothAdmin = ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN);
 
         List<String> listPermissionsNeeded = new ArrayList<>();
 
         if (permissionAccounts != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(android.Manifest.permission.GET_ACCOUNTS);
+        }
+        if (permissionBluetooth != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.BLUETOOTH);
+        }
+        if (permissionBluetoothAdmin != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.BLUETOOTH_ADMIN);
         }
         if (!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
@@ -108,22 +118,29 @@ public class LoginActivity extends AppCompatActivity {
 
                 // Initialize the map with both permissions
                 perms.put(android.Manifest.permission.GET_ACCOUNTS, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.BLUETOOTH, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.BLUETOOTH_ADMIN, PackageManager.PERMISSION_GRANTED);
 
                 // Fill with actual results from user
                 if (grantResults.length > 0) {
                     for (int i = 0; i < permissions.length; i++)
                         perms.put(permissions[i], grantResults[i]);
                     // Check for both permissions
-                    if (perms.get(Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED) {
+                    if (perms.get(Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(Manifest.permission.BLUETOOTH_ADMIN) == PackageManager.PERMISSION_GRANTED) {
                         Log.d(TAG, "[permission test]all permission granted");
                         // process the normal flow
+                        getMacAddress();
                         // else any one or both the permissions are not granted
                     } else {
                         Log.d(TAG, "[permission test]Some permissions are not granted ask again ");
                         //permission is denied (this is the first time, when "never ask again" is not checked) so ask again explaining the usage of permission
                         // shouldShowRequestPermissionRationale will return true
                         //show the dialog or snackbar saying its necessary and try again otherwise proceed with setup.
-                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.GET_ACCOUNTS)) {
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.GET_ACCOUNTS)
+                                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.BLUETOOTH)
+                                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.BLUETOOTH_ADMIN)) {
 
                             showDialogOK("all Permission required for this app",
                                     new DialogInterface.OnClickListener() {
@@ -139,8 +156,7 @@ public class LoginActivity extends AppCompatActivity {
                                             }
                                         }
                                     });
-                        }
-                        else {
+                        } else {
                             Toast.makeText(this, "Go to settings and enable permissions", Toast.LENGTH_LONG).show();
                         }
                     }
@@ -231,12 +247,21 @@ public class LoginActivity extends AppCompatActivity {
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage());
         }
+
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (!mBluetoothAdapter.isEnabled()) {
+            mBluetoothAdapter.enable();
+        }
+
         btMacAddr = android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        // Get mac address as device ID
+        getMacAddress();
 
         setFragment(PreferenceHelper.getPreferenceString(PreferenceHelper.USER_SETUP_PAGE, OPENPAGE_FRAGMENT));
     }

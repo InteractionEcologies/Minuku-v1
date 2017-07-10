@@ -25,6 +25,7 @@ import edu.umich.si.inteco.minuku.MainActivity;
 import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.util.PreferenceHelper;
 import edu.umich.si.inteco.minuku.util.ScheduleAndSampleManager;
+import edu.umich.si.inteco.minuku.util.UserAccountManager;
 
 /**
  * Created by tsung on 2017/4/7.
@@ -35,6 +36,7 @@ public class FirebaseManager {
 
     private DatabaseReference databaseReference;
     private Context context;
+    private UserAccountManager userAccountManager;
 
     private String[] dataParams = {"_id", "others", "user_id", "data_type", "timestamp_hour", "records", "device_id"};
     private String email = "minukudata@gmail.com";
@@ -45,9 +47,10 @@ public class FirebaseManager {
 
     public FirebaseManager(Context context) {
         this.context = context;
+        userAccountManager = new UserAccountManager(context);
 
         // init remote database authentication
-        if (null != MainActivity.getContext()){
+        if (null != MainActivity.getContext()) {
             initFirebase();
         }
     }
@@ -79,13 +82,14 @@ public class FirebaseManager {
             return;
 
         try {
-            databaseReference.child(document.getString(dataParams[0])).child(dataParams[0]).setValue(document.getString(dataParams[0]));
-            databaseReference.child(document.getString(dataParams[0])).child(dataParams[1]).setValue(document.getString(dataParams[1]));
-            databaseReference.child(document.getString(dataParams[0])).child(dataParams[2]).setValue(document.getString(dataParams[2]));
-            databaseReference.child(document.getString(dataParams[0])).child(dataParams[3]).setValue(document.getString(dataParams[3]));
-            databaseReference.child(document.getString(dataParams[0])).child(dataParams[4]).setValue(document.getString(dataParams[4]));
-            databaseReference.child(document.getString(dataParams[0])).child(dataParams[5]).setValue(document.getString(dataParams[5]));
-            databaseReference.child(document.getString(dataParams[0])).child(dataParams[6]).setValue(MainActivity.wifiMacAddr + MainActivity.btMacAddr);
+            String dataEntry = document.getString(dataParams[0]) + "-" + userAccountManager.getCurrentUserNumber();
+            databaseReference.child(dataEntry).child(dataParams[0]).setValue(dataEntry);
+            databaseReference.child(dataEntry).child(dataParams[1]).setValue(document.getString(dataParams[1]));
+            databaseReference.child(dataEntry).child(dataParams[2]).setValue(document.getString(dataParams[2]));
+            databaseReference.child(dataEntry).child(dataParams[3]).setValue(document.getString(dataParams[3]));
+            databaseReference.child(dataEntry).child(dataParams[4]).setValue(document.getString(dataParams[4]));
+            databaseReference.child(dataEntry).child(dataParams[5]).setValue(document.getString(dataParams[5]));
+            databaseReference.child(dataEntry).child(dataParams[6]).setValue(MainActivity.wifiMacAddr);
 
             setLastSeverSyncTime();
         } catch (Exception e) {
@@ -98,13 +102,14 @@ public class FirebaseManager {
             return;
 
         try {
-            databaseReference.child(document.getString(dataParams[0])).child(dataParams[0]).setValue(document.getString(dataParams[0]));
-            databaseReference.child(document.getString(dataParams[0])).child(dataParams[1]).setValue(document.getString(dataParams[1]));
-            databaseReference.child(document.getString(dataParams[0])).child(dataParams[2]).setValue(document.getString(dataParams[2]));
-            databaseReference.child(document.getString(dataParams[0])).child(dataParams[3]).setValue(document.getString(dataParams[3]));
-            databaseReference.child(document.getString(dataParams[0])).child(dataParams[4]).setValue(document.getString(dataParams[4]));
-            databaseReference.child(document.getString(dataParams[0])).child(dataParams[5]).setValue(document.getString(dataParams[5]));
-            databaseReference.child(document.getString(dataParams[0])).child(dataParams[6]).setValue(MainActivity.wifiMacAddr + MainActivity.btMacAddr);
+            String dataEntry = document.getString(dataParams[0]) + "-" + userAccountManager.getCurrentUserNumber();
+            databaseReference.child(dataEntry).child(dataParams[0]).setValue(dataEntry);
+            databaseReference.child(dataEntry).child(dataParams[1]).setValue(document.getString(dataParams[1]));
+            databaseReference.child(dataEntry).child(dataParams[2]).setValue(document.getString(dataParams[2]));
+            databaseReference.child(dataEntry).child(dataParams[3]).setValue(document.getString(dataParams[3]));
+            databaseReference.child(dataEntry).child(dataParams[4]).setValue(document.getString(dataParams[4]));
+            databaseReference.child(dataEntry).child(dataParams[5]).setValue(document.getString(dataParams[5]));
+            databaseReference.child(dataEntry).child(dataParams[6]).setValue(MainActivity.wifiMacAddr);
 
             PreferenceHelper.setPreferenceBooleanValue(PreferenceHelper.IF_SHUT_DOWN_UPLOADED, true);
         } catch (Exception e) {

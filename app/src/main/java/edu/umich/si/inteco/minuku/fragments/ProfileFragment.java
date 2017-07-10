@@ -53,7 +53,6 @@ import edu.umich.si.inteco.minuku.model.Views.UserIcon;
 import edu.umich.si.inteco.minuku.services.HomeScreenIconService;
 import edu.umich.si.inteco.minuku.util.PreferenceHelper;
 import edu.umich.si.inteco.minuku.util.RecordingAndAnnotateManager;
-import edu.umich.si.inteco.minuku.util.ScheduleAndSampleManager;
 
 public class ProfileFragment extends Fragment {
     private static String LOG_TAG = "ProfileFragment";
@@ -106,9 +105,6 @@ public class ProfileFragment extends Fragment {
 
         // Set title caption
         tvTitle = (TextView) rootView.findViewById(R.id.fragment_profile_tv_title);
-        if (!PreferenceHelper.getPreferenceBoolean(PreferenceHelper.USER_MODE_SELECTION, true)) {
-            tvTitle.setText("Please let this app run in the background. \n You are in mobile mode now.");
-        }
         tvRunBack = (TextView) rootView.findViewById(R.id.fragment_profile_tvRunBack);
 
         // Spinner is not used for current version, will be removed in release version
@@ -164,10 +160,15 @@ public class ProfileFragment extends Fragment {
 
         tvRunBack.setText("Loading...");
         tvRunBack.setVisibility(View.GONE);
-        new TaskSetUserIconView().execute();
 
-        tv1.setText("WiFi MAC Address: " + MainActivity.wifiMacAddr);
-        tv2.setText("Bluetooth MAC Address: " + MainActivity.btMacAddr);
+        if (!PreferenceHelper.getPreferenceBoolean(PreferenceHelper.USER_MODE_SELECTION, true)) {
+            tvTitle.setText("Please let this app run in the background. \n You are in mobile mode now.");
+        } else {
+            new TaskSetUserIconView().execute();
+        }
+
+//        tv1.setText("WiFi MAC Address: " + MainActivity.wifiMacAddr);
+//        tv2.setText("Bluetooth MAC Address: " + MainActivity.btMacAddr);
     }
 
     private class TaskSetUserIconView extends AsyncTask<Void, Void, Boolean> {

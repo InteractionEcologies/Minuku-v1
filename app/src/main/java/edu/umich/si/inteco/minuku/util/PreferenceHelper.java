@@ -32,6 +32,7 @@ public class PreferenceHelper {
     public static final String USER_MAIN_PAGE = PACKAGE_NAME + ".USER_MAIN_PAGE";
     public static final String IF_SHUT_DOWN_UPLOADED = PACKAGE_NAME + ".IF_SHUT_DOWN_UPLOADED";
     public static final String USER_SHUT_DOWN_LOG = PACKAGE_NAME + ".USER_SHUT_DOWN_LOG";
+    public static final String IF_USER_FOREGROUND = PACKAGE_NAME + ".IF_USER_FOREGROUND";
 
     /***
      * Shared preference for storing context related information

@@ -29,14 +29,11 @@ public class UserAccountManager {
         Account[] accounts = AccountManager.get(context).getAccounts();
         if (accounts != null && accounts.length > 0) {
             for (Account account : accounts) {
-                Log.d("asdasdas", account.name + "");
                 if (account.type.equals("com.google")) {
                     playAccounts.add(account.name);
                 }
             }
         }
-
-        Log.d("asdasdas", playAccounts + "");
 
         if (playAccounts.size() > 0) {
             return playAccounts.get(0).toString();

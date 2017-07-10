@@ -70,15 +70,14 @@ public class AdultEnterIdFragment extends Fragment {
                             .withMailto("Minukudata@umich.edu")
 //                            .withMailto("twho@umich.edu")
                             .withSubject("Family App Logger")
-                            .withBody("Family App Logger service started.\n \n" + "UniqueId: " + LoginActivity.wifiMacAddr + LoginActivity.btMacAddr
+                            .withBody("Family App Logger service started.\n \n" + "UniqueId: " + LoginActivity.wifiMacAddr
                                     + "\n \n" + "Device: mobile device"
                                     + "\n \n" + "StudyId: " + edStudyId.getText().toString()
-                                    + "\n \n" + "User Account Mapping: " + userAccountManager.getCurrentUserNumber() + "-" + userAccountManager.getCurrentAccount() + "\n \n"
-                                    + getUserDataList(userSettingsDBHelper.getAllUserList()))
+                                    + "\n \n" + "User Account Mapping: " + userAccountManager.getCurrentUserNumber() + " - " + userAccountManager.getCurrentAccount() + "\n \n")
                             .withOnSuccessCallback(new BackgroundMail.OnSuccessCallback() {
                                 @Override
                                 public void onSuccess() {
-                                    PreferenceHelper.setPreferenceStringValue(PreferenceHelper.DEVICE_ID, LoginActivity.wifiMacAddr + LoginActivity.btMacAddr);
+                                    PreferenceHelper.setPreferenceStringValue(PreferenceHelper.DEVICE_ID, LoginActivity.wifiMacAddr);
                                     PreferenceHelper.setPreferenceStringValue(PreferenceHelper.USER_ID, edStudyId.getText().toString());
                                     PreferenceHelper.setPreferenceBooleanValue(PreferenceHelper.USER_SETUP_COMPLETED, true);
                                     Intent intent = new Intent(getActivity(), MainActivity.class);
@@ -106,17 +105,5 @@ public class AdultEnterIdFragment extends Fragment {
                 }
             }
         });
-    }
-
-    private String getUserDataList(ArrayList<User> userArrayList) {
-        String userDataList = "";
-
-        for (int i = 0; i < userArrayList.size(); i++) {
-            userDataList += (i + 1) + "-";
-            userDataList += userArrayList.get(i).getUserName() + "-";
-            userDataList += "Age:" + userArrayList.get(i).getUserAge() + "\n";
-        }
-
-        return userDataList;
     }
 }

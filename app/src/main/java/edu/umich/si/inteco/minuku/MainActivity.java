@@ -4,9 +4,11 @@ import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -30,6 +32,7 @@ import java.util.Map;
 
 import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.fragments.ProfileFragment;
+import edu.umich.si.inteco.minuku.receivers.UserSwitchReceiver;
 import edu.umich.si.inteco.minuku.services.MinukuMainService;
 import edu.umich.si.inteco.minuku.util.PreferenceHelper;
 import io.fabric.sdk.android.Fabric;
@@ -50,6 +53,9 @@ public class MainActivity extends FragmentActivity {
     private FragmentManager fragmentManager;
     public static Context context;
     private String currentPage;
+
+    // Receiver
+    private UserSwitchReceiver userSwitchReceiver;
 
     // Device info
     public static String wifiMacAddr;
@@ -124,6 +130,8 @@ public class MainActivity extends FragmentActivity {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int permissionLocation = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
         int permissionAccounts = ContextCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS);
+        int permissionBluetooth = ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH);
+        int permissionBluetoothAdmin = ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN);
 
         List<String> listPermissionsNeeded = new ArrayList<>();
 
@@ -138,6 +146,12 @@ public class MainActivity extends FragmentActivity {
         }
         if (permissionWriteExternalStorage != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (permissionBluetooth != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.BLUETOOTH);
+        }
+        if (permissionBluetoothAdmin != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.BLUETOOTH_ADMIN);
         }
         if (!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
@@ -158,6 +172,8 @@ public class MainActivity extends FragmentActivity {
                 perms.put(Manifest.permission.ACCESS_FINE_LOCATION, PackageManager.PERMISSION_GRANTED);
                 perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
                 perms.put(Manifest.permission.GET_ACCOUNTS, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.BLUETOOTH, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.BLUETOOTH_ADMIN, PackageManager.PERMISSION_GRANTED);
 
                 // Fill with actual results from user
                 if (grantResults.length > 0) {
@@ -168,6 +184,8 @@ public class MainActivity extends FragmentActivity {
                             && perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
                             && perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                             && perms.get(Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(Manifest.permission.BLUETOOTH_ADMIN) == PackageManager.PERMISSION_GRANTED
                             ) {
                         Log.d(LOG_TAG, "[permission test]all permission granted");
                         // process the normal flow
@@ -180,7 +198,9 @@ public class MainActivity extends FragmentActivity {
                         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                                 || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                                 || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.GET_ACCOUNTS)) {
+                                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.GET_ACCOUNTS)
+                                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.BLUETOOTH)
+                                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.BLUETOOTH_ADMIN)) {
 
                             showDialogOK("all Permission required for this app",
                                     new DialogInterface.OnClickListener() {
@@ -243,6 +263,12 @@ public class MainActivity extends FragmentActivity {
         } catch (Exception exception) {
             Log.d(LOG_TAG, exception.getMessage());
         }
+
+//        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//        if (!mBluetoothAdapter.isEnabled()) {
+//            mBluetoothAdapter.enable();
+//        }
+
         btMacAddr = android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");
     }
 
@@ -259,6 +285,15 @@ public class MainActivity extends FragmentActivity {
         getMacAddress();
 
         setFragment();
+        registerReceiver();
+    }
+
+    private void registerReceiver() {
+        userSwitchReceiver = new UserSwitchReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_USER_BACKGROUND);
+        filter.addAction(Intent.ACTION_USER_FOREGROUND);
+        registerReceiver(userSwitchReceiver, filter);
     }
 
     @Override
@@ -272,6 +307,13 @@ public class MainActivity extends FragmentActivity {
     public void onDestroy() {
         super.onDestroy();
 
+        unregisterReceiver();
+    }
+
+    private void unregisterReceiver() {
+        if (null != userSwitchReceiver) {
+            unregisterReceiver(userSwitchReceiver);
+        }
     }
 
     @Override
