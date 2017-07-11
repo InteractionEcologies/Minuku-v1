@@ -85,11 +85,12 @@ public class FirebaseManager {
             String dataEntry = document.getString(dataParams[0]) + "-" + userAccountManager.getCurrentUserNumber();
             databaseReference.child(dataEntry).child(dataParams[0]).setValue(dataEntry);
             databaseReference.child(dataEntry).child(dataParams[1]).setValue(document.getString(dataParams[1]));
-            databaseReference.child(dataEntry).child(dataParams[2]).setValue(document.getString(dataParams[2]));
+            // Not to change original user_id settings, only change it to study_id for Firebase
+            databaseReference.child(dataEntry).child("study_id").setValue(document.getString(dataParams[2]));
             databaseReference.child(dataEntry).child(dataParams[3]).setValue(document.getString(dataParams[3]));
             databaseReference.child(dataEntry).child(dataParams[4]).setValue(document.getString(dataParams[4]));
             databaseReference.child(dataEntry).child(dataParams[5]).setValue(document.getString(dataParams[5]));
-            databaseReference.child(dataEntry).child(dataParams[6]).setValue(MainActivity.wifiMacAddr);
+            databaseReference.child(dataEntry).child(dataParams[6]).setValue(PreferenceHelper.getPreferenceString(PreferenceHelper.DEVICE_ID, MainActivity.wifiMacAddr + userAccountManager.getCurrentUserNumber()));
 
             setLastSeverSyncTime();
         } catch (Exception e) {
@@ -105,11 +106,12 @@ public class FirebaseManager {
             String dataEntry = document.getString(dataParams[0]) + "-" + userAccountManager.getCurrentUserNumber();
             databaseReference.child(dataEntry).child(dataParams[0]).setValue(dataEntry);
             databaseReference.child(dataEntry).child(dataParams[1]).setValue(document.getString(dataParams[1]));
-            databaseReference.child(dataEntry).child(dataParams[2]).setValue(document.getString(dataParams[2]));
+            // Not to change original user_id settings, only change it to study_id for Firebase
+            databaseReference.child(dataEntry).child("study_id").setValue(document.getString(dataParams[2]));
             databaseReference.child(dataEntry).child(dataParams[3]).setValue(document.getString(dataParams[3]));
             databaseReference.child(dataEntry).child(dataParams[4]).setValue(document.getString(dataParams[4]));
             databaseReference.child(dataEntry).child(dataParams[5]).setValue(document.getString(dataParams[5]));
-            databaseReference.child(dataEntry).child(dataParams[6]).setValue(MainActivity.wifiMacAddr);
+            databaseReference.child(dataEntry).child(dataParams[6]).setValue(PreferenceHelper.getPreferenceString(PreferenceHelper.DEVICE_ID, MainActivity.wifiMacAddr + userAccountManager.getCurrentUserNumber()));
 
             PreferenceHelper.setPreferenceBooleanValue(PreferenceHelper.IF_SHUT_DOWN_UPLOADED, true);
         } catch (Exception e) {

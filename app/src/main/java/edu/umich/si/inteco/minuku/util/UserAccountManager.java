@@ -24,24 +24,6 @@ public class UserAccountManager {
         this.context = context;
     }
 
-    public String getCurrentAccount() {
-        ArrayList playAccounts = new ArrayList();
-        Account[] accounts = AccountManager.get(context).getAccounts();
-        if (accounts != null && accounts.length > 0) {
-            for (Account account : accounts) {
-                if (account.type.equals("com.google")) {
-                    playAccounts.add(account.name);
-                }
-            }
-        }
-
-        if (playAccounts.size() > 0) {
-            return playAccounts.get(0).toString();
-        } else {
-            return "Can't retrieve user account info.";
-        }
-    }
-
     public String getCurrentUserNumber() {
         long userSerialNumber = 0;
         UserHandle uh = Process.myUserHandle();

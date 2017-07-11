@@ -129,15 +129,9 @@ public class MainActivity extends FragmentActivity {
         int permissionWriteExternalStorage = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int permissionLocation = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        int permissionAccounts = ContextCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS);
-        int permissionBluetooth = ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH);
-        int permissionBluetoothAdmin = ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN);
 
         List<String> listPermissionsNeeded = new ArrayList<>();
 
-        if (permissionAccounts != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.GET_ACCOUNTS);
-        }
         if (permissionLocation != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
@@ -146,12 +140,6 @@ public class MainActivity extends FragmentActivity {
         }
         if (permissionWriteExternalStorage != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
-        if (permissionBluetooth != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.BLUETOOTH);
-        }
-        if (permissionBluetoothAdmin != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.BLUETOOTH_ADMIN);
         }
         if (!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
@@ -171,9 +159,6 @@ public class MainActivity extends FragmentActivity {
                 perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
                 perms.put(Manifest.permission.ACCESS_FINE_LOCATION, PackageManager.PERMISSION_GRANTED);
                 perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
-                perms.put(Manifest.permission.GET_ACCOUNTS, PackageManager.PERMISSION_GRANTED);
-                perms.put(Manifest.permission.BLUETOOTH, PackageManager.PERMISSION_GRANTED);
-                perms.put(Manifest.permission.BLUETOOTH_ADMIN, PackageManager.PERMISSION_GRANTED);
 
                 // Fill with actual results from user
                 if (grantResults.length > 0) {
@@ -183,9 +168,6 @@ public class MainActivity extends FragmentActivity {
                     if (perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
                             && perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
                             && perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                            && perms.get(Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED
-                            && perms.get(Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED
-                            && perms.get(Manifest.permission.BLUETOOTH_ADMIN) == PackageManager.PERMISSION_GRANTED
                             ) {
                         Log.d(LOG_TAG, "[permission test]all permission granted");
                         // process the normal flow
@@ -197,10 +179,7 @@ public class MainActivity extends FragmentActivity {
                         //show the dialog or snackbar saying its necessary and try again otherwise proceed with setup.
                         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                                 || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.GET_ACCOUNTS)
-                                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.BLUETOOTH)
-                                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.BLUETOOTH_ADMIN)) {
+                                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
 
                             showDialogOK("all Permission required for this app",
                                     new DialogInterface.OnClickListener() {
@@ -264,12 +243,7 @@ public class MainActivity extends FragmentActivity {
             Log.d(LOG_TAG, exception.getMessage());
         }
 
-//        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-//        if (!mBluetoothAdapter.isEnabled()) {
-//            mBluetoothAdapter.enable();
-//        }
-
-        btMacAddr = android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");
+//        btMacAddr = android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");
     }
 
     private void getScreenInfo() {

@@ -39,9 +39,6 @@ public class LoginActivity extends AppCompatActivity {
     private String TAG = "LoginActivity";
     public static Context context;
 
-    // Permissions
-    public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
-
     // Function
     private String defaultFragment = OPENPAGE_FRAGMENT;
     private FragmentManager fragmentManager;
@@ -69,10 +66,6 @@ public class LoginActivity extends AppCompatActivity {
     private void init() {
         checkIfCompleteSetup();
 
-        if (checkAndRequestPermissions()) {
-            // carry on the normal flow, as the case of  permissions  granted.
-        }
-
         fragmentManager = getSupportFragmentManager();
         setFragment(defaultFragment);
     }
@@ -83,95 +76,6 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
             this.finish();
         }
-    }
-
-    private boolean checkAndRequestPermissions() {
-
-        int permissionAccounts = ContextCompat.checkSelfPermission(this, android.Manifest.permission.GET_ACCOUNTS);
-        int permissionBluetooth = ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH);
-        int permissionBluetoothAdmin = ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN);
-
-        List<String> listPermissionsNeeded = new ArrayList<>();
-
-        if (permissionAccounts != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(android.Manifest.permission.GET_ACCOUNTS);
-        }
-        if (permissionBluetooth != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.BLUETOOTH);
-        }
-        if (permissionBluetoothAdmin != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.BLUETOOTH_ADMIN);
-        }
-        if (!listPermissionsNeeded.isEmpty()) {
-            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        Log.d(TAG, "[permission test]Permission callback called-------");
-        switch (requestCode) {
-            case REQUEST_ID_MULTIPLE_PERMISSIONS: {
-                Map<String, Integer> perms = new HashMap<>();
-
-                // Initialize the map with both permissions
-                perms.put(android.Manifest.permission.GET_ACCOUNTS, PackageManager.PERMISSION_GRANTED);
-                perms.put(Manifest.permission.BLUETOOTH, PackageManager.PERMISSION_GRANTED);
-                perms.put(Manifest.permission.BLUETOOTH_ADMIN, PackageManager.PERMISSION_GRANTED);
-
-                // Fill with actual results from user
-                if (grantResults.length > 0) {
-                    for (int i = 0; i < permissions.length; i++)
-                        perms.put(permissions[i], grantResults[i]);
-                    // Check for both permissions
-                    if (perms.get(Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED
-                            && perms.get(Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED
-                            && perms.get(Manifest.permission.BLUETOOTH_ADMIN) == PackageManager.PERMISSION_GRANTED) {
-                        Log.d(TAG, "[permission test]all permission granted");
-                        // process the normal flow
-                        getMacAddress();
-                        // else any one or both the permissions are not granted
-                    } else {
-                        Log.d(TAG, "[permission test]Some permissions are not granted ask again ");
-                        //permission is denied (this is the first time, when "never ask again" is not checked) so ask again explaining the usage of permission
-                        // shouldShowRequestPermissionRationale will return true
-                        //show the dialog or snackbar saying its necessary and try again otherwise proceed with setup.
-                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.GET_ACCOUNTS)
-                                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.BLUETOOTH)
-                                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.BLUETOOTH_ADMIN)) {
-
-                            showDialogOK("all Permission required for this app",
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            switch (which) {
-                                                case DialogInterface.BUTTON_POSITIVE:
-                                                    checkAndRequestPermissions();
-                                                    break;
-                                                case DialogInterface.BUTTON_NEGATIVE:
-                                                    // proceed with logic by disabling the related features or quit the app.
-                                                    break;
-                                            }
-                                        }
-                                    });
-                        } else {
-                            Toast.makeText(this, "Go to settings and enable permissions", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private void showDialogOK(String message, DialogInterface.OnClickListener okListener) {
-        new AlertDialog.Builder(this)
-                .setMessage(message)
-                .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", okListener)
-                .create()
-                .show();
     }
 
     public void setFragment(String fragmentTag) {
@@ -248,12 +152,7 @@ public class LoginActivity extends AppCompatActivity {
             Log.e(TAG, ex.getMessage());
         }
 
-        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (!mBluetoothAdapter.isEnabled()) {
-            mBluetoothAdapter.enable();
-        }
-
-        btMacAddr = android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");
+//        btMacAddr = android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");
     }
 
     @Override
