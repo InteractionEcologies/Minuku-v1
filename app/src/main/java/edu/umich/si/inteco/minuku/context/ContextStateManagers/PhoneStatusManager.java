@@ -427,13 +427,13 @@ public class PhoneStatusManager extends ContextStateManager {
          * So we need each ContextSourceManager to implement this part**/
         JSONObject data = new JSONObject();
 
-        if (!PreferenceHelper.getPreferenceBoolean(PreferenceHelper.IF_USER_FOREGROUND, true)) {
-            return;
-        }
-
         if (sourceName.equals(STRING_CONTEXT_SOURCE_PHONE_STATUS_APPUSAGE)) {
 
             try {
+
+                if (!PreferenceHelper.getPreferenceBoolean(PreferenceHelper.IF_USER_FOREGROUND, true)) {
+                    return;
+                }
 
                 data.put(RECORD_DATA_PROPERTY_APPUSAGE_SCREEN_STATUS, mScreenStatus);
 
