@@ -25,8 +25,8 @@ android {
         applicationId "edu.umich.si.inteco.minuku"
         minSdkVersion 17
         targetSdkVersion 25
-        versionCode 10
-        versionName "1.0.11"
+        versionCode 11
+        versionName "1.0.12"
         multiDexEnabled true
     }
     buildTypes {

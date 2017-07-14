@@ -79,6 +79,7 @@ public class AdultEnterIdFragment extends Fragment {
                                     PreferenceHelper.setPreferenceStringValue(PreferenceHelper.DEVICE_ID, LoginActivity.wifiMacAddr + userAccountManager.getCurrentUserNumber());
                                     PreferenceHelper.setPreferenceStringValue(PreferenceHelper.USER_ID, edStudyId.getText().toString());
                                     PreferenceHelper.setPreferenceBooleanValue(PreferenceHelper.USER_SETUP_COMPLETED, true);
+                                    PreferenceHelper.setPreferenceBooleanValue(PreferenceHelper.IF_USER_FOREGROUND, true);
                                     Intent intent = new Intent(getActivity(), MainActivity.class);
                                     startActivity(intent);
                                     getActivity().finish();

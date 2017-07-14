@@ -431,6 +431,8 @@ public class PhoneStatusManager extends ContextStateManager {
 
             try {
 
+                Log.d("UserSwitchReceiver", userAccountManager.getCurrentUserNumber() + ": " + PreferenceHelper.getPreferenceBoolean(PreferenceHelper.IF_USER_FOREGROUND, true));
+
                 if (!PreferenceHelper.getPreferenceBoolean(PreferenceHelper.IF_USER_FOREGROUND, true)) {
                     return;
                 }
@@ -543,11 +545,13 @@ public class PhoneStatusManager extends ContextStateManager {
 
         JSONObject data = new JSONObject();
 
-        if (!PreferenceHelper.getPreferenceBoolean(PreferenceHelper.IF_USER_FOREGROUND, true)) {
-            return null;
-        }
-
         try {
+
+            Log.d("UserSwitchReceiver", userAccountManager.getCurrentUserNumber() + ": " + PreferenceHelper.getPreferenceBoolean(PreferenceHelper.IF_USER_FOREGROUND, true));
+
+            if (!PreferenceHelper.getPreferenceBoolean(PreferenceHelper.IF_USER_FOREGROUND, true)) {
+                return null;
+            }
 
             data.put(RECORD_DATA_PROPERTY_APPUSAGE_SCREEN_STATUS, mScreenStatus);
 

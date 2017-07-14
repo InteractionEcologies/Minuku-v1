@@ -35,6 +35,7 @@ import edu.umich.si.inteco.minuku.fragments.ProfileFragment;
 import edu.umich.si.inteco.minuku.receivers.UserSwitchReceiver;
 import edu.umich.si.inteco.minuku.services.MinukuMainService;
 import edu.umich.si.inteco.minuku.util.PreferenceHelper;
+import edu.umich.si.inteco.minuku.util.UserAccountManager;
 import io.fabric.sdk.android.Fabric;
 
 /**
@@ -66,6 +67,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
 
         setContentView(R.layout.activity_main);
@@ -254,12 +256,22 @@ public class MainActivity extends FragmentActivity {
     }
 
     @Override
+    public void onStart(){
+        super.onStart();
+
+        registerReceiver();
+
+        PreferenceHelper.setPreferenceBooleanValue(PreferenceHelper.IF_USER_FOREGROUND, true);
+        UserAccountManager userAccountManager = new UserAccountManager(this);
+        Log.d("UserSwitchReceiver", userAccountManager.getCurrentUserNumber() + " create app");
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         getMacAddress();
 
         setFragment();
-        registerReceiver();
     }
 
     private void registerReceiver() {
@@ -279,15 +291,11 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
-
-        unregisterReceiver();
-    }
-
-    private void unregisterReceiver() {
         if (null != userSwitchReceiver) {
             unregisterReceiver(userSwitchReceiver);
         }
+
+        super.onDestroy();
     }
 
     @Override

@@ -41,12 +41,19 @@ public class UserPresentBroadcastReceiver extends BroadcastReceiver {
                 this.context = context;
                 new TaskStartApp().execute();
             }
+
+            PreferenceHelper.setPreferenceBooleanValue(PreferenceHelper.IF_USER_FOREGROUND, true);
         }
 
         /*Device is shutting down. This is broadcast when the device
          * is being shut down (completely turned off, not sleeping)
          * */
         else if (intent.getAction().equals(Intent.ACTION_SHUTDOWN)) {
+
+            if (!PreferenceHelper.getPreferenceBoolean(PreferenceHelper.IF_USER_FOREGROUND, true)) {
+                return;
+            }
+
             PhoneStatusManager phoneStatusManager = new PhoneStatusManager(context);
             JSONObject shutDownDoc = RecordingAndAnnotateManager.generateShutDownActionDocument(phoneStatusManager.generateShutDownActionRecord());
 
