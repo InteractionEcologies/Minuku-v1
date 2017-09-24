@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -26,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -77,7 +79,7 @@ public class ProfileFragment extends Fragment {
     //BT: 80:7A:BF:06:5B:01
     //temporary use
     private TextView tv1, tv2;
-    private Button btnStart;
+    private ImageButton btnSync;
     private boolean showMessage = false;
 
 
@@ -146,9 +148,8 @@ public class ProfileFragment extends Fragment {
         tv2 = (TextView) rootView.findViewById(R.id.fragment_profile_btmac);
 
         // Button for testing backend
-        btnStart = (Button) rootView.findViewById(R.id.fragment_profile_btnStart);
-        btnStart.setVisibility(View.GONE);
-        btnStart.setOnClickListener(profileButtonListener);
+        btnSync = (ImageButton) rootView.findViewById(R.id.fragment_profile_btnSync);
+        btnSync.setOnClickListener(profileButtonListener);
     }
 
     @Override
@@ -258,23 +259,15 @@ public class ProfileFragment extends Fragment {
                                 }).show();
                     }
                     break;
-                case R.id.fragment_profile_btnStart:
-
-                    ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(0);
-
-                    try {
-                        if (null == firebaseMgr)
-                            firebaseMgr = new FirebaseManager(context);
-                        for (int i = 0; i < documents.size(); i++) {
-//                            firebaseMgr.uploadDocument(documents.get(i));
-                        }
-                    } catch (Exception e) {
-                        Log.d(LOG_TAG, e.getMessage());
-                    }
-
+                case R.id.fragment_profile_btnSync:
+                    // Use thread
                     break;
             }
         }
+    }
+
+    private void showDialog(){
+        
     }
 
     private void startHomeScreenIcon() {
