@@ -1,6 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/activity_vertical_margin"
+        android:text="Email my data to the research team"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:textColor="@color/white" />
+
+    <Button
+        android:id="@+id/dialog_sync_btn"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/activity_login_user_icon_size"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="@dimen/activity_vertical_margin"
+        android:padding="@dimen/activity_vertical_margin"
+        android:text="Email my data" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_vertical_margin"
+        android:gravity="center_horizontal"
+        android:padding="@dimen/activity_vertical_margin"
+        android:text="ONLY PRESS THIS BUTTON IF YOU HAVE BEEN INSTRUCTED TO BY THE RESEARCH TEAM"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        android:textColor="@color/red" />
 </LinearLayout>

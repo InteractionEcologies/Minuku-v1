@@ -61,6 +61,7 @@ public class ProfileFragment extends Fragment {
     private Button btnSave;
     private GridLayout gridLayout;
     private TextView tvTitle, tvRunBack;
+    private AlertDialog syncDialog;
 
     //functions
     private ProfileButtonListener profileButtonListener;
@@ -260,14 +261,47 @@ public class ProfileFragment extends Fragment {
                     }
                     break;
                 case R.id.fragment_profile_btnSync:
-                    // Use thread
+                    showSyncDialog();
+                    break;
+                case R.id.dialog_sync_btn:
+                    syncDialog.dismiss();
+                    showWarningDialog();
                     break;
             }
         }
     }
 
-    private void showDialog(){
-        
+    private void showSyncDialog() {
+        LayoutInflater li = LayoutInflater.from(context);
+        View v = li.inflate(R.layout.dialog_sync, null);
+        syncDialog = new AlertDialog.Builder(context).create();
+        Button sync = (Button) v.findViewById(R.id.dialog_sync_btn);
+        sync.setOnClickListener(profileButtonListener);
+        syncDialog.setView(v);
+        syncDialog.show();
+    }
+
+    private void showWarningDialog() {
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(context);
+        }
+        builder.setTitle("ARE YOU SURE?")
+                .setMessage("IF YES, MAKE SURE YOU ARE CONNECTED TO WIFI. OTHERWISE IT WILL USE A VERY LARGE AMOUNT OF YOUR DATA PLAN!")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // sync function here
+                    }
+                })
+                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     private void startHomeScreenIcon() {
