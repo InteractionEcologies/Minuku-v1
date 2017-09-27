@@ -15,8 +15,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
+import android.util.JsonWriter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,8 +33,16 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
+
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,6 +51,7 @@ import edu.umich.si.inteco.minuku.MainActivity;
 import edu.umich.si.inteco.minuku.R;
 import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.constants.UserIconReference;
+import edu.umich.si.inteco.minuku.context.ContextManager;
 import edu.umich.si.inteco.minuku.data.FirebaseManager;
 import edu.umich.si.inteco.minuku.data.UserSettingsDBHelper;
 import edu.umich.si.inteco.minuku.model.User;
@@ -75,6 +86,8 @@ public class ProfileFragment extends Fragment {
     private int currentSelected = 0;
     public static int OVERLAY_PERMISSION_REQ_CODE_CHATHEAD = 1234;
     public static int OVERLAY_PERMISSION_REQ_CODE_CHATHEAD_MSG = 5678;
+    private String FILE_NAME = "logs.json";
+    private File FILE_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + "/user_logs/");
 
     //WiFi: b4:ce:f6:9d:d0:18
     //BT: 80:7A:BF:06:5B:01
@@ -292,7 +305,7 @@ public class ProfileFragment extends Fragment {
                 .setMessage("IF YES, MAKE SURE YOU ARE CONNECTED TO WIFI. OTHERWISE IT WILL USE A VERY LARGE AMOUNT OF YOUR DATA PLAN!")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        // sync function here
+                        new TaskSendLogs().execute();
                     }
                 })
                 .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
@@ -302,6 +315,67 @@ public class ProfileFragment extends Fragment {
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+    }
+
+    File file = null;
+
+    private class TaskSendLogs extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            if (!FILE_PATH.exists()) {
+                FILE_PATH.mkdir();
+            }
+
+            file = new File(FILE_PATH, FILE_NAME);
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Create file failed: " + e.toString());
+            }
+            ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(0);
+
+            for (int i = 0; i < documents.size(); i++) {
+                try {
+                    FileOutputStream fOut = new FileOutputStream(file);
+                    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fOut);
+                    outputStreamWriter.write(documents.get(i).toString());
+
+                    outputStreamWriter.close();
+                    fOut.flush();
+                    fOut.close();
+                } catch (IOException e) {
+                    Log.e(LOG_TAG, "File write failed: " + e.toString());
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            BackgroundMail.newBuilder(context)
+                    .withUsername("minukudata@gmail.com")
+                    .withPassword("Ilove2sleep")
+                    .withType(BackgroundMail.TYPE_PLAIN)
+//                            .withMailto("Minukudata@umich.edu")
+                    .withMailto("twho@umich.edu")
+                    .withBody("User logs")
+                    .withSubject("Family App Logger User Logs")
+                    .withAttachments(file.getPath())
+                    .withOnSuccessCallback(new BackgroundMail.OnSuccessCallback() {
+                        @Override
+                        public void onSuccess() {
+
+                        }
+                    })
+                    .withOnFailCallback(new BackgroundMail.OnFailCallback() {
+                        @Override
+                        public void onFail() {
+                            Log.d(LOG_TAG + " BackgroundEmail", "Fail to send background email");
+                        }
+                    })
+                    .send();
+        }
     }
 
     private void startHomeScreenIcon() {
