@@ -5,20 +5,13 @@ package edu.umich.si.inteco.minuku.fragments;
  */
 
 import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.media.Image;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.Settings;
 import android.support.v4.app.Fragment;
-import android.util.JsonWriter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,27 +32,20 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import edu.umich.si.inteco.minuku.MainActivity;
 import edu.umich.si.inteco.minuku.R;
-import edu.umich.si.inteco.minuku.constants.Constants;
 import edu.umich.si.inteco.minuku.constants.UserIconReference;
-import edu.umich.si.inteco.minuku.context.ContextManager;
 import edu.umich.si.inteco.minuku.data.FirebaseManager;
 import edu.umich.si.inteco.minuku.data.UserSettingsDBHelper;
 import edu.umich.si.inteco.minuku.model.User;
 import edu.umich.si.inteco.minuku.model.Views.UserIcon;
-import edu.umich.si.inteco.minuku.services.HomeScreenIconService;
+import edu.umich.si.inteco.minuku.util.NotificationHelper;
 import edu.umich.si.inteco.minuku.util.PreferenceHelper;
 import edu.umich.si.inteco.minuku.util.RecordingAndAnnotateManager;
-import edu.umich.si.inteco.minuku.util.ScheduleAndSampleManager;
 
 public class ProfileFragment extends Fragment {
     private static String LOG_TAG = "ProfileFragment";
@@ -84,15 +70,12 @@ public class ProfileFragment extends Fragment {
     private ArrayList<Integer> userIdList;
     private int numOfPeopleUsing = 100;
     private int currentSelected = 0;
-    public static int OVERLAY_PERMISSION_REQ_CODE_CHATHEAD = 1234;
-    public static int OVERLAY_PERMISSION_REQ_CODE_CHATHEAD_MSG = 5678;
     private String FILE_NAME = "logs.json";
     private File FILE_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + "/user_logs/");
 
     //WiFi: b4:ce:f6:9d:d0:18
     //BT: 80:7A:BF:06:5B:01
     //temporary use
-    private TextView tv1, tv2;
     private ImageButton btnSync;
     private boolean showMessage = false;
 
@@ -158,9 +141,6 @@ public class ProfileFragment extends Fragment {
         btnSave.setOnClickListener(profileButtonListener);
         btnSave.setVisibility(View.GONE);
 
-        tv1 = (TextView) rootView.findViewById(R.id.fragment_profile_wifimac);
-        tv2 = (TextView) rootView.findViewById(R.id.fragment_profile_btmac);
-
         // Button for testing backend
         btnSync = (ImageButton) rootView.findViewById(R.id.fragment_profile_btnSync);
         btnSync.setOnClickListener(profileButtonListener);
@@ -173,9 +153,6 @@ public class ProfileFragment extends Fragment {
         tvRunBack.setText("Loading...");
         tvRunBack.setVisibility(View.GONE);
         new TaskSetUserIconView().execute();
-
-        tv1.setText("WiFi MAC Address: " + MainActivity.wifiMacAddr);
-        tv2.setText("Bluetooth MAC Address: " + MainActivity.btMacAddr);
     }
 
     private class TaskSetUserIconView extends AsyncTask<Void, Void, Boolean> {
@@ -253,7 +230,7 @@ public class ProfileFragment extends Fragment {
         new TaskSetUserIconView().execute();
     }
 
-    public class ProfileButtonListener implements View.OnClickListener {
+    private class ProfileButtonListener implements View.OnClickListener {
 
         @Override
         public void onClick(View view) {
@@ -335,18 +312,21 @@ public class ProfileFragment extends Fragment {
             }
             ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(0);
 
-            for (int i = 0; i < documents.size(); i++) {
-                try {
-                    FileOutputStream fOut = new FileOutputStream(file);
-                    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fOut);
+
+            try {
+                FileOutputStream fOut = new FileOutputStream(file);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fOut);
+
+                for (int i = 0; i < documents.size(); i++) {
                     outputStreamWriter.write(documents.get(i).toString());
 
-                    outputStreamWriter.close();
-                    fOut.flush();
-                    fOut.close();
-                } catch (IOException e) {
-                    Log.e(LOG_TAG, "File write failed: " + e.toString());
                 }
+
+                outputStreamWriter.close();
+                fOut.flush();
+                fOut.close();
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "File write failed: " + e.toString());
             }
             return null;
         }
@@ -357,7 +337,7 @@ public class ProfileFragment extends Fragment {
                     .withUsername("minukudata@gmail.com")
                     .withPassword("Ilove2sleep")
                     .withType(BackgroundMail.TYPE_PLAIN)
-//                            .withMailto("Minukudata@umich.edu")
+//                    .withMailto("Minukudata@umich.edu")
                     .withMailto("twho@umich.edu")
                     .withBody("User logs")
                     .withSubject("Family App Logger User Logs")
@@ -365,41 +345,17 @@ public class ProfileFragment extends Fragment {
                     .withOnSuccessCallback(new BackgroundMail.OnSuccessCallback() {
                         @Override
                         public void onSuccess() {
-
+                            NotificationHelper.createSendEmailResultNotification(true);
                         }
                     })
                     .withOnFailCallback(new BackgroundMail.OnFailCallback() {
                         @Override
                         public void onFail() {
+                            NotificationHelper.createSendEmailResultNotification(false);
                             Log.d(LOG_TAG + " BackgroundEmail", "Fail to send background email");
                         }
                     })
                     .send();
-        }
-    }
-
-    private void startHomeScreenIcon() {
-        requestPermission(OVERLAY_PERMISSION_REQ_CODE_CHATHEAD);
-        requestPermission(OVERLAY_PERMISSION_REQ_CODE_CHATHEAD_MSG);
-        context.startService(new Intent(context, HomeScreenIconService.class));
-    }
-
-    private void showHomeIconMsg() {
-        java.util.Date now = new java.util.Date();
-        String str = "test by henry  " + new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(now);
-
-        Intent it = new Intent(context, HomeScreenIconService.class);
-        it.putExtra("Hello", str);
-        context.startService(it);
-    }
-
-    private void requestPermission(int requestCode) {
-        if (!(Build.VERSION.SDK_INT < Build.VERSION_CODES.M)) {
-            if (!Settings.canDrawOverlays(context)) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-                intent.setData(Uri.parse("package:" + context.getPackageName()));
-                startActivityForResult(intent, requestCode);
-            }
         }
     }
 }

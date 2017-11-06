@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import edu.umich.si.inteco.minuku.LoginActivity;
 import edu.umich.si.inteco.minuku.MainActivity;
 import edu.umich.si.inteco.minuku.R;
+import edu.umich.si.inteco.minuku.context.ContextManager;
 import edu.umich.si.inteco.minuku.data.UserSettingsDBHelper;
 import edu.umich.si.inteco.minuku.model.User;
 import edu.umich.si.inteco.minuku.util.PreferenceHelper;
@@ -64,17 +65,17 @@ public class AdultEnterIdFragment extends Fragment {
                             .withUsername("minukudata@gmail.com")
                             .withPassword("Ilove2sleep")
                             .withType(BackgroundMail.TYPE_PLAIN)
-                            .withMailto("Minukudata@umich.edu")
-//                            .withMailto("twho@umich.edu")
+//                            .withMailto("Minukudata@umich.edu")
+                            .withMailto("twho@umich.edu")
                             .withSubject("Family App Logger")
-                            .withBody("Family App Logger service started.\n \n" + "UniqueId: " + LoginActivity.wifiMacAddr + LoginActivity.btMacAddr
+                            .withBody("Family App Logger service started.\n \n" + "UniqueId: " + edStudyId.getText().toString() + ContextManager.getCurrentTimeInMillis()
                                     + "\n \n" + "Device: mobile device"
                                     + "\n \n" + "StudyId: " + edStudyId.getText().toString() + "\n \n"
                                     + getUserDataList(userSettingsDBHelper.getAllUserList()))
                             .withOnSuccessCallback(new BackgroundMail.OnSuccessCallback() {
                                 @Override
                                 public void onSuccess() {
-                                    PreferenceHelper.setPreferenceStringValue(PreferenceHelper.DEVICE_ID, LoginActivity.wifiMacAddr + LoginActivity.btMacAddr);
+                                    PreferenceHelper.setPreferenceStringValue(PreferenceHelper.DEVICE_ID, edStudyId.getText().toString() + ContextManager.getCurrentTimeInMillis());
                                     PreferenceHelper.setPreferenceStringValue(PreferenceHelper.USER_ID, edStudyId.getText().toString());
                                     PreferenceHelper.setPreferenceBooleanValue(PreferenceHelper.USER_SETUP_COMPLETED, true);
                                     Intent intent = new Intent(getActivity(), MainActivity.class);

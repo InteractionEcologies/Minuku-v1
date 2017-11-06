@@ -50,8 +50,8 @@ public class MainActivity extends FragmentActivity {
     private String currentPage;
 
     // Device info
-    public static String wifiMacAddr;
-    public static String btMacAddr;
+//    public static String wifiMacAddr;
+//    public static String btMacAddr;
     public static int screenWidth;
     public static int screenHeight;
 
@@ -211,32 +211,32 @@ public class MainActivity extends FragmentActivity {
                 .show();
     }
 
-    public void getMacAddress() {
-        try {
-            List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
-            for (NetworkInterface nif : all) {
-                if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
-
-                byte[] macBytes = nif.getHardwareAddress();
-                if (macBytes == null) {
-                    wifiMacAddr = "";
-                }
-
-                StringBuilder res1 = new StringBuilder();
-                for (byte b : macBytes) {
-                    res1.append(Integer.toHexString(b & 0xFF) + ":");
-                }
-
-                if (res1.length() > 0) {
-                    res1.deleteCharAt(res1.length() - 1);
-                }
-                wifiMacAddr = res1.toString();
-            }
-        } catch (Exception exception) {
-            Log.d(LOG_TAG, exception.getMessage());
-        }
-        btMacAddr = android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");
-    }
+//    public void getMacAddress() {
+//        try {
+//            List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
+//            for (NetworkInterface nif : all) {
+//                if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
+//
+//                byte[] macBytes = nif.getHardwareAddress();
+//                if (macBytes == null) {
+//                    wifiMacAddr = "";
+//                }
+//
+//                StringBuilder res1 = new StringBuilder();
+//                for (byte b : macBytes) {
+//                    res1.append(Integer.toHexString(b & 0xFF) + ":");
+//                }
+//
+//                if (res1.length() > 0) {
+//                    res1.deleteCharAt(res1.length() - 1);
+//                }
+//                wifiMacAddr = res1.toString();
+//            }
+//        } catch (Exception exception) {
+//            Log.d(LOG_TAG, exception.getMessage());
+//        }
+//        btMacAddr = android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");
+//    }
 
     private void getScreenInfo() {
         DisplayMetrics metrics = new DisplayMetrics();
@@ -248,7 +248,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     public void onResume() {
         super.onResume();
-        getMacAddress();
+//        getMacAddress();
 
         setFragment();
     }

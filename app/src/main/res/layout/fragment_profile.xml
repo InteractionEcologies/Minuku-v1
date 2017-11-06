@@ -94,7 +94,7 @@
                 android:layout_margin="@dimen/activity_vertical_margin"
                 android:gravity="center"
                 android:padding="@dimen/activity_vertical_margin"
-                android:text="version 1.1.0"
+                android:text="version 1.1.2"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small" />
 
             <Button
@@ -104,34 +104,6 @@
                 android:layout_gravity="center"
                 android:padding="20dp"
                 android:text="Save" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="20dp">
-
-                <TextView
-                    android:id="@+id/fragment_profile_wifimac"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:padding="20dp"
-                    android:text="Loading..."
-                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/fragment_profile_btmac"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:padding="20dp"
-                    android:text="Loading..."
-                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-                    android:visibility="gone" />
-            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

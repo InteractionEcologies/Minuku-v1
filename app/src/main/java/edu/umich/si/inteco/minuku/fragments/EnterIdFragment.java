@@ -84,7 +84,6 @@ public class EnterIdFragment extends Fragment {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                .withMailto("parentingtech@umich.edu")
                 if (!edStudyId.getText().toString().equalsIgnoreCase("")) {
                     BackgroundMail.newBuilder(context)
                             .withUsername("minukudata@gmail.com")

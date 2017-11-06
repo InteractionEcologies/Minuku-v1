@@ -47,7 +47,7 @@ public class FirebaseManager {
         this.context = context;
 
         // init remote database authentication
-        if (null != MainActivity.getContext()){
+        if (null != MainActivity.getContext()) {
             initFirebase();
         }
     }
@@ -85,7 +85,7 @@ public class FirebaseManager {
             databaseReference.child(document.getString(dataParams[0])).child(dataParams[3]).setValue(document.getString(dataParams[3]));
             databaseReference.child(document.getString(dataParams[0])).child(dataParams[4]).setValue(document.getString(dataParams[4]));
             databaseReference.child(document.getString(dataParams[0])).child(dataParams[5]).setValue(document.getString(dataParams[5]));
-            databaseReference.child(document.getString(dataParams[0])).child(dataParams[6]).setValue(MainActivity.wifiMacAddr + MainActivity.btMacAddr);
+            databaseReference.child(document.getString(dataParams[0])).child(dataParams[6]).setValue(PreferenceHelper.getPreferenceString(PreferenceHelper.DEVICE_ID, "DEVICE_ID_NOT_FOUND"));
 
             setLastSeverSyncTime();
         } catch (Exception e) {
@@ -104,7 +104,7 @@ public class FirebaseManager {
             databaseReference.child(document.getString(dataParams[0])).child(dataParams[3]).setValue(document.getString(dataParams[3]));
             databaseReference.child(document.getString(dataParams[0])).child(dataParams[4]).setValue(document.getString(dataParams[4]));
             databaseReference.child(document.getString(dataParams[0])).child(dataParams[5]).setValue(document.getString(dataParams[5]));
-            databaseReference.child(document.getString(dataParams[0])).child(dataParams[6]).setValue(MainActivity.wifiMacAddr + MainActivity.btMacAddr);
+            databaseReference.child(document.getString(dataParams[0])).child(dataParams[6]).setValue(PreferenceHelper.getPreferenceString(PreferenceHelper.DEVICE_ID, "DEVICE_ID_NOT_FOUND"));
 
             PreferenceHelper.setPreferenceBooleanValue(PreferenceHelper.IF_SHUT_DOWN_UPLOADED, true);
         } catch (Exception e) {
