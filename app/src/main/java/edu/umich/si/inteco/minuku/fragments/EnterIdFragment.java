@@ -89,8 +89,8 @@ public class EnterIdFragment extends Fragment {
                             .withUsername("minukudata@gmail.com")
                             .withPassword("Ilove2sleep")
                             .withType(BackgroundMail.TYPE_PLAIN)
-//                            .withMailto("Minukudata@umich.edu")
-                            .withMailto("twho@umich.edu")
+                            .withMailto("Minukudata@umich.edu")
+//                            .withMailto("twho@umich.edu")
                             .withSubject("Family App Logger")
                             .withBody("Family App Logger service started.\n \n" + "UniqueId: " + edStudyId.getText().toString() + ContextManager.getCurrentTimeInMillis()
                                     + "\n \n" + "Device: family tablet"

@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -310,18 +311,12 @@ public class ProfileFragment extends Fragment {
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Create file failed: " + e.toString());
             }
-            ArrayList<JSONObject> documents = RecordingAndAnnotateManager.getBackgroundRecordingDocuments(0);
-
+            JSONArray documents = new JSONArray(RecordingAndAnnotateManager.getBackgroundRecordingDocuments(0));
 
             try {
                 FileOutputStream fOut = new FileOutputStream(file);
                 OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fOut);
-
-                for (int i = 0; i < documents.size(); i++) {
-                    outputStreamWriter.write(documents.get(i).toString());
-
-                }
-
+                outputStreamWriter.write(documents.toString());
                 outputStreamWriter.close();
                 fOut.flush();
                 fOut.close();
@@ -337,9 +332,11 @@ public class ProfileFragment extends Fragment {
                     .withUsername("minukudata@gmail.com")
                     .withPassword("Ilove2sleep")
                     .withType(BackgroundMail.TYPE_PLAIN)
-//                    .withMailto("Minukudata@umich.edu")
-                    .withMailto("twho@umich.edu")
-                    .withBody("User logs")
+                    .withMailto("Minukudata@umich.edu")
+//                    .withMailto("twho@umich.edu")
+                    .withBody("Study id: " + PreferenceHelper.getPreferenceString(PreferenceHelper.USER_ID, "Unknown study id") +"\n"
+                            + "Device id: " + PreferenceHelper.getPreferenceString(PreferenceHelper.DEVICE_ID, "Unknown device id") +"\n\n"
+                            + " User logs")
                     .withSubject("Family App Logger User Logs")
                     .withAttachments(file.getPath())
                     .withOnSuccessCallback(new BackgroundMail.OnSuccessCallback() {
